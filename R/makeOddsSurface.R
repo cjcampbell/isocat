@@ -1,0 +1,37 @@
+#'
+#'
+#' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to Odds Ratio surfaces.
+#'
+#' @param probabilitySurface Normalized probability surface RasterLayer
+#' @param rename Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.
+#'
+#' @return Returns rasterLayer rescaled to Odds Ratio values.
+#'
+#'
+#' @examples
+#' # Generate example probability surfaces.
+#' data(isoscape)
+#' myiso <- rasterFromXYZ(isoscape)
+#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' df <- data.frame(ID = c(-100, -80, -50), dD = c(-100, -80, -50), SD_indv = rep(5, 3))
+#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precipaster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+#'
+#' # Convert to odds ratio surfaces.
+#' odds_ratio_surface <- lapply(unstack(assignmentModels), makeOddsSurfaces) %>% stack
+#' plot(odds_ratio_surface)
+#'
+#' @export makeOddsSurfaces
+
+makeOddsSurfaces <- function(probabilitySurface, rename = FALSE){
+  p <- probabilitySurface
+  odds_r <- (p/(1-p))/(maxValue(p)/(1-maxValue(p)))
+
+  if(rename == FALSE){
+    names(odds_r) <- names(p)
+  } else {
+    if(class(rename) != "character") stop("argument 'rename' should be of character class.")
+    names(odds_r) <- paste0(names(p), "_odds")
+    }
+
+  return(odds_r)
+}

@@ -3,6 +3,7 @@
 export(clusterSimmatrix)
 export(getPrecisionPar)
 export(isotopeAssignmentModel)
+export(makeOddsSurfaces)
 export(projectClusters)
 export(quantileAtSamplingLocation)
 export(simmatrixMaker)
