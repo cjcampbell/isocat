@@ -1,4 +1,4 @@
-#' Similarity Matrix Function
+#' Generates similarity matrix for rasterStack
 #'
 #' Applies pairwise comparisons of scheoner's D-metric amongst each rasterLayer in a RasterStack to populate a similarity matrix.
 #' @param assignmentRasters Input rasterStack

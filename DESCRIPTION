@@ -8,3 +8,12 @@ Description: This package provides tools to create and post-process spatial isot
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1.9000
+Imports:
+	ClusterR,
+	foreach,
+	doParallel,
+	snow,
+	pvclust
+Depends:
+  raster,
+  dplyr

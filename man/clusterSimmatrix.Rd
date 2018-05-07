@@ -2,7 +2,7 @@
 % Please edit documentation in R/clusterSimmatrix.R
 \name{clusterSimmatrix}
 \alias{clusterSimmatrix}
-\title{Hierarchical Clustering Analysis Function}
+\title{Hierarchical clustering analysis of similarity matrix}
 \usage{
 clusterSimmatrix(simmatrix, dist_mthd = "correlation",
   hclust_mthd = "average", nBoot = 1000, nClusters = FALSE)

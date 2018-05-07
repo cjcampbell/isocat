@@ -28,6 +28,7 @@ isotopeAssignmentModel(ID, dD, SD_indv, precip_raster, precip_SD_raster,
 Creates isotope assignment models projections of probable origin. Results returned as a rasterstack, with layer names corresponding to individual ID.
 }
 \examples{
+require(raster)
 data(isoscape)
 myiso <- rasterFromXYZ(isoscape)
 raster::plot(myiso)

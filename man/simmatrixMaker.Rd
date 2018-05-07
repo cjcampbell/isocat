@@ -2,7 +2,7 @@
 % Please edit documentation in R/simmatrixMaker.R
 \name{simmatrixMaker}
 \alias{simmatrixMaker}
-\title{Similarity Matrix Function}
+\title{Generates similarity matrix for rasterStack}
 \usage{
 simmatrixMaker(assignmentRasters, nClusters = FALSE, csvSavePath = FALSE)
 }

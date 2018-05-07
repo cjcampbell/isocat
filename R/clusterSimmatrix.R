@@ -1,4 +1,4 @@
-#' Hierarchical Clustering Analysis Function
+#' Hierarchical clustering analysis of similarity matrix
 #'
 #' Function applies hierarchical clustering analysis to similarity matrix, such as one output by 'simmatrixMaker' function. Just a wrapper for pvclust. Output is a pvclust object.
 #' @param simmatrix symmetric similarity matrix object.

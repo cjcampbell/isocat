@@ -9,10 +9,15 @@
 \href{https://isomap.rcac.purdue.edu/isomap/fitting/explore?jobseq=66085&caseName=Annual_NoAm_H_1980_2010&userName=caitjcampbell}{IsoMAP Job 66100}
 }
 \usage{
-data(isoscape)
+isoscape
 }
 \description{
 Example isoscape data
+}
+\examples{
+data(isoscape)
+iso <- rasterFromXYZ(isoscape)
+
 }
 \references{
 Bowen G. J., West J.B., Miller C. C., Zhao L. and Zhang T. (2018) IsoMAP: Isoscapes Modeling, Analysis and Prediction (version 1.0). IsoMAP job 66100, Caitlin J. Campbell. Isoscapes Modeling, Analysis and Prediction (version 1.0). The IsoMAP Project.
