@@ -6,6 +6,10 @@
 #' @param hclust_mthd Method of clustering. Defaults to "average". See help(pvclust).
 #' @param nBoot number of bootstrap replications. Defaults to 1000. See help(pvclust).
 #' @param nClusters number of clusters to run in parallel using 'doParallel'. Defaults to FALSE (non-parallel).
+#'
+#' @export clusterSimmatrix
+#'
+#'
 
 clusterSimmatrix <- function(simmatrix, dist_mthd = "correlation", hclust_mthd = "average", nBoot = 1000,  nClusters = FALSE){
 

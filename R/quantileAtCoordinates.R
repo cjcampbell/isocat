@@ -4,6 +4,9 @@
 #' @param indivraster rasterlayer representing normalized probability of origin surface
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
+#'
+#' @export quantileAtSamplingLocation
+#'
 
 quantileAtSamplingLocation <- function(indivraster, Lat, Lon){
 

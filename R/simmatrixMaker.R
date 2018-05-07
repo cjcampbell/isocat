@@ -4,6 +4,9 @@
 #' @param assignmentRasters Input rasterStack
 #' @param nClusters Clusters to create run in parallel using 'doParallel'. Defaults to FALSE.
 #' @param csvSavePath Optional savepath to write similarity matrix to csv file. Defaults to FALSE, will not create csv.
+#'
+#' @export simmatrixMaker
+
 
 simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = FALSE){
 

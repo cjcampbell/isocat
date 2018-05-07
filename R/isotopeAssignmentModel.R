@@ -18,6 +18,9 @@
 #' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
 #' raster::plot(assignmentModels)
 #'
+#' @export isotopeAssignmentModel
+#'
+#'
 
 isotopeAssignmentModel <- function(ID, dD, SD_indv, precip_raster, precip_SD_raster, additionalModel = FALSE, savePath = FALSE, nClusters = FALSE) {
 

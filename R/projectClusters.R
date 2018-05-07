@@ -16,6 +16,8 @@
 #'  \item{"named"}{ returns raster of projected clusters named by input cluster names.}
 #'  \item{"both}{ returns rasterstack of 'numbered' and 'named' rasters.}
 #' }
+#'
+#' @export projectClusters
 
 projectClusters <- function(assignmentRasters, clustID, simmatrix, namedOutput = "both", parallel = FALSE){
 
