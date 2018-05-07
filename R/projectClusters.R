@@ -53,15 +53,18 @@ projectClusters <- function(assignmentRasters, clustID, simmatrix, namedOutput =
     projectFriendly1 <- calc(friendlyStack, which.max2)
   }
   if(parallel != FALSE){
-    require(ClusterR)
-    require(snow)
-    beginCluster(parallel)
-    projectFriendly1 <- clusterR(friendlyStack, calc, args=list(which.max2))
-    endCluster()
+    if("snow" %in% rownames(installed.packages()) == FALSE) stop("This function applies library 'snow' for parallel processing. Please install this package.")
+    # if("ClusterR" %in% rownames(installed.packages()) == FALSE) stop("This function applies library 'ClusterR' for parallel processing. Please install this package.")
+
+    raster::beginCluster(parallel)
+    projectFriendly1 <- raster::clusterR(friendlyStack, calc, args=list(which.max2))
+    raster::endCluster()
   }
 
   projectFriendly2 <- projectFriendly1
-  require(foreach)
+
+  if (!requireNamespace("foreach", quietly = TRUE)) { stop("Package \"foreach\" needed for this function to work. Please install it.", call. = FALSE) }
+
   valsFriendly <- na.omit(unique(projectFriendly2@data@values))
   foreach(i = valsFriendly) %do% {
     projectFriendly2[projectFriendly2 == i] <- names(friendlyStack)[i]

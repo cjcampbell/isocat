@@ -9,18 +9,17 @@
 
 clusterSimmatrix <- function(simmatrix, dist_mthd = "correlation", hclust_mthd = "average", nBoot = 1000,  nClusters = FALSE){
 
-  ifelse(
-    "pvclust" %in% rownames(installed.packages()),
-    require(pvclust),
-    stop("This function applies library 'pvclust' for parallel processing. Please install this package.")
-  )
+  if("pvclust" %in% rownames(installed.packages()) == FALSE) stop("This function applies library 'pvclust' for parallel processing. Please install this package.")
 
   if(class(simmatrix) != "matrix") stop("Object 'x' is not of class 'Matrix'")
   if(nClusters != FALSE){
+
     if(!is.numeric(nClusters)) stop("nClusters must be set to 'FALSE' or a numeric value.")
-    require(doParallel)
-    cl <- makeCluster(nClusters)
-    registerDoParallel(cl)
+    if("parallel" %in% rownames(installed.packages()) == FALSE) stop("This function applies library 'parallel' for parallel processing. Please install this package.")
+    if("doParallel" %in% rownames(installed.packages()) == FALSE) stop("This function applies library 'doParallel' for parallel processing. Please install this package.")
+
+    cl <- parallel::makeCluster(nClusters)
+    doParallel::registerDoParallel(cl)
   }
 
   result_ave <- pvclust(

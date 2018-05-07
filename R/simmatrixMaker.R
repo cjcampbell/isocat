@@ -27,7 +27,9 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
   t <- t(combn(a,2))
 
   if(parallel == FALSE){
-    require(foreach)
+
+    if (!requireNamespace("foreach", quietly = TRUE)) { stop("Package \"foreach\" needed for this function to work. Please install it.", call. = FALSE) }
+
     l <- foreach(i = 1:nrow(t), .packages="raster") %do% {
       schoener(
         assignmentRasters[[t[i,1]]],
@@ -55,11 +57,8 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
   }
 
   if(parallel != FALSE){
-    ifelse(
-      "doParallel" %in% rownames(installed.packages()),
-      require(doParallel),
-      stop("This function applies library 'doParallel' for parallel processing. Please install this package.")
-    )
+    if (!requireNamespace("doParallel", quietly = TRUE)) { stop("Package \"doParallel\" needed for this function to work as called.", call. = FALSE) }
+
     cl <- makeCluster(parallel)
     registerDoParallel(cl)
     l <- foreach(i = 1:nrow(t), .packages="raster") %dopar% {

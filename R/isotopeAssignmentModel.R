@@ -38,17 +38,7 @@ isotopeAssignmentModel <- function(ID, dD, SD_indv, precip_raster, precip_SD_ras
 
 
   if(class(nClusters) == "numeric"){
-
-    ifelse(
-      "doParallel" %in% rownames(installed.packages()),
-      require(doParallel),
-      stop("This function applies library 'doParallel' for parallel processing. Please install this package.")
-    )
-    ifelse(
-      "raster" %in% rownames(installed.packages()),
-      require(raster),
-      stop("This function applies library 'raster'. Please install this package.")
-    )
+    if (!requireNamespace("doParallel", quietly = TRUE)) { stop("Package \"doParallel\" needed for this function to work as called.", call. = FALSE) }
 
     cl <- makeCluster(nClusters)
     registerDoParallel(cl)
