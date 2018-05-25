@@ -10,13 +10,6 @@
 
 simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = FALSE){
 
-  # Performs pairwise comparisons using Schoener's statistic to populate a similarity matrix.
-  # Note that this is a computationally heavy (inefficient) function, and takes a long time for large rasterstacks.
-  # Args:
-  # assignmentRasters: Rasterstack of isotope assignment models
-  # parallel: clusters to run in parallel. Defaults to "FALSE".
-  # csvSavePath: Optional location to which to save an output csv. Recommended for large rasterstacks.
-
   if(missing(assignmentRasters))
     stop("Object 'assignmentRasters' not found.")
   if(class(assignmentRasters) != "RasterStack")
@@ -29,7 +22,7 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 
   t <- t(combn(a,2))
 
-  if(parallel == FALSE){
+  if(nClusters == FALSE){
 
     if (!requireNamespace("foreach", quietly = TRUE)) { stop("Package \"foreach\" needed for this function to work. Please install it.", call. = FALSE) }
 
@@ -59,10 +52,10 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
     x[is.na(x)] <- 1
   }
 
-  if(parallel != FALSE){
+  if(nClusters != FALSE){
     if (!requireNamespace("doParallel", quietly = TRUE)) { stop("Package \"doParallel\" needed for this function to work as called.", call. = FALSE) }
 
-    cl <- makeCluster(parallel)
+    cl <- makeCluster(nClusters)
     registerDoParallel(cl)
     l <- foreach(i = 1:nrow(t), .packages="raster") %dopar% {
       schoener(
