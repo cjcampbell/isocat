@@ -1,10 +1,10 @@
-Package: IsoModAT
+Package: isocat
 Type: Package
-Title: Isotome Assignment Model Analytical Tools
-Version: 0.1.0
+Title: Isotope Clustering and Assignment Tools
+Version: 0.1.1
 Author: Caitlin J. Campbell
 Maintainer: Caitlin J. Campbell <caitjcampbell@gmail.com>
-Description: This package provides tools to create and post-process spatial isotope assignment models of animal origin.
+Description: This package provides tools to create, compare, and post-process spatial isotope assignment models of animal origin.
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1.9000
@@ -17,4 +17,3 @@ Suggests:
 	doParallel,
 	snow,
 	pvclust
-
