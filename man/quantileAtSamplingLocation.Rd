@@ -14,5 +14,6 @@ quantileAtSamplingLocation(indivraster, Lat, Lon)
 \item{Lon}{Integer longitude}
 }
 \description{
-Function estimates percentile of each non-NA value within a rasterLayer using the empirical cumulative distribution function, and extracts value at location specified. For more information, see help(ecdf).
+Function estimates percentile of each non-NA value within a rasterLayer using the empirical cumulative distribution function, and extracts value at location specified.
+For more information, see help(ecdf).
 }

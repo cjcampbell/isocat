@@ -41,7 +41,10 @@ isotopeAssignmentModel <- function(ID, dD, SD_indv, precip_raster, precip_SD_ras
 
 
   if(class(nClusters) == "numeric"){
-    if (!requireNamespace("doParallel", quietly = TRUE)) { stop("Package \"doParallel\" needed for this function to work as called.", call. = FALSE) }
+    if (!requireNamespace("doParallel", quietly = TRUE)) {
+      stop("Package \"doParallel\" needed for this function to work as called.",
+           call. = FALSE)
+      }
 
     cl <- makeCluster(nClusters)
     registerDoParallel(cl)

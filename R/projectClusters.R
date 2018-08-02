@@ -32,8 +32,10 @@ projectClusters <- function(assignmentRasters, clustID, simmatrix, namedOutput =
 
   friendlyRasts <- lapply(unique(clustID), function(z){
     targetrasts <- names(assignmentRasters[[which(clustID == z)]])
-    subsetSimmatrix <- simmatrix[which(paste0("X",rownames(simmatrix)) %in% targetrasts),
-                                 which(paste0("X",colnames(simmatrix)) %in% targetrasts)]
+    subsetSimmatrix <- simmatrix[
+      which(paste0("X",rownames(simmatrix)) %in% targetrasts),
+      which(paste0("X",colnames(simmatrix)) %in% targetrasts)
+      ]
 
     if(!is.matrix(subsetSimmatrix)) { # When there is only 1 individual / cluster, manually create matrix.
       subsetSimmatrix <- matrix(1, dimnames = as.list(rep(targetrasts, times = 2)))
@@ -56,7 +58,6 @@ projectClusters <- function(assignmentRasters, clustID, simmatrix, namedOutput =
   }
   if(parallel != FALSE){
     if("snow" %in% rownames(installed.packages()) == FALSE) stop("This function applies library 'snow' for parallel processing. Please install this package.")
-    # if("ClusterR" %in% rownames(installed.packages()) == FALSE) stop("This function applies library 'ClusterR' for parallel processing. Please install this package.")
 
     raster::beginCluster(parallel)
     projectFriendly1 <- raster::clusterR(friendlyStack, calc, args=list(which.max2))
@@ -65,7 +66,10 @@ projectClusters <- function(assignmentRasters, clustID, simmatrix, namedOutput =
 
   projectFriendly2 <- projectFriendly1
 
-  if (!requireNamespace("foreach", quietly = TRUE)) { stop("Package \"foreach\" needed for this function to work. Please install it.", call. = FALSE) }
+  if (!requireNamespace("foreach", quietly = TRUE)) {
+    stop("Package \"foreach\" needed for this function to work. Please install it.",
+         call. = FALSE)
+    }
 
   valsFriendly <- na.omit(unique(projectFriendly2@data@values))
   foreach(i = valsFriendly) %do% {

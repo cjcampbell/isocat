@@ -29,7 +29,8 @@ makeOddsSurfaces <- function(probabilitySurface, rename = FALSE){
   if(rename == FALSE){
     names(odds_r) <- names(p)
   } else {
-    if(class(rename) != "character") stop("argument 'rename' should be of character class.")
+    if(class(rename) != "character")
+      stop("argument 'rename' should be of character class.")
     names(odds_r) <- paste0(names(p), rename)
     }
 

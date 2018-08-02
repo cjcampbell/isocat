@@ -1,6 +1,7 @@
 #'
 #'
-#' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to quantile surfaces.
+#' Converts normalized probability surface (e.g. one layer output of
+#' isotopeAssignmentModel function) to quantile surfaces.
 #'
 #' @param probabilitySurface Normalized probability surface RasterLayer
 #' @param rename Character value to append to raster name (e.g. "_quantile"). Defaults to FALSE.
@@ -34,7 +35,8 @@ makeQuantileSurfaces <- function(probabilitySurface, rename = FALSE){
   if(rename == FALSE){
     names(quantile_surface) <- names(p)
   } else {
-    if(class(rename) != "character") stop("argument 'rename' should be of character class.")
+    if(class(rename) != "character")
+      stop("argument 'rename' should be of character class.")
     names(quantile_surface) <- paste0(names(p), rename)
   }
 

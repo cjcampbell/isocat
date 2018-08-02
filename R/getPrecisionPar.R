@@ -22,11 +22,17 @@ getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 2
       cells_df <- plyr::ldply(cellsAbove, data.frame)
       n_cells_tot <- sum(!is.na(rasterstack[[n]][]), na.rm = T)
 
-      cbind(cells_df, propAbove = cells_df$cellsAbove / n_cells_tot, id = names(rasterstack[[n]]))
+      cbind(
+        cells_df,
+        propAbove = cells_df$cellsAbove / n_cells_tot,
+        id = names(rasterstack[[n]])
+        )
 
     }; endCluster()
 
   myDf <- plyr::ldply(getcells, data.frame)
-  if(method != FALSE & class(method) == "character"){myDf <- cbind(myDf, method = method)}
+  if(method != FALSE & class(method) == "character"){
+    myDf <- cbind(myDf, method = method)
+    }
   return(myDf)
 }

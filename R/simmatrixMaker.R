@@ -16,7 +16,7 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
     stop("Object 'assignmentRasters' is not of class 'RasterStack.'")
 
   # Run pairwise comparisons.
-  schoener <- function(rast1, rast2){1 - (0.5 * cellStats(abs(rast1 - rast2), stat='sum'))}
+  schoener <- function(rast1, rast2){ 1 - (0.5 * cellStats(abs(rast1 - rast2), stat='sum')) }
 
   a <- names(assignmentRasters)
 
@@ -24,7 +24,10 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 
   if(nClusters == FALSE){
 
-    if (!requireNamespace("foreach", quietly = TRUE)) { stop("Package \"foreach\" needed for this function to work. Please install it.", call. = FALSE) }
+    if (!requireNamespace("foreach", quietly = TRUE)) {
+      stop("Package \"foreach\" needed for this function to work.
+           Please install it.", call. = FALSE)
+      }
 
     l <- foreach(i = 1:nrow(t), .packages="raster") %do% {
       schoener(
@@ -53,7 +56,10 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
   }
 
   if(nClusters != FALSE){
-    if (!requireNamespace("doParallel", quietly = TRUE)) { stop("Package \"doParallel\" needed for this function to work as called.", call. = FALSE) }
+    if (!requireNamespace("doParallel", quietly = TRUE)) {
+      stop("Package \"doParallel\" needed for this function to work as called.",
+           call. = FALSE)
+      }
 
     cl <- makeCluster(nClusters)
     registerDoParallel(cl)

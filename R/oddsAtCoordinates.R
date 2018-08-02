@@ -10,7 +10,8 @@
 
 oddsAtSamplingLocation <- function(indivraster, Lat, Lon){
 
-  if(!is.numeric(Lat) | !is.numeric(Lon)) stop("'Lat' and 'Lon' must both be numeric values.")
+  if(!is.numeric(Lat) | !is.numeric(Lon))
+    stop("'Lat' and 'Lon' must both be numeric values.")
 
   if(is.na(Lat) | is.na(Lon)) {return(NA)} else {
 
