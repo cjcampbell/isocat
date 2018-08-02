@@ -17,13 +17,13 @@
 #' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
 #'
 #' # Convert to quantile surfaces.
-#' quantile_surface <-  stack( lapply( unstack(assignmentModels), makeQuantSurfaces) )
+#' quantile_surface <-  stack( lapply( unstack(assignmentModels), makeQuantileSurfaces) )
 #' plot(quantile_surface)
 #'
-#' @export makeQuantSurfaces
+#' @export makeQuantileSurfaces
 #'
 
-makeQuantSurfaces <- function(probabilitySurface, rename = FALSE){
+makeQuantileSurfaces <- function(probabilitySurface, rename = FALSE){
   p <- probabilitySurface
 
   f <- ecdf(na.omit(probabilitySurface[]))
