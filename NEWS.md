@@ -1,4 +1,16 @@
-# isocat 0.2.0.9000
+# isocat 0.2.1
+
+## New Functions
+* Added a 'schoenersD' function that compares the spatial similarity of two surfaces.
+* Added a 'makeQuantileSimulationSurface' function that converts a surface to a quantile-simulation surface.
+
+
+## Minor Tweaks
+* Improved code readibility within several functions.
+
+
+
+# isocat 0.2.0
 
 * Added a `NEWS.md` file to track changes to the package.
 * Renamed package from 'IsoModAT' (Isotope Models of Animal Origin Analytical Toolset) to 'isocat' (Isotope Clustering and Assignment Tools). 
