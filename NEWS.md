@@ -1,3 +1,10 @@
+# isocat 0.2.2
+## Vignette Included
+* Basic vignette with example applications of all functions written.
+
+
+
+
 # isocat 0.2.1
 
 ## New Functions
@@ -7,6 +14,7 @@
 
 ## Minor Tweaks
 * Improved code readibility within several functions.
+
 
 
 
