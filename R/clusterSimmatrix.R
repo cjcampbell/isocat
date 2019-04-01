@@ -37,7 +37,7 @@ clusterSimmatrix <- function(simmatrix,
       cl <- FALSE
     }
 
-  result_ave <- pvclust(
+  result_ave <- pvclust::pvclust(
     data = data.matrix(simmatrix),
     method.hclust = hclust_mthd,
     method.dist = dist_mthd,

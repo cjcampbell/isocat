@@ -38,7 +38,7 @@ meanAggregateClusterProbability <- function(indivIDs, clusters, surfaces, nClust
   which.mean <- function(x, ...) ifelse( length(x) == sum( is.na(x) ), NA, mean(x, na.rm = T))
 
   meanRasts_list <- lapply(1:length(unique(clusters)), function(z){
-    clustStack <- subset(surfaces, indivIDs[ clusters == z])
+    clustStack <- raster::subset(surfaces, indivIDs[ clusters == z])
     if(nClust == FALSE){
       meanRasts <- calc(clustStack, which.mean)
     } else {
