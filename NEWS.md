@@ -7,6 +7,7 @@
 
 ## New Function
 * Added a `meanAggregateClusterProbability` function to create mean probability-of-origin map based on cluster assignments (for individuals of similar origin).
+* Added `projectSummarySurface` function to show which RasterLayer in a stack has highest value at any given location.
 
 ## Bug fixes
 * Updated `clusterSimmatrix` function to match `pvclust` version 2.0-1 with debug of `r` parameter.
