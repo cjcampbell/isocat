@@ -1,11 +1,18 @@
 
+
 # isocat 0.2.2
+# 
 ## Vignette Included
 * Vignette with example applications of all functions written.
+
+## New Function
+* Added a `meanAggregateClusterProbability` function to create mean probability-of-origin map based on cluster assignments (for individuals of similar origin).
 
 ## Bug fixes
 * Updated `clusterSimmatrix` function to match `pvclust` version 2.0-1 with debug of `r` parameter.
 * Replaced buggy `projectCluster` function with alternative code (see `isocat` vignette).
+
+
 
 
 # isocat 0.2.1
@@ -17,8 +24,6 @@
 
 ## Minor Tweaks
 * Improved code readibility within several functions.
-
-
 
 
 # isocat 0.2.0
