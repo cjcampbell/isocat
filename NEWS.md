@@ -1,15 +1,18 @@
+
 # isocat 0.2.2
 ## Vignette Included
-* Basic vignette with example applications of all functions written.
+* Vignette with example applications of all functions written.
 
-
+## Bug fixes
+* Updated `clusterSimmatrix` function to match `pvclust` version 2.0-1 with debug of `r` parameter.
+* Replaced buggy `projectCluster` function with alternative code (see `isocat` vignette).
 
 
 # isocat 0.2.1
 
 ## New Functions
-* Added a 'schoenersD' function that compares the spatial similarity of two surfaces.
-* Added a 'makeQuantileSimulationSurface' function that converts a surface to a quantile-simulation surface.
+* Added a `schoenersD` function that compares the spatial similarity of two surfaces.
+* Added a `makeQuantileSimulationSurface` function that converts a surface to a quantile-simulation surface.
 
 
 ## Minor Tweaks
@@ -21,7 +24,7 @@
 # isocat 0.2.0
 
 * Added a `NEWS.md` file to track changes to the package.
-* Renamed package from 'IsoModAT' (Isotope Models of Animal Origin Analytical Toolset) to 'isocat' (Isotope Clustering and Assignment Tools). 
+* Renamed package from `IsoModAT` (Isotope Models of Animal Origin Analytical Toolset) to `isocat` (Isotope Clustering and Assignment Tools). 
 * Specified CC0 license.
 
 ## New Functions

@@ -6,14 +6,14 @@
 #' @param hclust_mthd Method of clustering. Defaults to "average". See help(pvclust).
 #' @param nBoot number of bootstrap replications. Defaults to 1000. See help(pvclust).
 #' @param nClusters number of clusters to run in parallel using 'doParallel'. Defaults to FALSE (non-parallel).
-#'
+#' @param r Relative size of bootstrap replications.
 #' @export clusterSimmatrix
 #'
 #'
 
 clusterSimmatrix <- function(simmatrix,
                              dist_mthd = "correlation", hclust_mthd = "average",
-                             nBoot = 1000,  nClusters = FALSE){
+                             nBoot = 1000,  nClusters = FALSE, r=seq(.7,1.4,by=.1)){
 
   if("pvclust" %in% rownames(installed.packages()) == FALSE)
     stop("This function applies library 'pvclust' for parallel processing.
@@ -33,13 +33,16 @@ clusterSimmatrix <- function(simmatrix,
 
     cl <- parallel::makeCluster(nClusters)
     doParallel::registerDoParallel(cl)
-  }
+  } else {
+      cl <- FALSE
+    }
 
   result_ave <- pvclust(
     data = data.matrix(simmatrix),
-    dist_mthd = dist_mthd,
-    hclust_mthd = hclust_mthd,
-    nboot = nboot,
+    method.hclust = hclust_mthd,
+    method.dist = dist_mthd,
+    nboot = nBoot,
+    r = seq(.7,1.4,by=.1),
     parallel = cl
   )
 
