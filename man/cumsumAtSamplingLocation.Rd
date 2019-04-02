@@ -2,7 +2,7 @@
 % Please edit documentation in R/CumSumSuite.R
 \name{cumsumAtSamplingLocation}
 \alias{cumsumAtSamplingLocation}
-\title{Cumulative sum at coordinates function}
+\title{Cumulative sum at coordinates}
 \usage{
 cumsumAtSamplingLocation(indivraster, Lat, Lon)
 }

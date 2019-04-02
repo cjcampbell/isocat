@@ -2,7 +2,7 @@
 % Please edit documentation in R/CumSumSuite.R
 \name{cumsumbelow}
 \alias{cumsumbelow}
-\title{Function that calculates the cumulative sum of values less than or equal to a given value.}
+\title{Cumulative sum below value}
 \usage{
 cumsumbelow(vals)
 }

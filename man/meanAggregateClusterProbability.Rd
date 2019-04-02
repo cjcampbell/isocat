@@ -12,6 +12,8 @@ meanAggregateClusterProbability(indivIDs, clusters, surfaces, nClust = FALSE)
 \item{clusters}{Vector of cluster IDs, in an order corresponding to `indivIDs`.}
 
 \item{surfaces}{Stack of probability-of-origin surfaces for all individuals. Object of class 'RasterStack.'}
+
+\item{nClust}{Create and apply a multi-core cluster for faster processing using `raster` and `snow` packages. Defaults to `FALSE` (i.e., no clustering).}
 }
 \description{
 Subset probability-of-origin surfaces by cluster assignment and find mean aggregate probability-of-origin surface for each clustered group.
