@@ -5,7 +5,8 @@
 \title{Hierarchical clustering analysis of similarity matrix}
 \usage{
 clusterSimmatrix(simmatrix, dist_mthd = "correlation",
-  hclust_mthd = "average", nBoot = 1000, nClusters = FALSE)
+  hclust_mthd = "average", nBoot = 1000, nClusters = FALSE, r = seq(0.7,
+  1.4, by = 0.1))
 }
 \arguments{
 \item{simmatrix}{symmetric similarity matrix object.}
@@ -17,6 +18,8 @@ clusterSimmatrix(simmatrix, dist_mthd = "correlation",
 \item{nBoot}{number of bootstrap replications. Defaults to 1000. See help(pvclust).}
 
 \item{nClusters}{number of clusters to run in parallel using 'doParallel'. Defaults to FALSE (non-parallel).}
+
+\item{r}{Relative size of bootstrap replications.}
 }
 \description{
 Function applies hierarchical clustering analysis to similarity matrix, such as one output by 'simmatrixMaker' function. Just a wrapper for pvclust. Output is a pvclust object.
