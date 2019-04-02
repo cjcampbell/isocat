@@ -1,4 +1,5 @@
 
+#' Cumulative sum below value
 #'
 #' Function that calculates the cumulative sum of values less than or equal to a given value.
 #'
@@ -71,7 +72,7 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 
 
 
-#' Cumulative sum at coordinates function
+#' Cumulative sum at coordinates
 #'
 #'
 #' Function estimates cumulative sum of all values in a surface below the value at a specified longitude and latitude.
