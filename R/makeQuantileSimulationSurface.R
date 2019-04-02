@@ -1,13 +1,12 @@
+#' Create quantile-simulation surfaces
 #'
-#'
-#' Converts normalized probability surface (e.g. one layer output of
+#' Converts normalized probability surfaces (e.g. one layer output of
 #' isotopeAssignmentModel function) to quantile surfaces.
 #'
 #' @param probabilitySurface Normalized probability surface RasterLayer.
 #' @param ValidationQuantiles Vector of quantile values from known-origin individuals, against which to compare each value within the probability surface. Each value must be between 0 and 1.
 #' @param rename Character value to append to raster name (e.g. "_quantileSimulation"). Defaults to FALSE.
 #' @param rescale If rescale = TRUE, returns surface showing proportion of times each surface cell value fell within the validation quantiles distribution. If rescale = FALSE, returns discrete number of times the cell fell within the distribution.
-#'
 #'
 #' @return Returns rasterLayer rescaled to quantile values.
 #'
@@ -35,14 +34,24 @@
 #'
 
 makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantiles, rename = FALSE, rescale = TRUE){
-  if(!is.logical(rescale)) stop("'rescale' must be a logical value.")
-  if(class(probabilitySurface) != RasterLayer) stop("'probabilitySurface' must be of class RasterLayer")
+  if(!is.logical(rescale))
+    stop("'rescale' must be a logical value.")
+  if(class(probabilitySurface) != "RasterLayer")
+    stop("'probabilitySurface' must be of class RasterLayer")
+  if( nClust != FALSE & class(nClust) %in% c(FALSE, "numeric", "integer") != TRUE )
+    stop( "nClust class must either be FALSE, numeric, or integer." )
 
   p <- probabilitySurface
   f <- ecdf(na.omit(probabilitySurface[]))
   quantile_surface <- p # create baseline surface.
   quantile_surface[] <- f(p[]) # redefine values.
 
+  check_above <- function(x){ sum( x >= q, na.rm = T) }
+
+  quantileSimulation_surface[] <- unlist(lapply(quantile_surface[], check_above) )
+
+  names(quantileSimulation_surface) <- names(probabilitySurface) # make layer names match up.
+  quantileSimulation_surface <- mask(quantileSimulation_surface, probabilitySurface) # Make extents line up (mask vals that should be NA).
 
 
   if(rename == FALSE){
@@ -53,10 +62,9 @@ makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantile
     names(quantileSimulation_surface) <- paste0(names(p), rename)
   }
 
-  if(rescale == TRUE)
+  if(rescale == TRUE){
     quantileSimulation_surface <- quantileSimulation_surface / length(ValidationQuantiles)
-
-
+  }
 
   return(quantileSimulation_surface)
 }

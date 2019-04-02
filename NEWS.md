@@ -11,6 +11,7 @@
 * Added `projectSummarySurface` function to show which RasterLayer in a stack has highest value at any given location.
 
 ## Bug fixes
+* Fixed minor issue with running `makeQuantileSimulationSurface` on object of class RasterLayer.
 * Updated `clusterSimmatrix` function to match `pvclust` version 2.0-1 with debug of `r` parameter.
 * Replaced buggy `projectCluster` function with alternative function (`projectSummarySurface`; see `isocat` vignette).
 
