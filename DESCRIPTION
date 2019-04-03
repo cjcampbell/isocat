@@ -1,7 +1,7 @@
 Package: isocat
 Type: Package
 Title: Isotope Clustering and Assignment Tools
-Version: 0.2.2
+Version: 0.2.3
 Author: Caitlin J. Campbell
 Maintainer: Caitlin J. Campbell <caitjcampbell@gmail.com>
 Description: This package provides tools to create, compare, and post-process spatial isotope assignment models of animal origin.

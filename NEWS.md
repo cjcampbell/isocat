@@ -1,4 +1,13 @@
 
+# isocat 0.2.3
+
+## Vignette updates.
+* Vignette updated
+
+## Bug fixes
+* Updated data file to realistic isoscape standard deviations.
+
+
 
 # isocat 0.2.2
 

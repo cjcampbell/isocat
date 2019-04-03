@@ -18,7 +18,7 @@
 #' myiso <- raster::rasterFromXYZ(isoscape)
 #' myiso_sd <- raster::rasterFromXYZ(isoscape_sd)
 #' df <- data.frame(ID = c(-100, -80, -50), dD = c(-100, -80, -50), SD_indv = rep(5, 3))
-#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd)
 #'
 #' # Example known-origin quantile data.
 #' set.seed(42)
@@ -38,16 +38,15 @@ makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantile
     stop("'rescale' must be a logical value.")
   if(class(probabilitySurface) != "RasterLayer")
     stop("'probabilitySurface' must be of class RasterLayer")
-  if( nClust != FALSE & class(nClust) %in% c(FALSE, "numeric", "integer") != TRUE )
-    stop( "nClust class must either be FALSE, numeric, or integer." )
 
   p <- probabilitySurface
   f <- ecdf(na.omit(probabilitySurface[]))
   quantile_surface <- p # create baseline surface.
   quantile_surface[] <- f(p[]) # redefine values.
 
-  check_above <- function(x){ sum( x >= q, na.rm = T) }
+  check_above <- function(x){ sum( x >= ValidationQuantiles, na.rm = T) }
 
+  quantileSimulation_surface <- quantile_surface
   quantileSimulation_surface[] <- unlist(lapply(quantile_surface[], check_above) )
 
   names(quantileSimulation_surface) <- names(probabilitySurface) # make layer names match up.

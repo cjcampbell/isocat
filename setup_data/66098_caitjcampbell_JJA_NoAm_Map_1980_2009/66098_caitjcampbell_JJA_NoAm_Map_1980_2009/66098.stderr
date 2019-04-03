@@ -1,0 +1,159 @@
+--2018-01-24 12:43:21--  https://isomap-prod.rcac.purdue.edu/isomap/DownloadMetadata/script?content=metadata&jobseq=66098
+Resolving isomap-prod.rcac.purdue.edu... 128.211.128.67
+Connecting to isomap-prod.rcac.purdue.edu|128.211.128.67|:443... connected.
+WARNING: cannot verify isomap-prod.rcac.purdue.edu's certificate, issued by `/C=US/ST=MI/L=Ann Arbor/O=Internet2/OU=InCommon/CN=InCommon RSA Server CA':
+  Unable to locally verify the issuer's authority.
+HTTP request sent, awaiting response... 200 OK
+Length: 24136 (24K) [text/xml]
+Saving to: `/depot/ssg/isomap/data/isomap-prod/portal/caitjcampbell/jobs/66098/metadata.xml'
+
+     0K .......... .......... ...                             100% 37.9M=0.001s
+
+2018-01-24 12:43:21 (37.9 MB/s) - `/depot/ssg/isomap/data/isomap-prod/portal/caitjcampbell/jobs/66098/metadata.xml' saved [24136/24136]
+
+* About to connect() to isomap-prod.rcac.purdue.edu port 8081 (#0)
+*   Trying 128.211.128.67... connected
+* Connected to isomap-prod.rcac.purdue.edu (128.211.128.67) port 8081 (#0)
+* Server auth using Basic with user 'gridbot'
+> POST /geoserver/rest/workspaces HTTP/1.1
+> Authorization: Basic Z3JpZGJvdDo4MHRqMGI=
+> User-Agent: curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 NSS/3.27.1 zlib/1.2.3 libidn/1.18 libssh2/1.4.2
+> Host: isomap-prod.rcac.purdue.edu:8081
+> Accept: */*
+> Content-type: text/xml
+> Content-Length: 41
+> 
+} [data not shown]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0    41      0  26114 --:--:-- --:--:-- --:--:-- 26114< HTTP/1.1 201 Created
+< Date: Wed, 24 Jan 2018 17:43:33 GMT
+< Location: http://isomap-prod.rcac.purdue.edu:8081/geoserver/rest/workspaces/66098
+< Server: Noelios-Restlet-Engine/1.0..8
+< Transfer-Encoding: chunked
+< 
+{ [data not shown]
+  0     0    0     0    0    41      0    376 --:--:-- --:--:-- --:--:--     0* Connection #0 to host isomap-prod.rcac.purdue.edu left intact
+
+* Closing connection #0
+* About to connect() to isomap-prod.rcac.purdue.edu port 8081 (#0)
+*   Trying 128.211.128.67... connected
+* Connected to isomap-prod.rcac.purdue.edu (128.211.128.67) port 8081 (#0)
+* Server auth using Basic with user 'gridbot'
+> PUT /geoserver/rest/workspaces/66098/coveragestores/caitjcampbell_66098_predkrig/external.geotiff?configure=first&coverageName=caitjcampbell_66098_predkrig HTTP/1.1
+> Authorization: Basic Z3JpZGJvdDo4MHRqMGI=
+> User-Agent: curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 NSS/3.27.1 zlib/1.2.3 libidn/1.18 libssh2/1.4.2
+> Host: isomap-prod.rcac.purdue.edu:8081
+> Accept: */*
+> Content-type: text/plain
+> Content-Length: 85
+> 
+} [data not shown]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0    85      0  42225 --:--:-- --:--:-- --:--:-- 42225< HTTP/1.1 201 Created
+< Date: Wed, 24 Jan 2018 17:43:33 GMT
+< Server: Noelios-Restlet-Engine/1.0..8
+< Content-Type: application/xml
+< Transfer-Encoding: chunked
+< 
+{ [data not shown]
+126   672    0   672    0    85   2800    354 --:--:-- --:--:-- --:--:--  2476* Connection #0 to host isomap-prod.rcac.purdue.edu left intact
+
+* Closing connection #0
+* About to connect() to isomap-prod.rcac.purdue.edu port 8081 (#0)
+*   Trying 128.211.128.67... connected
+* Connected to isomap-prod.rcac.purdue.edu (128.211.128.67) port 8081 (#0)
+* Server auth using Basic with user 'gridbot'
+> PUT /geoserver/rest/workspaces/66098/coveragestores/caitjcampbell_66098_predreg/external.geotiff?configure=first&coverageName=caitjcampbell_66098_predreg HTTP/1.1
+> Authorization: Basic Z3JpZGJvdDo4MHRqMGI=
+> User-Agent: curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 NSS/3.27.1 zlib/1.2.3 libidn/1.18 libssh2/1.4.2
+> Host: isomap-prod.rcac.purdue.edu:8081
+> Accept: */*
+> Content-type: text/plain
+> Content-Length: 84
+> 
+} [data not shown]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0    84      0  59743 --:--:-- --:--:-- --:--:-- 59743< HTTP/1.1 201 Created
+< Date: Wed, 24 Jan 2018 17:43:34 GMT
+< Server: Noelios-Restlet-Engine/1.0..8
+< Content-Type: application/xml
+< Transfer-Encoding: chunked
+< 
+{ [data not shown]
+125   669    0   669    0    84   3545    445 --:--:-- --:--:-- --:--:--  3128* Connection #0 to host isomap-prod.rcac.purdue.edu left intact
+
+* Closing connection #0
+* About to connect() to isomap-prod.rcac.purdue.edu port 8081 (#0)
+*   Trying 128.211.128.67... connected
+* Connected to isomap-prod.rcac.purdue.edu (128.211.128.67) port 8081 (#0)
+* Server auth using Basic with user 'gridbot'
+> PUT /geoserver/rest/workspaces/66098/coveragestores/caitjcampbell_66098_stdkrig/external.geotiff?configure=first&coverageName=caitjcampbell_66098_stdkrig HTTP/1.1
+> Authorization: Basic Z3JpZGJvdDo4MHRqMGI=
+> User-Agent: curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 NSS/3.27.1 zlib/1.2.3 libidn/1.18 libssh2/1.4.2
+> Host: isomap-prod.rcac.purdue.edu:8081
+> Accept: */*
+> Content-type: text/plain
+> Content-Length: 84
+> 
+} [data not shown]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0    84      0  55555 --:--:-- --:--:-- --:--:-- 55555< HTTP/1.1 201 Created
+< Date: Wed, 24 Jan 2018 17:43:34 GMT
+< Server: Noelios-Restlet-Engine/1.0..8
+< Content-Type: application/xml
+< Transfer-Encoding: chunked
+< 
+{ [data not shown]
+125   669    0   669    0    84   2794    350 --:--:-- --:--:-- --:--:--  2457125   669    0   669    0    84   2792    350 --:--:-- --:--:-- --:--:--  2447* Connection #0 to host isomap-prod.rcac.purdue.edu left intact
+
+* Closing connection #0
+* About to connect() to isomap-prod.rcac.purdue.edu port 8081 (#0)
+*   Trying 128.211.128.67... connected
+* Connected to isomap-prod.rcac.purdue.edu (128.211.128.67) port 8081 (#0)
+* Server auth using Basic with user 'gridbot'
+> PUT /geoserver/rest/workspaces/66098/coveragestores/caitjcampbell_66098_stdreg/external.geotiff?configure=first&coverageName=caitjcampbell_66098_stdreg HTTP/1.1
+> Authorization: Basic Z3JpZGJvdDo4MHRqMGI=
+> User-Agent: curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 NSS/3.27.1 zlib/1.2.3 libidn/1.18 libssh2/1.4.2
+> Host: isomap-prod.rcac.purdue.edu:8081
+> Accept: */*
+> Content-type: text/plain
+> Content-Length: 83
+> 
+} [data not shown]
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0    83      0  49112 --:--:-- --:--:-- --:--:-- 49112< HTTP/1.1 201 Created
+< Date: Wed, 24 Jan 2018 17:43:34 GMT
+< Server: Noelios-Restlet-Engine/1.0..8
+< Content-Type: application/xml
+< Transfer-Encoding: chunked
+< 
+{ [data not shown]
+124   666    0   666    0    83   3046    379 --:--:-- --:--:-- --:--:--  2699* Connection #0 to host isomap-prod.rcac.purdue.edu left intact
+
+* Closing connection #0
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0  1275    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0101  1423    0   148  106  1275   7903  68083 --:--:-- --:--:-- --:--:-- 75000
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0 24136    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 24283    0   147  100 24136  33227  5327k --:--:-- --:--:-- --:--:-- 7856k
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0   334      0   226k --:--:-- --:--:-- --:--:--  226k481   147    0   147    0   334  35091  79732 --:--:-- --:--:-- --:--:--     0
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0   334      0   225k --:--:-- --:--:-- --:--:--  225k481   147    0   147    0   334  47221   104k --:--:-- --:--:-- --:--:--     0
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0   332      0   227k --:--:-- --:--:-- --:--:--  227k479   147    0   147    0   332  47588   104k --:--:-- --:--:-- --:--:--     0
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0   333      0   246k --:--:-- --:--:-- --:--:--  246k480   147    0   147    0   333  36153  81898 --:--:-- --:--:-- --:--:--     0
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     9      0   6028 --:--:-- --:--:-- --:--:--  6028158   149    0   149    0     9    278     16 --:--:-- --:--:-- --:--:--   262

@@ -1,0 +1,31 @@
+<add>
+<doc>
+	<field name="db_version">2.0</field>
+	<field name="lower_longitude">-176.5</field>
+	<field name="upper_year">2009</field>
+	<field name="reg_ivalue">0.6419</field>
+	<field name="time_mode">synoptic</field>
+	<field name="reg_pvalue">4.98863e-10</field>
+	<field name="reg_det_coefficient">0.663695</field>
+	<field name="upper_longitude">-30.9</field>
+	<field name="author">caitjcampbell</field>
+	<field name="access">private</field>
+	<field name="geo_mse">598.508</field>
+	<field name="extraction_date">1800-12-31T23:59:59Z</field>
+	<field name="extraction_filename"></field>
+	<field name="description">describe this run</field>
+	<field name="timestamp">2018-01-24T12:42:15Z</field>
+	<field name="case_name">JJA_NoAm_Map_1980_2009</field>
+	<field name="db_name">isomap_db</field>
+	<field name="lower_latitude">3.5</field>
+	<field name="key">66098</field>
+	<field name="output_directory">/depot/ssg/isomap/data/isomap-prod/portal/caitjcampbell/jobs/66087</field>
+	<field name="stage">model_prediction</field>
+	<field name="proj4">+proj=longlat +ellps=wgs84 +datum=wgs84 +no_defs</field>
+	<field name="lower_year">1980</field>
+	<field name="upper_latitude">78.9</field>
+	<field name="model_type">precipitation</field>
+	<field name="reg_mse">0.0</field>
+
+</doc>
+</add>
