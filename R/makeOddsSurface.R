@@ -1,4 +1,4 @@
-#'
+#' Convert probability surface to odds-ratio surface
 #'
 #' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to Odds Ratio surfaces.
 #'
