@@ -18,6 +18,11 @@ Suggests:
 	doParallel,
 	snow,
 	pvclust,
-    knitr,
-    rmarkdown
+  knitr,
+  rmarkdown,
+  gridExtra,
+  kableExtra,
+  rasterVis,
+  ggplot2,
+  viridisLite
 VignetteBuilder: knitr
