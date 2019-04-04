@@ -2,8 +2,7 @@
 % Please edit documentation in R/makeQuantileSurface.R
 \name{makeQuantileSurfaces}
 \alias{makeQuantileSurfaces}
-\title{Converts normalized probability surface (e.g. one layer output of
-isotopeAssignmentModel function) to quantile surfaces.}
+\title{Convert probability surface to probability-quantile surface}
 \usage{
 makeQuantileSurfaces(probabilitySurface, rename = FALSE)
 }

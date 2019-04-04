@@ -1,3 +1,20 @@
+## ----setup, include = FALSE, cache = T-----------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4, cache = T
+)
+
+library(kableExtra)
+library(isocat)
+library(pvclust)
+library(rasterVis)
+library(ggplot2)
+library(viridisLite)
+library(gridExtra)
+
+
 ## ----load isocat---------------------------------------------------------
 library(isocat)
 

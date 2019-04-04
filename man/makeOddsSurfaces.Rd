@@ -2,7 +2,7 @@
 % Please edit documentation in R/makeOddsSurface.R
 \name{makeOddsSurfaces}
 \alias{makeOddsSurfaces}
-\title{Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to Odds Ratio surfaces.}
+\title{Convert probability surface to odds-ratio surface}
 \usage{
 makeOddsSurfaces(probabilitySurface, rename = FALSE)
 }

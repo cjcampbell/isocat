@@ -1,13 +1,13 @@
 ---
 title: "Overview of package `isocat` (Isotope Clustering and Assignment Tools)"
 author: "Caitlin J. Campbell"
-date: "2019-04-03"
+date: "2019-04-04"
 output:
   rmarkdown::html_vignette:
     toc: true
     keep_md: true
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{isocat}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -48,31 +48,6 @@ myiso_sd <- rasterFromXYZ(isoscape_sd)
 
 ```r
 library(ggplot2, quietly = T); library(rasterVis, quietly = T); library(gridExtra, quietly = T)
-```
-
-```
-## 
-## Attaching package: 'latticeExtra'
-```
-
-```
-## The following object is masked from 'package:ggplot2':
-## 
-##     layer
-```
-
-```
-## 
-## Attaching package: 'gridExtra'
-```
-
-```
-## The following object is masked from 'package:dplyr':
-## 
-##     combine
-```
-
-```r
 gglayers <-  list(
   geom_tile(aes(fill = value)),
   coord_equal(),
@@ -194,10 +169,7 @@ To compare probability-of-origin surfaces, we apply Schoener's D metric. To simp
 ```r
 # Calculate Schoener's D-metric of spatial similarity between two of the example probability surfaces.
 schoenersD(assignmentModels[[1]], assignmentModels[[2]])
-```
-
-```
-## [1] 0.5777822
+#> [1] 0.5777822
 ```
 
 To compare multiple surfaces to one another, `isocat` includes a `simmatrixMaker` function to create a similarity matrix of the surfaces. The output is a symmetric matrix with row and column names corresponding to the layernames of the surfaces to be compared. The `nClusters` specification, as in the `isotopeAssignmentModel` function, generates a number of parallel processing clusters equal to the numeric value specified. If `csvSavePath` is included, a .csv file will also be written to the path specified. For large rasterStacks, this function can be quite processing-intensive and take some time.
@@ -210,23 +182,20 @@ mySimilarityMatrix <- simmatrixMaker(
   csvSavePath = FALSE
 )
 mySimilarityMatrix
-```
-
-```
-##              A           B          C            D            E
-## A 1.0000000000 0.577782179 0.08876164 0.0003429836 0.7639950906
-## B 0.5777821786 1.000000000 0.24369626 0.0032380107 0.3900655057
-## C 0.0887616430 0.243696260 1.00000000 0.0836391997 0.0470433418
-## D 0.0003429836 0.003238011 0.08363920 1.0000000000 0.0000866323
-## E 0.7639950906 0.390065506 0.04704334 0.0000866323 1.0000000000
-## F 0.0004037637 0.003695405 0.09175482 0.9662229136 0.0001058838
-##              F
-## A 0.0004037637
-## B 0.0036954045
-## C 0.0917548194
-## D 0.9662229136
-## E 0.0001058838
-## F 1.0000000000
+#>              A           B          C            D            E
+#> A 1.0000000000 0.577782179 0.08876164 0.0003429836 0.7639950906
+#> B 0.5777821786 1.000000000 0.24369626 0.0032380107 0.3900655057
+#> C 0.0887616430 0.243696260 1.00000000 0.0836391997 0.0470433418
+#> D 0.0003429836 0.003238011 0.08363920 1.0000000000 0.0000866323
+#> E 0.7639950906 0.390065506 0.04704334 0.0000866323 1.0000000000
+#> F 0.0004037637 0.003695405 0.09175482 0.9662229136 0.0001058838
+#>              F
+#> A 0.0004037637
+#> B 0.0036954045
+#> C 0.0917548194
+#> D 0.9662229136
+#> E 0.0001058838
+#> F 1.0000000000
 ```
 ## Clustering by similar origins
 
@@ -251,20 +220,14 @@ cS <- clusterSimmatrix(
   nClusters = FALSE,
   r = seq(.7,1.4,by=.1)
   )
-```
-
-```
-## Bootstrap (r = 0.67)... Done.
-## Bootstrap (r = 0.67)... Done.
-## Bootstrap (r = 0.83)... Done.
-## Bootstrap (r = 1.0)... Done.
-## Bootstrap (r = 1.0)... Done.
-## Bootstrap (r = 1.17)... Done.
-## Bootstrap (r = 1.17)... Done.
-## Bootstrap (r = 1.33)... Done.
-```
-
-```r
+#> Bootstrap (r = 0.67)... Done.
+#> Bootstrap (r = 0.67)... Done.
+#> Bootstrap (r = 0.83)... Done.
+#> Bootstrap (r = 1.0)... Done.
+#> Bootstrap (r = 1.0)... Done.
+#> Bootstrap (r = 1.17)... Done.
+#> Bootstrap (r = 1.17)... Done.
+#> Bootstrap (r = 1.33)... Done.
 plot(cS)
 ```
 
@@ -300,6 +263,7 @@ abline(h = myheight, col = "red", lwd = 2, lty = 2)
 ![](isocat_files/figure-html/cluster cutting code-1.png)<!-- -->
 
 ```r
+
 df$cluster <- dendextend::cutree(cS$hclust, h = myheight)
 
 kableExtra::kable(df)
