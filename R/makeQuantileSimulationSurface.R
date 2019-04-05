@@ -13,26 +13,22 @@
 #'
 #' @examples
 #' # Generate example probability surfaces.
-#' data(isoscape)
 #' library
 #' myiso <- raster::rasterFromXYZ(isoscape)
 #' myiso_sd <- raster::rasterFromXYZ(isoscape_sd)
-#' df <- data.frame(ID = c(-100, -80, -50), dD = c(-100, -80, -50), SD_indv = rep(5, 3))
-#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd)
+#' df <- data.frame(ID = c(-100, -80, -50), isotopeValue = c(-100, -80, -50), SD_indv = rep(5, 3))
+#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, isotopeValue = df$isotopeValue, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd)
 #'
 #' # Example known-origin quantile data.
-#' set.seed(42)
-#' x <- rgamma(10000, 1, 1)
-#' myValidationQuantiles <- 1 - (x-min(x))/(max(x)-min(x)) # quantile values must be between 0 and 1.
-#' hist(myValidationQuantiles)
+#' q <- rweibull(20000, 6, .98)
+#' q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = TRUE)
+#' hist(q)
 #'
 #' # Convert to quantile surfaces.
-#' quantileSimulation_surface <-  stack( lapply( unstack(assignmentModels), makeQuantileSimulationSurface) )
+#' quantileSimulation_surface <-  stack( lapply( unstack(assignmentModels), makeQuantileSimulationSurface, ValidationQuantiles = q) )
 #' plot(quantileSimulation_surface)
 #'
-#' @export makeQuantileSimulationSurface
-#'
-
+#' @export
 makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantiles, rename = FALSE, rescale = TRUE){
   if(!is.logical(rescale))
     stop("'rescale' must be a logical value.")
@@ -44,7 +40,7 @@ makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantile
   quantile_surface <- p # create baseline surface.
   quantile_surface[] <- f(p[]) # redefine values.
 
-  check_above <- function(x){ sum( x >= ValidationQuantiles, na.rm = T) }
+  check_above <- function(x){ sum( x >= ValidationQuantiles, na.rm = TRUE) }
 
   quantileSimulation_surface <- quantile_surface
   quantileSimulation_surface[] <- unlist(lapply(quantile_surface[], check_above) )

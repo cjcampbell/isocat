@@ -15,7 +15,6 @@ isoscape
 Example isoscape data
 }
 \examples{
-data(isoscape)
 iso <- rasterFromXYZ(isoscape)
 }
 \references{

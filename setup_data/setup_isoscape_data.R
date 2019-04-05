@@ -10,7 +10,7 @@ prepRast <- function(
     crop(
       raster(paste0( isoscape_file_location, extension ) ),
       my_extent ),
-    xy = T)
+    xy = TRUE)
 }
 
 isoscape    <- prepRast(extension = "predkrig.tiff")

@@ -4,13 +4,14 @@
 \alias{isotopeAssignmentModel}
 \title{Isotope assignment model function}
 \usage{
-isotopeAssignmentModel(ID, dD, SD_indv, precip_raster, precip_SD_raster,
-  additionalModel = FALSE, savePath = FALSE, nClusters = FALSE)
+isotopeAssignmentModel(ID, isotopeValue, SD_indv, precip_raster,
+  precip_SD_raster, additionalModel = FALSE, savePath = FALSE,
+  nClusters = FALSE)
 }
 \arguments{
 \item{ID}{ID value or vector of values (for naming assignment model layers). If missing, will count from 1.}
 
-\item{dD}{Isotope precipitation value or vector of values.}
+\item{isotopeValue}{Isotope precipitation value or vector of values.}
 
 \item{SD_indv}{error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.}
 
@@ -28,12 +29,22 @@ isotopeAssignmentModel(ID, dD, SD_indv, precip_raster, precip_SD_raster,
 Creates isotope assignment models projections of probable origin. Results returned as a rasterstack, with layer names corresponding to individual ID.
 }
 \examples{
-data(isoscape)
 myiso <- rasterFromXYZ(isoscape)
 raster::plot(myiso)
 myiso_sd <- rasterFromXYZ(isoscape_sd)
-df <- data.frame(ID = c(-100, -80, -50), dD = c(-100, -80, -50), SD_indv = rep(5, 3))
-assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+df <- data.frame(
+         ID = c(-100, -80, -50),
+         isotopeValue = c(-100, -80, -50),
+         SD_indv = rep(5, 3)
+         )
+assignmentModels <- isotopeAssignmentModel(
+                        ID = df$ID,
+                        isotopeValue = df$isotopeValue,
+                        SD_indv = df$SD_indv,
+                        precip_raster = myiso,
+                        precip_SD_raster = myiso_sd,
+                        nClusters = FALSE
+                        )
 raster::plot(assignmentModels)
 
 }

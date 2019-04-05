@@ -18,10 +18,9 @@ This surface is intended as a visual summary of common origins, not a basis for 
 }
 \examples{
 # Create and cluster example assignment surfaces.
-data(isoscape)
 myiso <- rasterFromXYZ(isoscape)
 myiso_sd <- rasterFromXYZ(isoscape_sd)
-assignmentModels <- isotopeAssignmentModel(ID = LETTERS[1:4], dD =seq(-120,-25,length.out = 4), SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+assignmentModels <- isotopeAssignmentModel(ID = LETTERS[1:4], isotopeValue =seq(-120,-25,length.out = 4), SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
 raster::plot(assignmentModels)
 
 # Project mean aggregate surfaces into space.

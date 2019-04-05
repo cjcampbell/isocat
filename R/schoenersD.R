@@ -8,12 +8,10 @@
 #'
 #' @examples
 #' # Generate example probability surfaces.
-#' library(raster)
-#' data(isoscape)
 #' myiso <- rasterFromXYZ(isoscape)
 #' myiso_sd <- rasterFromXYZ(isoscape_sd)
-#' df <- data.frame(ID = c(-100, -80, -50), dD = c(-100, -80, -50), SD_indv = rep(5, 3))
-#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+#' df <- data.frame(ID = c(-100, -80, -50), isotopeValue = c(-100, -80, -50), SD_indv = rep(5, 3))
+#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, isotopeValue = df$isotopeValue, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
 #'
 #' # Calculate Schoener's D-metric of spatial similarity between two of the
 #' example probability surfaces.

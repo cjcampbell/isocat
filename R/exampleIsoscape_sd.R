@@ -9,7 +9,6 @@
 #' @source \href{https://isomap.rcac.purdue.edu/isomap/DownloadMetadata/download?content=tarball&type=raster&jobseq=66100&username=caitjcampbell&casename=Annual_NoAm_Map_H_1980_2010}{Download IsoMAP Job Map 66100}
 #'
 #'@examples
-#'data(isoscape_sd)
 #'iso_sd <- rasterFromXYZ(isoscape_sd)
 
 "isoscape_sd"

@@ -12,6 +12,8 @@ getPrecisionPar(rasterstack, checkVals, method = FALSE, nCluster = 20)
 \item{checkVals}{vector of numeric 'threshold' values against which to calculate precision}
 
 \item{method}{is FALSE by default. If character vector, appends a column recording 'method' used.}
+
+\item{nCluster}{is a numeric object specifying how many clusters to form and run in parallel.}
 }
 \value{
 Returns a dataframe of precision values at given threshold.

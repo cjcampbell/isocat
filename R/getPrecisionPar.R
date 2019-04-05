@@ -4,21 +4,25 @@
 #' @param rasterstack rasterStack of probability surfaces
 #' @param checkVals vector of numeric 'threshold' values against which to calculate precision
 #' @param method is FALSE by default. If character vector, appends a column recording 'method' used.
+#' @param nCluster is a numeric object specifying how many clusters to form and run in parallel.
 #'
 #' @return Returns a dataframe of precision values at given threshold.
 #'
-#' @export getPrecisionPar
-#'
-
-
+#' @export
 getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 20){
 
   # Iterate for each rasterstack layer:
   cl <- makeCluster(nCluster); doParallel::registerDoParallel(cl); getcells <- foreach(
-    n = 1:nlayers(rasterstack), .verbose = T, .packages = c("raster", "plyr","dplyr")) %dopar% {
+    n = 1:nlayers(rasterstack),
+    .verbose = T,
+    .packages = c("raster", "plyr","dplyr")) %dopar% {
       # Calculate number of cells above each given threshold value.
       cellsAbove <- lapply(checkVals, function(z){
-        data.frame(z = z, cellsAbove = sum(na.omit(rasterstack[[n]][]) >= z, na.rm = T)) })
+        data.frame(
+          z = z,
+          cellsAbove = sum(na.omit(rasterstack[[n]][]) >= z, na.rm = TRUE))
+        }
+        )
       cells_df <- plyr::ldply(cellsAbove, data.frame)
       n_cells_tot <- sum(!is.na(rasterstack[[n]][]), na.rm = T)
 

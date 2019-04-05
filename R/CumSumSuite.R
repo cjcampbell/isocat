@@ -14,8 +14,9 @@
 #'
 #' @export
 cumsumbelow <- function(vals){
-  if(class(vals) != "numeric" & class(vals) != "integer") stop("values entered must be numeric")
-  vals %>% purrr::map(~ vals[ vals <= . ] %>% sum(na.rm = T) )
+  if(class(vals) != "numeric" & class(vals) != "integer")
+    stop("values entered must be numeric")
+  vals %>% purrr::map(~ vals[ vals <= . ] %>% sum(na.rm = TRUE) )
 }
 
 
@@ -33,11 +34,10 @@ cumsumbelow <- function(vals){
 #'
 #' @examples
 #' # Generate example probability surfaces.
-#' data(isoscape)
 #' myiso <- rasterFromXYZ(isoscape)
 #' myiso_sd <- rasterFromXYZ(isoscape_sd)
-#' df <- data.frame(ID = c(-100, -80, -50), dD = c(-100, -80, -50), SD_indv = rep(5, 3))
-#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+#' df <- data.frame(ID = c(-100, -80, -50), isotopeValue = c(-100, -80, -50), SD_indv = rep(5, 3))
+#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, isotopeValue = df$isotopeValue, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
 #'
 #' # Convert to cumulative sum surface.
 #' cumulative_sum_surface <- lapply(unstack(assignmentModels), makecumsumSurface) %>% stack
@@ -54,8 +54,10 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
   if(rescale == TRUE){
     new.min <- 0
     new.max <- 1
-    x.min <- vals[ vals <= raster::cellStats(indivraster, "min") ] %>% sum(na.rm = T)
-    x.max <- vals[ vals <= raster::cellStats(indivraster, "max") ] %>% sum(na.rm = T)
+    x.min <- vals[ vals <= raster::cellStats(indivraster, "min") ] %>%
+      sum(na.rm = TRUE)
+    x.max <- vals[ vals <= raster::cellStats(indivraster, "max") ] %>%
+      sum(na.rm = TRUE)
     newsurface <- new.min + (newsurface - x.min) * ((new.max - new.min) / (x.max - x.min))
   }
 
@@ -94,7 +96,7 @@ cumsumAtSamplingLocation <- function(indivraster, Lat, Lon){
     p_atPoint <- raster::extract(indivraster, indivcoords)
 
     vals <- na.omit( indivraster[] )
-    cumsumAtPoint <- vals[ vals <= p_atPoint ] %>% sum(na.rm = T)
+    cumsumAtPoint <- vals[ vals <= p_atPoint ] %>% sum(na.rm = TRUE)
 
     return(cumsumAtPoint)
   }

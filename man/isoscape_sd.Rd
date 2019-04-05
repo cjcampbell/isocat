@@ -15,7 +15,6 @@ isoscape_sd
 Example isoscape standard deviation data
 }
 \examples{
-data(isoscape_sd)
 iso_sd <- rasterFromXYZ(isoscape_sd)
 }
 \references{

@@ -2,7 +2,7 @@
 #'
 #' Creates isotope assignment models projections of probable origin. Results returned as a rasterstack, with layer names corresponding to individual ID.
 #' @param ID ID value or vector of values (for naming assignment model layers). If missing, will count from 1.
-#' @param dD Isotope precipitation value or vector of values.
+#' @param isotopeValue Isotope precipitation value or vector of values.
 #' @param SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
 #' @param precip_raster precipitation isoscape raster.
 #' @param precip_SD_raster precipitation isoscape standard deviation raster.
@@ -10,22 +10,32 @@
 #' @param savePath If specified, function will save results to this path as a .grd.
 #' @param nClusters integer of cores to run in parallel with doParallel. Default FALSE.
 #' @examples
-#' data(isoscape)
 #' myiso <- rasterFromXYZ(isoscape)
 #' raster::plot(myiso)
 #' myiso_sd <- rasterFromXYZ(isoscape_sd)
-#' df <- data.frame(ID = c(-100, -80, -50), dD = c(-100, -80, -50), SD_indv = rep(5, 3))
-#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, dD = df$dD, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+#' df <- data.frame(
+#'          ID = c(-100, -80, -50),
+#'          isotopeValue = c(-100, -80, -50),
+#'          SD_indv = rep(5, 3)
+#'          )
+#' assignmentModels <- isotopeAssignmentModel(
+#'                         ID = df$ID,
+#'                         isotopeValue = df$isotopeValue,
+#'                         SD_indv = df$SD_indv,
+#'                         precip_raster = myiso,
+#'                         precip_SD_raster = myiso_sd,
+#'                         nClusters = FALSE
+#'                         )
 #' raster::plot(assignmentModels)
 #'
 #' @export isotopeAssignmentModel
 #'
 #'
 
-isotopeAssignmentModel <- function(ID, dD, SD_indv, precip_raster, precip_SD_raster, additionalModel = FALSE, savePath = FALSE, nClusters = FALSE) {
+isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, precip_SD_raster, additionalModel = FALSE, savePath = FALSE, nClusters = FALSE) {
 
-  if(missing(dD)){
-    stop("dD value not found.")
+  if(missing(isotopeValue)){
+    stop("isotopeValue object not found.")
   }
   if(missing(precip_raster)){
     stop("Precipitation isoscape not found.")
@@ -34,7 +44,7 @@ isotopeAssignmentModel <- function(ID, dD, SD_indv, precip_raster, precip_SD_ras
     stop("Precipitation isoscape error raster not found.")
   }
   if(missing(ID)) {
-    ID <- seq(1, length(dD), 1)
+    ID <- seq(1, length(isotopeValue), 1)
   }
   if(missing(SD_indv)) {
     SD_indv <- rep(0, length(ID)) }
@@ -49,12 +59,12 @@ isotopeAssignmentModel <- function(ID, dD, SD_indv, precip_raster, precip_SD_ras
     cl <- makeCluster(nClusters)
     registerDoParallel(cl)
 
-    listOfAssigments <- foreach(i = 1:length(dD), .packages="raster") %dopar% {
+    listOfAssigments <- foreach(i = 1:length(isotopeValue), .packages="raster") %dopar% {
       # Calculate total error.
       totError <- sqrt((precip_SD_raster)^2 + SD_indv[i]^2)
 
       # Assignment function.
-      assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (dD[i] - precip_raster)^2 / (2 * totError^2))
+      assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (isotopeValue[i] - precip_raster)^2 / (2 * totError^2))
 
       # Normalize to sum to 1.
       assign_norm <- assign/cellStats(assign, "sum")
@@ -83,12 +93,12 @@ isotopeAssignmentModel <- function(ID, dD, SD_indv, precip_raster, precip_SD_ras
 
   } else{
 
-    listOfAssigments <- lapply(1:length(dD), function(i){
+    listOfAssigments <- lapply(1:length(isotopeValue), function(i){
       # Calculate total error.
       totError <- sqrt((precip_SD_raster)^2 + SD_indv[i]^2)
 
       # Assignment function.
-      assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (dD[i] - precip_raster)^2 / (2 * totError^2))
+      assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (isotopeValue[i] - precip_raster)^2 / (2 * totError^2))
 
       # Normalize to sum to 1.
       assign_norm <- assign/cellStats(assign, "sum")
