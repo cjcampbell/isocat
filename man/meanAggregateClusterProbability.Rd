@@ -22,14 +22,33 @@ Subset probability-of-origin surfaces by cluster assignment and find mean aggreg
 # Create and cluster example assignment surfaces.
 myiso <- rasterFromXYZ(isoscape)
 myiso_sd <- rasterFromXYZ(isoscape_sd)
-df <- data.frame(ID = LETTERS[1:9], isotopeValue = seq(-120,-25,length.out = 9), SD_indv = rep(5, 9))
-assignmentModels <- isotopeAssignmentModel(ID = df$ID, isotopeValue = df$isotopeValue, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+df <- data.frame(
+        ID = LETTERS[1:9],
+        isotopeValue = seq(-120,-25,length.out = 9),
+        SD_indv = rep(5, 9)
+        )
+assignmentModels <- isotopeAssignmentModel(
+         ID = df$ID,
+         isotopeValue = df$isotopeValue,
+         SD_indv = df$SD_indv,
+         precip_raster = myiso,
+         precip_SD_raster = myiso_sd,
+         nClusters = FALSE
+         )
 mySimilarityMatrix <- simmatrixMaker(assignmentModels)
-cS <- clusterSimmatrix( simmatrix = mySimilarityMatrix, r = seq(.7,1.4,by=.1) )
+cS <- clusterSimmatrix(
+         simmatrix = mySimilarityMatrix,
+         r = seq(.7,1.4,by=.1)
+         )
 # Cut clusters.
 myheight <- 0.25
 df$cluster <- dendextend::cutree(cS$hclust, h = myheight)
 # Create mean aggregate surfaces.
-meanSurfaces <- meanAggregateClusterProbability( indivIDs = df$ID, clusters = df$cluster, surfaces = assignmentModels, nClust = FALSE )
+meanSurfaces <- meanAggregateClusterProbability(
+         indivIDs = df$ID,
+         clusters = df$cluster,
+         surfaces = assignmentModels,
+         nClust = FALSE
+         )
 
 }

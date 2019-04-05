@@ -12,11 +12,25 @@
 #' # Generate example probability surfaces.
 #' myiso <- rasterFromXYZ(isoscape)
 #' myiso_sd <- rasterFromXYZ(isoscape_sd)
-#' df <- data.frame(ID = c(-100, -80, -50), isotopeValue = c(-100, -80, -50), SD_indv = rep(5, 3))
-#' assignmentModels <- isotopeAssignmentModel(ID = df$ID, isotopeValue = df$isotopeValue, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE)
+#' df <- data.frame(
+#'          ID = c(-100, -80, -50),
+#'          isotopeValue = c(-100, -80, -50),
+#'          SD_indv = rep(5, 3)
+#'          )
+#' assignmentModels <- isotopeAssignmentModel(
+#'          ID = df$ID,
+#'          isotopeValue = df$isotopeValue,
+#'          SD_indv = df$SD_indv,
+#'          precip_raster = myiso,
+#'          precip_SD_raster = myiso_sd,
+#'          nClusters = FALSE
+#'          )
 #'
 #' # Convert to odds ratio surfaces.
-#' odds_ratio_surface <- lapply(unstack(assignmentModels), makeOddsSurfaces) %>% stack
+#' odds_ratio_surface <- lapply(
+#'                            unstack(assignmentModels), makeOddsSurfaces
+#'                            ) %>%
+#'                          stack
 #' plot(odds_ratio_surface)
 #'
 #' @export makeOddsSurfaces

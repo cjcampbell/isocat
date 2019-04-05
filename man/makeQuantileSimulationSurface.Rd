@@ -28,8 +28,18 @@ isotopeAssignmentModel function) to quantile surfaces.
 library
 myiso <- raster::rasterFromXYZ(isoscape)
 myiso_sd <- raster::rasterFromXYZ(isoscape_sd)
-df <- data.frame(ID = c(-100, -80, -50), isotopeValue = c(-100, -80, -50), SD_indv = rep(5, 3))
-assignmentModels <- isotopeAssignmentModel(ID = df$ID, isotopeValue = df$isotopeValue, SD_indv = df$SD_indv, precip_raster = myiso, precip_SD_raster = myiso_sd)
+df <- data.frame(
+         ID = c(-100, -80, -50),
+         isotopeValue = c(-100, -80, -50),
+         SD_indv = rep(5, 3)
+         )
+assignmentModels <- isotopeAssignmentModel(
+         ID = df$ID,
+         isotopeValue = df$isotopeValue,
+         SD_indv = df$SD_indv,
+         precip_raster = myiso,
+         precip_SD_raster = myiso_sd
+         )
 
 # Example known-origin quantile data.
 q <- rweibull(20000, 6, .98)
@@ -37,7 +47,12 @@ q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = TRUE)
 hist(q)
 
 # Convert to quantile surfaces.
-quantileSimulation_surface <-  stack( lapply( unstack(assignmentModels), makeQuantileSimulationSurface, ValidationQuantiles = q) )
+quantileSimulation_surface <-  stack(
+                  lapply(
+                            unstack(assignmentModels),
+                            makeQuantileSimulationSurface,
+                            ValidationQuantiles = q)
+                        )
 plot(quantileSimulation_surface)
 
 }
