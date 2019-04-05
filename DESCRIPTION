@@ -10,19 +10,25 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1.9000
 Depends:
+  utils,
+	plyr,
+	stats,
+	magrittr,
   dplyr,
   foreach,
   raster
 Suggests:
 	ClusterR,
+	dendextend,
 	doParallel,
-	snow,
+	ggplot2,
+	gridExtra,
+	kableExtra,
+	knitr,
+	purrr,
 	pvclust,
-  knitr,
   rmarkdown,
-  gridExtra,
-  kableExtra,
+  snow,
   rasterVis,
-  ggplot2,
   viridisLite
 VignetteBuilder: knitr
