@@ -7,9 +7,11 @@
 makecumsumSurface(indivraster, rescale = FALSE, rename = FALSE)
 }
 \arguments{
-\item{rename}{Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.}
+\item{indivraster}{Normalized probability surface RasterLayer}
 
-\item{probabilitySurface}{Normalized probability surface RasterLayer}
+\item{rescale}{Rescale between 0 and 1? Defaults to FALSE.}
+
+\item{rename}{Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.}
 }
 \value{
 Returns rasterLayer rescaled to Cumulative Sum values.

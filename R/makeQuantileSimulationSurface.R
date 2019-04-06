@@ -35,7 +35,7 @@
 #' hist(q)
 #'
 #' # Convert to quantile surfaces.
-#' quantileSimulation_surface <-  stack(
+#' quantileSimulation_surface <-  raster::stack(
 #'                   lapply(
 #'                             unstack(assignmentModels),
 #'                             makeQuantileSimulationSurface,
@@ -51,7 +51,7 @@ makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantile
     stop("'probabilitySurface' must be of class RasterLayer")
 
   p <- probabilitySurface
-  f <- ecdf(na.omit(probabilitySurface[]))
+  f <- stats::ecdf(stats::na.omit(probabilitySurface[]))
   quantile_surface <- p # create baseline surface.
   quantile_surface[] <- f(p[]) # redefine values.
 
@@ -61,7 +61,7 @@ makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantile
   quantileSimulation_surface[] <- unlist(lapply(quantile_surface[], check_above) )
 
   names(quantileSimulation_surface) <- names(probabilitySurface) # make layer names match up.
-  quantileSimulation_surface <- mask(quantileSimulation_surface, probabilitySurface) # Make extents line up (mask vals that should be NA).
+  quantileSimulation_surface <- raster::mask(quantileSimulation_surface, probabilitySurface) # Make extents line up (mask vals that should be NA).
 
 
   if(rename == FALSE){

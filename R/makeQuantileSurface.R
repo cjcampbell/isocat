@@ -28,7 +28,7 @@
 #'          )
 #'
 #' # Convert to quantile surfaces.
-#' quantile_surface <-  stack( lapply( unstack(assignmentModels), makeQuantileSurfaces) )
+#' quantile_surface <-  raster::stack( lapply( unstack(assignmentModels), makeQuantileSurfaces) )
 #' plot(quantile_surface)
 #'
 #' @export makeQuantileSurfaces
@@ -37,7 +37,7 @@
 makeQuantileSurfaces <- function(probabilitySurface, rename = FALSE){
   p <- probabilitySurface
 
-  f <- ecdf(na.omit(probabilitySurface[]))
+  f <- stats::ecdf(na.omit(probabilitySurface[]))
 
   quantile_surface <- p # create baseline surface.
   quantile_surface[] <- f(p[]) # redefine values.

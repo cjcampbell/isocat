@@ -60,15 +60,15 @@ meanAggregateClusterProbability <- function(indivIDs, clusters, surfaces, nClust
   meanRasts_list <- lapply(1:length(unique(clusters)), function(z){
     clustStack <- raster::subset(surfaces, indivIDs[ clusters == z])
     if(nClust == FALSE){
-      meanRasts <- calc(clustStack, which.mean)
+      meanRasts <- raster::calc(clustStack, which.mean)
     } else {
       beginCluster(nClust)
-      meanRasts <- clusterR(clustStack, calc, args=list(which.mean))
+      meanRasts <- raster::clusterR(clustStack, calc, args=list(which.mean))
       endCluster()
     }
     return(meanRasts)
   })
 
-  stack(meanRasts_list)
+  raster::stack(meanRasts_list)
 
   }

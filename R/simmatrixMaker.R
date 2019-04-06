@@ -5,9 +5,9 @@
 #' @param nClusters Clusters to create run in parallel using 'doParallel'. Defaults to FALSE.
 #' @param csvSavePath Optional savepath to write similarity matrix to csv file. Defaults to FALSE, will not create csv.
 #'
-#' @export simmatrixMaker
-
-
+#' @import foreach
+#'
+#' @export
 simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = FALSE){
 
   if(missing(assignmentRasters))
@@ -37,16 +37,16 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 
     # Create and populate matrix.
     l <- unlist(l)
-    x<- matrix(NA,length(a),length(a),dimnames=list(a,a))
-    combos1<-paste0(colnames(x)[col(x)],rownames(x)[row(x)])
-    combos2<- paste0(t[,1],t[,2])
-    x[match(combos2,combos1)]<- l
+    x <- matrix( NA, length(a), length(a), dimnames=list(a,a) )
+    combos1 <- paste0( colnames(x)[col(x)], rownames(x)[ row(x) ] )
+    combos2 <- paste0( t[ ,1], t[ ,2] )
+    x[ match(combos2, combos1) ] <- l
 
     # Force symmetry.
-    for(i in 1:ncol(x)){
-      for(j in 1:nrow(x)){
-        ifelse(is.na(x[i,j]),
-               ifelse(!is.na(x[j,i]),
+    for( i in 1:ncol(x) ){
+      for( j in 1:nrow(x) ){
+        ifelse( is.na( x[i,j] ),
+               ifelse( !is.na(x[j,i] ),
                       x[i,j] <- x[j,i],
                       1),
                x[i,j])
@@ -62,7 +62,7 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
       }
 
     cl <- makeCluster(nClusters)
-    registerDoParallel(cl)
+    doParallel::registerDoParallel(cl)
     l <- foreach(i = 1:nrow(t), .packages="raster") %dopar% {
       schoener(
         assignmentRasters[[t[i,1]]],

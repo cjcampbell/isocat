@@ -37,7 +37,7 @@ assignmentModels <- isotopeAssignmentModel(
          )
 
 # Convert to quantile surfaces.
-quantile_surface <-  stack( lapply( unstack(assignmentModels), makeQuantileSurfaces) )
+quantile_surface <-  raster::stack( lapply( unstack(assignmentModels), makeQuantileSurfaces) )
 plot(quantile_surface)
 
 }

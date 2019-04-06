@@ -25,7 +25,7 @@
 #'         )
 #'
 #' # Calculate Schoener's D-metric of spatial similarity between two of the
-#' example probability surfaces.
+#' # example probability surfaces.
 #' schoenersD(assignmentModels[[1]], assignmentModels[[2]])
 #' ## 0.969156
 #'

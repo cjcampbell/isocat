@@ -15,7 +15,7 @@ oddsAtSamplingLocation <- function(indivraster, Lat, Lon){
 
   if(is.na(Lat) | is.na(Lon)) {return(NA)} else {
 
-    indivcoords <- SpatialPoints(cbind(Lon,Lat))
+    indivcoords <- sp::SpatialPoints(cbind(Lon,Lat))
     p_atPoint <- raster::extract(indivraster, indivcoords)
 
     odds_r_atPoint <- (p_atPoint/(1-p_atPoint))/(maxValue(indivraster)/(1-maxValue(indivraster)))

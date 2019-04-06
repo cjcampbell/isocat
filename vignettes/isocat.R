@@ -1,29 +1,10 @@
-## ----setup, include = FALSE, cache = T-----------------------------------
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.width = 6,
-  fig.height = 4, cache = T
-)
-
-library(kableExtra)
-library(isocat)
-library(pvclust)
-library(rasterVis)
-library(ggplot2)
-library(viridisLite)
-library(gridExtra)
-
-
 ## ----load isocat---------------------------------------------------------
 library(isocat)
 
-## ----load isoscape data,  fig.width=6, fig.height=4----------------------
-data(isoscape)
+## ----load isoscape data--------------------------------------------------
 myiso <- rasterFromXYZ(isoscape)
 
 ## ----load isoscape data 2------------------------------------------------
-data(isoscape_sd)
 myiso_sd <- rasterFromXYZ(isoscape_sd)
 
 ## ----plot isoscape data--------------------------------------------------
@@ -52,7 +33,7 @@ n <- 6 # Number of example rasters
 set.seed(1)
 df <- data.frame(
   ID = LETTERS[1:n], 
-  dD = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = T), 
+  isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = T), 
   SD_indv = rep(5, n)
   )
 kableExtra::kable(df)
@@ -60,7 +41,7 @@ kableExtra::kable(df)
 ## ----prob of orgin surface, fig.width=6, fig.height=6--------------------
 assignmentModels <- isotopeAssignmentModel(
   ID = df$ID,
-  dD = df$dD, 
+  isotopeValue = df$isotopeValue, 
   SD_indv = df$SD_indv, 
   precip_raster = myiso, 
   precip_SD_raster = myiso_sd, 
@@ -76,7 +57,9 @@ ggProb <- list(
 gplot(assignmentModels) + gglayers + ggProb
 
 ## ----schoenersD----------------------------------------------------------
-# Calculate Schoener's D-metric of spatial similarity between two of the example probability surfaces.
+# Calculate Schoener's D-metric of spatial similarity between 
+# two of the example probability surfaces.
+
 schoenersD(assignmentModels[[1]], assignmentModels[[2]])
 
 ## ----simmatrix-----------------------------------------------------------
@@ -136,7 +119,7 @@ gplot(summaryMap) +
 set.seed(42)
 p <- isotopeAssignmentModel(
   ID = "Example",
-  dD = sample(-125:-25, 1), 
+  isotopeValue = sample(-125:-25, 1), 
   SD_indv = 5, 
   precip_raster = myiso, 
   precip_SD_raster = myiso_sd, 

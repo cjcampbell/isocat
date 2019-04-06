@@ -25,7 +25,8 @@ cumsumbelow <- function(vals){
 #'
 #' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or eual to the old value of the cell.
 #'
-#' @param probabilitySurface Normalized probability surface RasterLayer
+#' @param indivraster Normalized probability surface RasterLayer
+#' @param rescale Rescale between 0 and 1? Defaults to FALSE.
 #' @param rename Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.
 #'
 #' @return Returns rasterLayer rescaled to Cumulative Sum values.
@@ -103,10 +104,10 @@ cumsumAtSamplingLocation <- function(indivraster, Lat, Lon){
 
   if(is.na(Lat) | is.na(Lon)) {return(NA)} else {
 
-    indivcoords <- SpatialPoints(cbind(Lon,Lat))
+    indivcoords <- sp::SpatialPoints(cbind(Lon,Lat))
     p_atPoint <- raster::extract(indivraster, indivcoords)
 
-    vals <- na.omit( indivraster[] )
+    vals <- stats::na.omit( indivraster[] )
     cumsumAtPoint <- vals[ vals <= p_atPoint ] %>% sum(na.rm = TRUE)
 
     return(cumsumAtPoint)

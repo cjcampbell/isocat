@@ -120,18 +120,18 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
     })
   }
 
-  stackOfAssignments <-  stack(lapply(listOfAssigments, function(x) x[["isotopeAssignments"]]))
+  stackOfAssignments <-  raster::stack(lapply(listOfAssigments, function(x) x[["isotopeAssignments"]]))
 
   if(class(additionalModel) == "RasterLayer"){
-    stackOfCombinations <- stack(lapply(listOfAssigments, function(x) x[["comboAssignments"]]))
+    stackOfCombinations <- raster::stack(lapply(listOfAssigments, function(x) x[["comboAssignments"]]))
   }
 
   if(savePath != FALSE){
-    writeRaster(x = stackOfAssignments,
+    raster::writeRaster(x = stackOfAssignments,
                 filename = paste0(savePath, "IsotopeAssignments.grd"), format = "raster",
                 overwrite = TRUE)
     if(class(additionalModel) == "RasterLayer"){
-      writeRaster(x = stackOfCombinations,
+      raster::writeRaster(x = stackOfCombinations,
                   filename = paste0(savePath, "CombinedIsotope-OtherModelAssignments.grd"), format = "raster",
                   overwrite = TRUE)
     }

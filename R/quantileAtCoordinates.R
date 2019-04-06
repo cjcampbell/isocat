@@ -16,8 +16,8 @@ quantileAtSamplingLocation <- function(indivraster, Lat, Lon){
 
   if(is.na(Lat) | is.na(Lon)) {return(NA)} else {
 
-    indivcoords <- SpatialPoints(cbind(Lon,Lat))
-    f <- ecdf(na.omit(indivraster[]))
+    indivcoords <- sp::SpatialPoints(cbind(Lon,Lat))
+    f <- stats::ecdf(na.omit(indivraster[]))
     l <- raster::extract(indivraster, indivcoords)
     quantileAtPoints <- f(l)
     return(quantileAtPoints)

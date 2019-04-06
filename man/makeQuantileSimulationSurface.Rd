@@ -47,7 +47,7 @@ q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = TRUE)
 hist(q)
 
 # Convert to quantile surfaces.
-quantileSimulation_surface <-  stack(
+quantileSimulation_surface <-  raster::stack(
                   lapply(
                             unstack(assignmentModels),
                             makeQuantileSimulationSurface,

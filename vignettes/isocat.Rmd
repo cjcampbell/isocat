@@ -7,7 +7,7 @@ output:
     toc: true
     keep_md: true
 vignette: >
-  %\VignetteIndexEntry{isocat}
+  %\VignetteIndexEntry{Isotope Clustering and Assignment Tools}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -47,15 +47,13 @@ library(isocat)
 
 Example isoscape:
 
-```{r load isoscape data,  fig.width=6, fig.height=4}
-data(isoscape)
+```{r load isoscape data}
 myiso <- rasterFromXYZ(isoscape)
 ```
 
 Load example isoscape standard deviation surface:
 
 ```{r load isoscape data 2}
-data(isoscape_sd)
 myiso_sd <- rasterFromXYZ(isoscape_sd)
 ```
 ```{r plot isoscape data}
@@ -97,7 +95,7 @@ n <- 6 # Number of example rasters
 set.seed(1)
 df <- data.frame(
   ID = LETTERS[1:n], 
-  dD = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = T), 
+  isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = T), 
   SD_indv = rep(5, n)
   )
 kableExtra::kable(df)
@@ -108,7 +106,7 @@ The contents of these columns are passed to the function `isotopeAssignmentModel
 ```{r prob of orgin surface, fig.width=6, fig.height=6}
 assignmentModels <- isotopeAssignmentModel(
   ID = df$ID,
-  dD = df$dD, 
+  isotopeValue = df$isotopeValue, 
   SD_indv = df$SD_indv, 
   precip_raster = myiso, 
   precip_SD_raster = myiso_sd, 
@@ -131,7 +129,9 @@ gplot(assignmentModels) + gglayers + ggProb
 To compare probability-of-origin surfaces, we apply Schoener's D metric. To simply compare two surfaces, we can apply `isocat`'s `schoenersD` function, which determine's Schoener's D-metric of similarity between two surfaces. The D-value varies between 0 (completely dissimilar surfaces) and 1 (identical surfaces).
 
 ```{r schoenersD}
-# Calculate Schoener's D-metric of spatial similarity between two of the example probability surfaces.
+# Calculate Schoener's D-metric of spatial similarity between 
+# two of the example probability surfaces.
+
 schoenersD(assignmentModels[[1]], assignmentModels[[2]])
 ```
 
@@ -243,7 +243,7 @@ We will use an example probability surface in the following example. Let us also
 set.seed(42)
 p <- isotopeAssignmentModel(
   ID = "Example",
-  dD = sample(-125:-25, 1), 
+  isotopeValue = sample(-125:-25, 1), 
   SD_indv = 5, 
   precip_raster = myiso, 
   precip_SD_raster = myiso_sd, 

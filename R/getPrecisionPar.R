@@ -20,7 +20,7 @@ getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 2
       cellsAbove <- lapply(checkVals, function(z){
         data.frame(
           z = z,
-          cellsAbove = sum(na.omit(rasterstack[[n]][]) >= z, na.rm = TRUE))
+          cellsAbove = sum(stats::na.omit(rasterstack[[n]][]) >= z, na.rm = TRUE))
         }
         )
       cells_df <- plyr::ldply(cellsAbove, data.frame)

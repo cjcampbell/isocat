@@ -7,9 +7,9 @@
 projectSummaryMaxSurface(surfaces, nClust = FALSE)
 }
 \arguments{
-\item{nClust}{Create and apply a multi-core cluster for faster processing using `raster` and `snow` packages. Defaults to `FALSE` (i.e., no clustering).}
+\item{surfaces}{Object of class "RasterStack", where each layer represents a probability-of-origin surface}
 
-\item{meanRasts}{Object of class "RasterStack", where each layer represents a probability-of-origin surface}
+\item{nClust}{Create and apply a multi-core cluster for faster processing using `raster` and `snow` packages. Defaults to `FALSE` (i.e., no clustering).}
 }
 \description{
 Create a summary surface showing which RasterLayer in a Stack has the highest value at a given location.
