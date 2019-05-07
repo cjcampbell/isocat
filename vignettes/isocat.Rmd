@@ -86,11 +86,9 @@ To create a probability-of-origin map, we first import or generate a dataframe c
 
 1) Individual IDs
 
-2) Individual-level isotope data, transformed with a transfer function to reflect isoscape values.[^1]
+2) Individual-level isotope data, transformed with a transfer function to reflect isoscape values.
 
 3) Standard deviation of isotope standard measurements, which are associated with machine accuracy.
-
-[^1]: [TODO]  
 
 ```{r example_dataframe}
 n <- 6 # Number of example rasters
@@ -184,8 +182,8 @@ Note that the output of the `pvclust` analysis also contains a nested object of 
 
 ### Project Clusters
 
-[TODO explanation of cluster cutting]
-[TODO fix this garbage code below and explain it in English]
+To divide individuals into a discrete number of groups with common origin, one might apply one or more options. In this example, we cut the tree relating individual origins at a given height. Users might alternatively cut with respect to bootstrap support of given groups, into a certain number of groups, or into groups optimizing k-means or another metric of within-group similarity for D-values or isotope tissue values.
+
 
 ```{r cluster_cutting_code }
 myheight <- 0.05
