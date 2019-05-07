@@ -7,6 +7,7 @@
 #'
 #' @return Returns list of values representing cumulative sum of `val` values less than or equal to the input.
 #'
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #' vals <- 1:10
@@ -32,6 +33,7 @@ cumsumbelow <- function(vals){
 #' @return Returns rasterLayer rescaled to Cumulative Sum values.
 #'
 #' @inheritParams cumsumbelow
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #' # Generate example probability surfaces.
@@ -57,6 +59,9 @@ cumsumbelow <- function(vals){
 #'
 #' @export
 makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
+
+  . <- "quiet" # silence 'no visible binding for global variable' call.
+  vals <- NULL
 
   newsurface <- indivraster
   newsurface[] <- indivraster[] %>%

@@ -1,7 +1,7 @@
 ---
 title: "Overview of package `isocat` (Isotope Clustering and Assignment Tools)"
 author: "Caitlin J. Campbell"
-date: "2019-04-05"
+date: "2019-05-07"
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -416,7 +416,7 @@ p <- isotopeAssignmentModel(
   )[[1]]
 
 # Example Point
-pt <- data.frame(x = -103, y = 48)
+pt <- data.frame(x = -100, y = 40)
 ptDeets <- list(
   geom_point(
     data = pt, 

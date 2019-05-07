@@ -7,6 +7,7 @@
 #' @param surfaces Object of class "RasterStack", where each layer represents a probability-of-origin surface
 #' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `snow` packages. Defaults to `FALSE` (i.e., no clustering).
 #'
+#' @importFrom raster calc
 #'
 #' @examples
 #' # Create and cluster example assignment surfaces.
@@ -43,9 +44,9 @@ projectSummaryMaxSurface <- function(surfaces, nClust = FALSE){
   if(nClust == FALSE){
     summaryMap <- raster::calc(surfaces, which.max2)
   } else {
-    beginCluster(nClust)
-    summaryMap <- raster::clusterR(surfaces, calc, args=list(which.max2))
-    endCluster()
+    raster::beginCluster(nClust)
+    summaryMap <- raster::clusterR(surfaces, raster::calc, args=list(which.max2))
+    raster::endCluster()
   }
 
   summaryMap <- raster::ratify(summaryMap)

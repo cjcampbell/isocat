@@ -127,7 +127,7 @@ p <- isotopeAssignmentModel(
   )[[1]]
 
 # Example Point
-pt <- data.frame(x = -103, y = 48)
+pt <- data.frame(x = -100, y = 40)
 ptDeets <- list(
   geom_point(
     data = pt, 

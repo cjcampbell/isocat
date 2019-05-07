@@ -7,6 +7,7 @@
 #'
 #' @return Returns rasterLayer rescaled to Odds Ratio values.
 #'
+#' @importFrom magrittr %>%
 #'
 #' @examples
 #' # Generate example probability surfaces.
@@ -37,7 +38,7 @@
 
 makeOddsSurfaces <- function(probabilitySurface, rename = FALSE){
   p <- probabilitySurface
-  odds_r <- (p/(1-p))/(maxValue(p)/(1-maxValue(p)))
+  odds_r <- (p/(1-p))/(raster::maxValue(p)/(1-raster::maxValue(p)))
 
   if(rename == FALSE){
     names(odds_r) <- names(p)

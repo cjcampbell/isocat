@@ -6,6 +6,8 @@
 #' @param surfaces Stack of probability-of-origin surfaces for all individuals. Object of class 'RasterStack.'
 #' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `snow` packages. Defaults to `FALSE` (i.e., no clustering).
 #'
+#' @importFrom raster "calc"
+#'
 #' @examples
 #' # Create and cluster example assignment surfaces.
 #' myiso <- rasterFromXYZ(isoscape)
@@ -62,9 +64,9 @@ meanAggregateClusterProbability <- function(indivIDs, clusters, surfaces, nClust
     if(nClust == FALSE){
       meanRasts <- raster::calc(clustStack, which.mean)
     } else {
-      beginCluster(nClust)
-      meanRasts <- raster::clusterR(clustStack, calc, args=list(which.mean))
-      endCluster()
+     raster::beginCluster(nClust)
+      meanRasts <- raster::clusterR(clustStack, raster::calc, args=list(which.mean))
+      raster::endCluster()
     }
     return(meanRasts)
   })

@@ -4,7 +4,8 @@
 \alias{simmatrixMaker}
 \title{Generates similarity matrix for rasterStack}
 \usage{
-simmatrixMaker(assignmentRasters, nClusters = FALSE, csvSavePath = FALSE)
+simmatrixMaker(assignmentRasters, nClusters = FALSE,
+  csvSavePath = FALSE)
 }
 \arguments{
 \item{assignmentRasters}{Input rasterStack}

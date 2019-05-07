@@ -11,9 +11,11 @@
 #' @export
 getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 20){
 
+  n <- NULL
+
   # Iterate for each rasterstack layer:
-  cl <- makeCluster(nCluster); doParallel::registerDoParallel(cl); getcells <- foreach(
-    n = 1:nlayers(rasterstack),
+  cl <- parallel::makeCluster(nCluster); doParallel::registerDoParallel(cl); getcells <- foreach(
+    n = 1:raster::nlayers(rasterstack),
     .verbose = T,
     .packages = c("raster", "plyr","dplyr")) %dopar% {
       # Calculate number of cells above each given threshold value.
@@ -32,7 +34,7 @@ getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 2
         id = names(rasterstack[[n]])
         )
 
-    }; endCluster()
+    }; parallel::stopCluster()
 
   myDf <- plyr::ldply(getcells, data.frame)
   if(method != FALSE & class(method) == "character"){

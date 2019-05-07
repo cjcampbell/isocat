@@ -56,9 +56,10 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
            call. = FALSE)
       }
 
-    cl <- makeCluster(nClusters)
-    registerDoParallel(cl)
+    cl <- parallel::makeCluster(nClusters)
+    doParallel::registerDoParallel(cl)
 
+    i <- NULL
     listOfAssigments <- foreach(i = 1:length(isotopeValue), .packages="raster") %dopar% {
       # Calculate total error.
       totError <- sqrt((precip_SD_raster)^2 + SD_indv[i]^2)
@@ -67,7 +68,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
       assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (isotopeValue[i] - precip_raster)^2 / (2 * totError^2))
 
       # Normalize to sum to 1.
-      assign_norm <- assign/cellStats(assign, "sum")
+      assign_norm <- assign/raster::cellStats(assign, "sum")
 
       names(assign_norm) <- paste0(ID[i])
 
@@ -80,7 +81,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
 
           # Bring in additionalModel
           combo_prod <- prod(assign_norm, additionalModel)
-          combo_norm <- combo_prod / cellStats(combo_prod, "sum")
+          combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
 
           return(list(isotopeAssignments = assign_norm, comboAssignments = combo_norm))
         }
@@ -89,7 +90,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
       }
 
     }
-    stopCluster(cl)
+    parallel::stopCluster(cl)
 
   } else{
 
@@ -101,7 +102,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
       assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (isotopeValue[i] - precip_raster)^2 / (2 * totError^2))
 
       # Normalize to sum to 1.
-      assign_norm <- assign/cellStats(assign, "sum")
+      assign_norm <- assign/raster::cellStats(assign, "sum")
 
       names(assign_norm) <- paste0(ID[i])
 
@@ -110,7 +111,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
 
         # Bring in additionalModel
         combo_prod <- prod(assign_norm, additionalModel)
-        combo_norm <- combo_prod / cellStats(combo_prod, "sum")
+        combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
 
         return(list(isotopeAssignments = assign_norm, comboAssignments = combo_norm))
 

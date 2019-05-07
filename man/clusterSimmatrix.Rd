@@ -5,8 +5,8 @@
 \title{Hierarchical clustering analysis of similarity matrix}
 \usage{
 clusterSimmatrix(simmatrix, dist_mthd = "correlation",
-  hclust_mthd = "average", nBoot = 1000, nClusters = FALSE, r = seq(0.7,
-  1.4, by = 0.1))
+  hclust_mthd = "average", nBoot = 1000, nClusters = FALSE,
+  r = seq(0.7, 1.4, by = 0.1))
 }
 \arguments{
 \item{simmatrix}{symmetric similarity matrix object.}

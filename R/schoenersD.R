@@ -39,6 +39,6 @@ schoenersD <- function(rast1, rast2){
   if(class(rast1) != "RasterLayer" | class(rast2) != "RasterLayer")
     stop("arguments are not of class 'RasterLayer'")
 
-  1 - (0.5 * cellStats(abs(rast1 - rast2), stat='sum'))
+  1 - (0.5 * raster::cellStats(abs(rast1 - rast2), stat='sum'))
 
   }

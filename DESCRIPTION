@@ -8,10 +8,11 @@ Description: This package provides tools to create, compare, and post-process sp
 License: CC0
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1.9000
+RoxygenNote: 6.1.1
 Imports:
   stats
 Depends:
+  sp,
   utils,
 	plyr,
 	magrittr,

@@ -16,11 +16,11 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
     stop("Object 'assignmentRasters' is not of class 'RasterStack.'")
 
   # Run pairwise comparisons.
-  schoener <- function(rast1, rast2){ 1 - (0.5 * cellStats(abs(rast1 - rast2), stat='sum')) }
+  schoener <- function(rast1, rast2){ 1 - (0.5 * raster::cellStats(abs(rast1 - rast2), stat='sum')) }
 
   a <- names(assignmentRasters)
 
-  t <- t(combn(a,2))
+  t <- t(utils::combn(a,2))
 
   if(nClusters == FALSE){
 
@@ -61,7 +61,7 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
            call. = FALSE)
       }
 
-    cl <- makeCluster(nClusters)
+    cl <- parallel::makeCluster(nClusters)
     doParallel::registerDoParallel(cl)
     l <- foreach(i = 1:nrow(t), .packages="raster") %dopar% {
       schoener(
@@ -88,11 +88,11 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 
     x[is.na(x)] <- 1
 
-    stopCluster(cl)
+    parallel::stopCluster(cl)
   }
 
   if(csvSavePath != FALSE){
-    write.csv(x, file = paste0(csvSavePath, "PairwiseComparisonMatrix.csv"))
+    utils::write.csv(x, file = paste0(csvSavePath, "PairwiseComparisonMatrix.csv"))
   }
   return(x)
 }

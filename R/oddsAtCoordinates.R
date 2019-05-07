@@ -5,6 +5,8 @@
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
 #'
+#' @importFrom raster maxValue
+#'
 #' @export oddsAtSamplingLocation
 #'
 

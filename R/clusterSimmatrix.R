@@ -15,7 +15,7 @@ clusterSimmatrix <- function(simmatrix,
                              dist_mthd = "correlation", hclust_mthd = "average",
                              nBoot = 1000,  nClusters = FALSE, r=seq(.7,1.4,by=.1)){
 
-  if("pvclust" %in% rownames(installed.packages()) == FALSE)
+  if("pvclust" %in% rownames(utils::installed.packages()) == FALSE)
     stop("This function applies library 'pvclust' for parallel processing.
          Please install this package.")
 
@@ -24,10 +24,10 @@ clusterSimmatrix <- function(simmatrix,
 
     if(!is.numeric(nClusters))
       stop("nClusters must be set to 'FALSE' or a numeric value.")
-    if("parallel" %in% rownames(installed.packages()) == FALSE)
+    if("parallel" %in% rownames(utils::installed.packages()) == FALSE)
       stop("This function applies library 'parallel' for parallel processing.
            Please install this package.")
-    if("doParallel" %in% rownames(installed.packages()) == FALSE)
+    if("doParallel" %in% rownames(utils::installed.packages()) == FALSE)
       stop("This function applies library 'doParallel' for parallel processing.
            Please install this package.")
 
@@ -47,7 +47,7 @@ clusterSimmatrix <- function(simmatrix,
   )
 
   if(nClusters != FALSE){
-    stopCluster(cl)
+    parallel::stopCluster(cl)
   }
 
   return(result_ave)
