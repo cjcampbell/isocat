@@ -12,12 +12,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE, cache = T}
+```{r setup, include = FALSE, cache = F}
 knitr::opts_chunk$set(
+  cache = F,
   collapse = TRUE,
   comment = "#>",
   fig.width = 6,
-  fig.height = 4, cache = T
+  fig.height = 4
 )
 
 library(kableExtra)
@@ -37,7 +38,7 @@ library(gridExtra)
 
 The `isocat` package provides multiple tools for creating and quantitatively analyzing and summarizing probability-of-origin surfaces generated from stable isotope analyses of animal tissue. This vignette will walk users through a brief example for each function included in this vignette.
 
-```{r load isocat}
+```{r load_isocat}
 library(isocat)
 ```
 
@@ -47,16 +48,16 @@ library(isocat)
 
 Example isoscape:
 
-```{r load isoscape data}
+```{r load_isoscape_data}
 myiso <- rasterFromXYZ(isoscape)
 ```
 
 Load example isoscape standard deviation surface:
 
-```{r load isoscape data 2}
+```{r load_isoscape_data_2}
 myiso_sd <- rasterFromXYZ(isoscape_sd)
 ```
-```{r plot isoscape data}
+```{r plot_isoscape_data}
 library(ggplot2, quietly = T); library(rasterVis, quietly = T); library(gridExtra, quietly = T)
 gglayers <-  list(
   geom_tile(aes(fill = value)),
@@ -90,7 +91,7 @@ To create a probability-of-origin map, we first import or generate a dataframe c
 
 [^1]: [TODO]  
 
-```{r example dataframe}
+```{r example_dataframe}
 n <- 6 # Number of example rasters
 set.seed(1)
 df <- data.frame(
@@ -103,7 +104,7 @@ kableExtra::kable(df)
 
 The contents of these columns are passed to the function `isotopeAssignmentModel` as vectors, along with the object names of isoscape and isoscape-SD objects. If parallel processing is specified, the function creates and deploys clusters using the `doParallel` package. The output is a rasterStack with layers named corresponding to the individual IDs.
 
-```{r prob of orgin surface, fig.width=6, fig.height=6}
+```{r prob_of_orgin_surface, fig.width=6, fig.height=6}
 assignmentModels <- isotopeAssignmentModel(
   ID = df$ID,
   isotopeValue = df$isotopeValue, 
@@ -173,7 +174,7 @@ plot(cS)
 
 If bootstrapped clustering is not desired, one could instead apply the `hclust` function from within the base `stats` package:
 
-```{r hclust instead}
+```{r hclust_instead}
 hS <- hclust(dist(data.matrix(mySimilarityMatrix)))
 plot(hS)
 ```
@@ -185,7 +186,7 @@ Note that the output of the `pvclust` analysis also contains a nested object of 
 [TODO explanation of cluster cutting]
 [TODO fix this garbage code below and explain it in English]
 
-```{r cluster cutting code }
+```{r cluster_cutting_code }
 myheight <- 0.05
 
 plot(as.dendrogram(cS$hclust), horiz = F)
@@ -200,7 +201,7 @@ kableExtra::kable(df)
 
 For each group of individuals of common origin, create an aggregate surface of mean within-group probability of origin using the `meanAggregateClusterProbability` function. This function returns a RasterStack corresponding to each cluster fed into it. If specified as an integer, `nClust` parameter interfaces with `raster::clusterR` to create and apply apply $n$ multi-core clusters for faster processing.
 
-```{r Create mean aggregate surfaces, eval = T}
+```{r Create_mean_aggregate_surfaces}
 meanSurfaces <- meanAggregateClusterProbability( 
   indivIDs = df$ID, 
   clusters = df$cluster, 
@@ -215,7 +216,7 @@ gplot(meanSurfaces) + gglayers + ggProb
 
 [TODO] write this
 
-```{r summary surface}
+```{r summary_surface}
 summaryMap <- projectSummaryMaxSurface(surfaces = meanSurfaces, nClust = FALSE)
 
 gplot(summaryMap) + 
@@ -239,7 +240,7 @@ The relative strengths and performance of these approaches are explored in Campb
 
 We will use an example probability surface in the following example. Let us also specify a sampling site at point $i,j$, indicated with a red circle.
 
-```{r example surface}
+```{r example_surface}
 set.seed(42)
 p <- isotopeAssignmentModel(
   ID = "Example",
@@ -276,12 +277,12 @@ gridExtra::grid.arrange(ex_plot, ex_hist, ncol = 2, widths = c(2,1))
 ## Cumulative Sum
 
 
-```{r make cumulative sum surface, eval = T}
+```{r make_cumulative_sum_surface, eval = T}
 CumSumEx <- makecumsumSurface(p)
 ```
 
 
-```{r plot cumulative sum surface, eval = T}
+```{r_plot_cumulative_sum_surface, eval = T}
 cumsum_plot <- gplot(CumSumEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
@@ -302,12 +303,12 @@ gridExtra::grid.arrange( cumsum_plot, cumsum_hist, ncol = 2, widths = c(2,1) )
 ## Odds-Ratio
 
 
-```{r odds ratio surface, eval = T}
+```{r odds_ratio_surface, eval = T}
 OddsRatioEx <- makeOddsSurfaces(p)
 ```
 
 
-```{r eval odds ratio surface}
+```{r eval_odds_ratio_surface}
 odds_plot <- gplot(OddsRatioEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
@@ -328,12 +329,12 @@ gridExtra::grid.arrange( odds_plot, odds_hist, ncol = 2, widths = c(2,1) )
 ## Quantile
 
 
-```{r quantile surface, eval = T}
+```{r quantile_surface, eval = T}
 QuantileEx <- makeQuantileSurfaces(p)
 ```
 
 
-```{r eval quantile surface}
+```{r eval_quantile_surface}
 quantile_plot <- gplot(QuantileEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
@@ -354,7 +355,7 @@ gridExtra::grid.arrange( quantile_plot, quantile_hist, ncol = 2, widths = c(2,1)
 ## Quantile-Simulation
 
 Simulate a distribution fit to known-origin quantile values:
-```{r quantsim values, eval = T}
+```{r quantsim_values, eval = T}
 q <- rweibull(20000, 6, .98)
 q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = T)
 hist(q)
@@ -362,7 +363,7 @@ hist(q)
 
 Create quantile-simulation surface:
 
-```{r quantsim surface, eval = T}
+```{r quantsim_surface, eval = T}
 QuantSimEx <- makeQuantileSimulationSurface(
   probabilitySurface = p, 
   ValidationQuantiles = q,
@@ -371,7 +372,7 @@ QuantSimEx <- makeQuantileSimulationSurface(
 ```
 
 
-```{r eval quantsim surface, eval = T}
+```{r eval_quantsim_surface, eval = T}
 quantsim_plot <- gplot(QuantSimEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
