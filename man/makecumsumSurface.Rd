@@ -38,7 +38,9 @@ assignmentModels <- isotopeAssignmentModel(
         )
 
 # Convert to cumulative sum surface.
-cumulative_sum_surface <- lapply(unstack(assignmentModels), makecumsumSurface) \%>\% stack
+cumulative_sum_surface <- stack(
+     lapply( unstack( assignmentModels ), makecumsumSurface )
+     )
 plot(cumulative_sum_surface)
 
 }

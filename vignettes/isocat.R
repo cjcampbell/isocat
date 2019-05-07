@@ -1,13 +1,32 @@
-## ----load isocat---------------------------------------------------------
+## ----setup, include = FALSE, cache = F-----------------------------------
+knitr::opts_chunk$set(
+  cache = F,
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4
+)
+
+library(kableExtra)
+library(isocat)
+library(pvclust)
+library(rasterVis)
+library(ggplot2)
+library(viridisLite)
+library(gridExtra)
+library(dplyr)
+
+
+## ----load_isocat---------------------------------------------------------
 library(isocat)
 
-## ----load isoscape data--------------------------------------------------
+## ----load_isoscape_data--------------------------------------------------
 myiso <- rasterFromXYZ(isoscape)
 
-## ----load isoscape data 2------------------------------------------------
+## ----load_isoscape_data_2------------------------------------------------
 myiso_sd <- rasterFromXYZ(isoscape_sd)
 
-## ----plot isoscape data--------------------------------------------------
+## ----plot_isoscape_data--------------------------------------------------
 library(ggplot2, quietly = T); library(rasterVis, quietly = T); library(gridExtra, quietly = T)
 gglayers <-  list(
   geom_tile(aes(fill = value)),
@@ -28,7 +47,7 @@ gridExtra::grid.arrange(
   )
   
 
-## ----example dataframe---------------------------------------------------
+## ----example_dataframe---------------------------------------------------
 n <- 6 # Number of example rasters
 set.seed(1)
 df <- data.frame(
@@ -38,7 +57,7 @@ df <- data.frame(
   )
 kableExtra::kable(df)
 
-## ----prob of orgin surface, fig.width=6, fig.height=6--------------------
+## ----prob_of_orgin_surface, fig.width=6, fig.height=6--------------------
 assignmentModels <- isotopeAssignmentModel(
   ID = df$ID,
   isotopeValue = df$isotopeValue, 
@@ -84,11 +103,11 @@ cS <- clusterSimmatrix(
   )
 plot(cS)
 
-## ----hclust instead------------------------------------------------------
+## ----hclust_instead------------------------------------------------------
 hS <- hclust(dist(data.matrix(mySimilarityMatrix)))
 plot(hS)
 
-## ----cluster cutting code------------------------------------------------
+## ----cluster_cutting_code------------------------------------------------
 myheight <- 0.05
 
 plot(as.dendrogram(cS$hclust), horiz = F)
@@ -98,7 +117,7 @@ df$cluster <- dendextend::cutree(cS$hclust, h = myheight)
 
 kableExtra::kable(df)
 
-## ----Create mean aggregate surfaces, eval = T----------------------------
+## ----Create_mean_aggregate_surfaces--------------------------------------
 meanSurfaces <- meanAggregateClusterProbability( 
   indivIDs = df$ID, 
   clusters = df$cluster, 
@@ -108,14 +127,14 @@ meanSurfaces <- meanAggregateClusterProbability(
 
 gplot(meanSurfaces) + gglayers + ggProb
 
-## ----summary surface-----------------------------------------------------
+## ----summary_surface-----------------------------------------------------
 summaryMap <- projectSummaryMaxSurface(surfaces = meanSurfaces, nClust = FALSE)
 
 gplot(summaryMap) + 
   gglayers +
   scale_fill_viridis_c(name = "Cluster")
 
-## ----example surface-----------------------------------------------------
+## ----example_surface-----------------------------------------------------
 set.seed(42)
 p <- isotopeAssignmentModel(
   ID = "Example",
@@ -148,29 +167,13 @@ ex_hist <- data.frame(x = p[]) %>%
 
 gridExtra::grid.arrange(ex_plot, ex_hist, ncol = 2, widths = c(2,1)) 
 
-## ----make cumulative sum surface, eval = T-------------------------------
+## ----make_cumulative_sum_surface, eval = T-------------------------------
 CumSumEx <- makecumsumSurface(p)
 
-## ----plot cumulative sum surface, eval = T-------------------------------
-cumsum_plot <- gplot(CumSumEx) + 
-  gglayers + ptDeets +
-  scale_fill_gradient(
-    name = "Cumulative Sum\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
-
-cumsum_hist <- data.frame(x = CumSumEx[]) %>% 
-  ggplot(.) +
-  geom_density(aes(x = x)) +
-  scale_y_continuous(expand = c(0,0)) +
-  scale_x_continuous(name = "Cumulative Sum\nProbability Value") +
-  theme_bw() +
-  geom_vline(aes(xintercept = extract(CumSumEx, pt)), linetype = "dashed", col = "red")
-
-gridExtra::grid.arrange( cumsum_plot, cumsum_hist, ncol = 2, widths = c(2,1) ) 
-
-## ----odds ratio surface, eval = T----------------------------------------
+## ----odds_ratio_surface, eval = T----------------------------------------
 OddsRatioEx <- makeOddsSurfaces(p)
 
-## ----eval odds ratio surface---------------------------------------------
+## ----eval_odds_ratio_surface---------------------------------------------
 odds_plot <- gplot(OddsRatioEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
@@ -186,10 +189,10 @@ odds_hist <- data.frame(x = OddsRatioEx[]) %>%
 
 gridExtra::grid.arrange( odds_plot, odds_hist, ncol = 2, widths = c(2,1) ) 
 
-## ----quantile surface, eval = T------------------------------------------
+## ----quantile_surface, eval = T------------------------------------------
 QuantileEx <- makeQuantileSurfaces(p)
 
-## ----eval quantile surface-----------------------------------------------
+## ----eval_quantile_surface-----------------------------------------------
 quantile_plot <- gplot(QuantileEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
@@ -205,19 +208,19 @@ quantile_hist <- data.frame(x = QuantileEx[]) %>%
 
 gridExtra::grid.arrange( quantile_plot, quantile_hist, ncol = 2, widths = c(2,1) ) 
 
-## ----quantsim values, eval = T-------------------------------------------
+## ----quantsim_values, eval = T-------------------------------------------
 q <- rweibull(20000, 6, .98)
 q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = T)
 hist(q)
 
-## ----quantsim surface, eval = T------------------------------------------
+## ----quantsim_surface, eval = T------------------------------------------
 QuantSimEx <- makeQuantileSimulationSurface(
   probabilitySurface = p, 
   ValidationQuantiles = q,
   rename = FALSE, rescale = TRUE
   )
 
-## ----eval quantsim surface, eval = T-------------------------------------
+## ----eval_quantsim_surface, eval = T-------------------------------------
 quantsim_plot <- gplot(QuantSimEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(

@@ -28,10 +28,9 @@
 #'          )
 #'
 #' # Convert to odds ratio surfaces.
-#' odds_ratio_surface <- lapply(
-#'                            unstack(assignmentModels), makeOddsSurfaces
-#'                            ) %>%
-#'                          stack
+#' odds_ratio_surface <- stack(
+#'    lapply( unstack(assignmentModels), makeOddsSurfaces )
+#'    )
 #' plot(odds_ratio_surface)
 #'
 #' @export makeOddsSurfaces

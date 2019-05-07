@@ -9,16 +9,17 @@ License: CC0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-Imports:
-  stats
 Depends:
-  sp,
+  R (>= 2.10),
   utils,
-	plyr,
-	magrittr,
-  dplyr,
-  foreach,
   raster
+Imports:
+  stats,
+  plyr,
+  dplyr,
+  sp,
+  magrittr,
+  foreach
 Suggests:
 	ClusterR,
 	dendextend,

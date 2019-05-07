@@ -46,31 +46,6 @@ myiso_sd <- rasterFromXYZ(isoscape_sd)
 
 ```r
 library(ggplot2, quietly = T); library(rasterVis, quietly = T); library(gridExtra, quietly = T)
-```
-
-```
-## 
-## Attaching package: 'latticeExtra'
-```
-
-```
-## The following object is masked from 'package:ggplot2':
-## 
-##     layer
-```
-
-```
-## 
-## Attaching package: 'gridExtra'
-```
-
-```
-## The following object is masked from 'package:dplyr':
-## 
-##     combine
-```
-
-```r
 gglayers <-  list(
   geom_tile(aes(fill = value)),
   coord_equal(),
@@ -90,7 +65,7 @@ gridExtra::grid.arrange(
   )
 ```
 
-![](isocat_files/figure-html/plot isoscape data-1.png)<!-- -->
+![](isocat_files/figure-html/plot_isoscape_data-1.png)<!-- -->
 
 # Creating a probability-of-origin surface
 
@@ -180,7 +155,7 @@ ggProb <- list(
 gplot(assignmentModels) + gglayers + ggProb
 ```
 
-![](isocat_files/figure-html/prob of orgin surface-1.png)<!-- -->
+![](isocat_files/figure-html/prob_of_orgin_surface-1.png)<!-- -->
 
 # Comparing surfaces
 
@@ -194,10 +169,7 @@ To compare probability-of-origin surfaces, we apply Schoener's D metric. To simp
 # two of the example probability surfaces.
 
 schoenersD(assignmentModels[[1]], assignmentModels[[2]])
-```
-
-```
-## [1] 0.5777822
+#> [1] 0.5777822
 ```
 
 To compare multiple surfaces to one another, `isocat` includes a `simmatrixMaker` function to create a similarity matrix of the surfaces. The output is a symmetric matrix with row and column names corresponding to the layernames of the surfaces to be compared. The `nClusters` specification, as in the `isotopeAssignmentModel` function, generates a number of parallel processing clusters equal to the numeric value specified. If `csvSavePath` is included, a .csv file will also be written to the path specified. For large rasterStacks, this function can be quite processing-intensive and take some time.
@@ -210,23 +182,20 @@ mySimilarityMatrix <- simmatrixMaker(
   csvSavePath = FALSE
 )
 mySimilarityMatrix
-```
-
-```
-##              A           B          C            D            E
-## A 1.0000000000 0.577782179 0.08876164 0.0003429836 0.7639950906
-## B 0.5777821786 1.000000000 0.24369626 0.0032380107 0.3900655057
-## C 0.0887616430 0.243696260 1.00000000 0.0836391997 0.0470433418
-## D 0.0003429836 0.003238011 0.08363920 1.0000000000 0.0000866323
-## E 0.7639950906 0.390065506 0.04704334 0.0000866323 1.0000000000
-## F 0.0004037637 0.003695405 0.09175482 0.9662229136 0.0001058838
-##              F
-## A 0.0004037637
-## B 0.0036954045
-## C 0.0917548194
-## D 0.9662229136
-## E 0.0001058838
-## F 1.0000000000
+#>              A           B          C            D            E
+#> A 1.0000000000 0.577782179 0.08876164 0.0003429836 0.7639950906
+#> B 0.5777821786 1.000000000 0.24369626 0.0032380107 0.3900655057
+#> C 0.0887616430 0.243696260 1.00000000 0.0836391997 0.0470433418
+#> D 0.0003429836 0.003238011 0.08363920 1.0000000000 0.0000866323
+#> E 0.7639950906 0.390065506 0.04704334 0.0000866323 1.0000000000
+#> F 0.0004037637 0.003695405 0.09175482 0.9662229136 0.0001058838
+#>              F
+#> A 0.0004037637
+#> B 0.0036954045
+#> C 0.0917548194
+#> D 0.9662229136
+#> E 0.0001058838
+#> F 1.0000000000
 ```
 ## Clustering by similar origins
 
@@ -251,20 +220,14 @@ cS <- clusterSimmatrix(
   nClusters = FALSE,
   r = seq(.7,1.4,by=.1)
   )
-```
-
-```
-## Bootstrap (r = 0.67)... Done.
-## Bootstrap (r = 0.67)... Done.
-## Bootstrap (r = 0.83)... Done.
-## Bootstrap (r = 1.0)... Done.
-## Bootstrap (r = 1.0)... Done.
-## Bootstrap (r = 1.17)... Done.
-## Bootstrap (r = 1.17)... Done.
-## Bootstrap (r = 1.33)... Done.
-```
-
-```r
+#> Bootstrap (r = 0.67)... Done.
+#> Bootstrap (r = 0.67)... Done.
+#> Bootstrap (r = 0.83)... Done.
+#> Bootstrap (r = 1.0)... Done.
+#> Bootstrap (r = 1.0)... Done.
+#> Bootstrap (r = 1.17)... Done.
+#> Bootstrap (r = 1.17)... Done.
+#> Bootstrap (r = 1.33)... Done.
 plot(cS)
 ```
 
@@ -280,7 +243,7 @@ hS <- hclust(dist(data.matrix(mySimilarityMatrix)))
 plot(hS)
 ```
 
-![](isocat_files/figure-html/hclust instead-1.png)<!-- -->
+![](isocat_files/figure-html/hclust_instead-1.png)<!-- -->
 
 Note that the output of the `pvclust` analysis also contains a nested object of class "hclust".
 
@@ -297,9 +260,10 @@ plot(as.dendrogram(cS$hclust), horiz = F)
 abline(h = myheight, col = "red", lwd = 2, lty = 2)
 ```
 
-![](isocat_files/figure-html/cluster cutting code-1.png)<!-- -->
+![](isocat_files/figure-html/cluster_cutting_code-1.png)<!-- -->
 
 ```r
+
 df$cluster <- dendextend::cutree(cS$hclust, h = myheight)
 
 kableExtra::kable(df)
@@ -370,7 +334,7 @@ meanSurfaces <- meanAggregateClusterProbability(
 gplot(meanSurfaces) + gglayers + ggProb
 ```
 
-![](isocat_files/figure-html/Create mean aggregate surfaces-1.png)<!-- -->
+![](isocat_files/figure-html/Create_mean_aggregate_surfaces-1.png)<!-- -->
 
 #### Summary Surface
 
@@ -385,7 +349,7 @@ gplot(summaryMap) +
   scale_fill_viridis_c(name = "Cluster")
 ```
 
-![](isocat_files/figure-html/summary surface-1.png)<!-- -->
+![](isocat_files/figure-html/summary_surface-1.png)<!-- -->
 
 # Post-processing surfaces
 
@@ -438,7 +402,7 @@ ex_hist <- data.frame(x = p[]) %>%
 gridExtra::grid.arrange(ex_plot, ex_hist, ncol = 2, widths = c(2,1)) 
 ```
 
-![](isocat_files/figure-html/example surface-1.png)<!-- -->
+![](isocat_files/figure-html/example_surface-1.png)<!-- -->
 
 ## Cumulative Sum
 
@@ -450,7 +414,7 @@ CumSumEx <- makecumsumSurface(p)
 
 
 
-```r
+```r_plot_cumulative_sum_surface
 cumsum_plot <- gplot(CumSumEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
@@ -466,8 +430,6 @@ cumsum_hist <- data.frame(x = CumSumEx[]) %>%
 
 gridExtra::grid.arrange( cumsum_plot, cumsum_hist, ncol = 2, widths = c(2,1) ) 
 ```
-
-![](isocat_files/figure-html/plot cumulative sum surface-1.png)<!-- -->
 
 
 ## Odds-Ratio
@@ -497,7 +459,7 @@ odds_hist <- data.frame(x = OddsRatioEx[]) %>%
 gridExtra::grid.arrange( odds_plot, odds_hist, ncol = 2, widths = c(2,1) ) 
 ```
 
-![](isocat_files/figure-html/eval odds ratio surface-1.png)<!-- -->
+![](isocat_files/figure-html/eval_odds_ratio_surface-1.png)<!-- -->
 
 
 ## Quantile
@@ -527,7 +489,7 @@ quantile_hist <- data.frame(x = QuantileEx[]) %>%
 gridExtra::grid.arrange( quantile_plot, quantile_hist, ncol = 2, widths = c(2,1) ) 
 ```
 
-![](isocat_files/figure-html/eval quantile surface-1.png)<!-- -->
+![](isocat_files/figure-html/eval_quantile_surface-1.png)<!-- -->
 
 
 ## Quantile-Simulation
@@ -540,7 +502,7 @@ q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = T)
 hist(q)
 ```
 
-![](isocat_files/figure-html/quantsim values-1.png)<!-- -->
+![](isocat_files/figure-html/quantsim_values-1.png)<!-- -->
 
 Create quantile-simulation surface:
 
@@ -572,5 +534,5 @@ quantsim_hist <- data.frame(x = QuantSimEx[]) %>%
 gridExtra::grid.arrange( quantsim_plot, quantsim_hist, ncol = 2, widths = c(2,1) ) 
 ```
 
-![](isocat_files/figure-html/eval quantsim surface-1.png)<!-- -->
+![](isocat_files/figure-html/eval_quantsim_surface-1.png)<!-- -->
 

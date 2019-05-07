@@ -8,6 +8,9 @@
 #'
 #' @return Returns a dataframe of precision values at given threshold.
 #'
+#' @importFrom foreach foreach
+#' @importFrom foreach %dopar%
+#'
 #' @export
 getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 20){
 

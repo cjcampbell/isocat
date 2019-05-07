@@ -9,6 +9,10 @@
 #' @param additionalModel optional additional model raster (e.g. an SDM or rasterized rangemap). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.
 #' @param savePath If specified, function will save results to this path as a .grd.
 #' @param nClusters integer of cores to run in parallel with doParallel. Default FALSE.
+#'
+#' @importFrom foreach foreach
+#' @importFrom foreach %dopar%
+#'
 #' @examples
 #' myiso <- rasterFromXYZ(isoscape)
 #' raster::plot(myiso)
