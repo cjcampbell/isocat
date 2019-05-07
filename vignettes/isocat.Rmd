@@ -213,7 +213,7 @@ gplot(meanSurfaces) + gglayers + ggProb
 
 #### Summary Surface
 
-[TODO] write this
+To visualize the general regions of a spatial range most associated with each aggregate surface, `isocat` includes a `projectSummaryMaxSurface` function. This function associates each cell of a spatial extent with the identity of a discrete rasterLayer the highest relative value at that location. The output is a ratified raster that, in this context, shows the regions of highest relative association with the aggregated origins of groups of individuals. This summary surface is not appropriate for summary statistics (which we recommend be applied to mean aggregate surfaces for individuals sharing common origins, if not to the individual origin maps themselves), but does serve as a visual summary of the relative regions of probable origins of each group.
 
 ```{r summary_surface}
 summaryMap <- projectSummaryMaxSurface(surfaces = meanSurfaces, nClust = FALSE)

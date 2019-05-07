@@ -1,13 +1,13 @@
 
 # isocat 0.2.3
 
-## Vignette updates.
-* Vignette updated
-
 ## Bug fixes
 * Updated data file to realistic isoscape standard deviations.
+* Fixed dependency / import issues throughout.
+* Adjusted file names for cross-platform compatibility.
 
-
+## Vignette updated
+* Vignette updated, TODO's resolved.
 
 # isocat 0.2.2
 
