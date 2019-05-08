@@ -11,7 +11,7 @@ The `isocat` package provides multiple tools in `R` for creating and quantitativ
 
 Probability-of-origin maps can be quantitatively compared, and individual origins compared and clustered.
 
-![-1](https://raw.githubusercontent.com/cjcampbell/isocat/master/vignettes/isocat_files/figure-html/cluster_cutting_code-1.png)
+![](https://raw.githubusercontent.com/cjcampbell/isocat/master/vignettes/isocat_files/figure-html/cluster_cutting_code-1.png)
 
 ![](https://raw.githubusercontent.com/cjcampbell/isocat/master/vignettes/isocat_files/figure-html/summary_surface-1.png)
 
@@ -26,11 +26,14 @@ For more information, and for reproducible examples, please see `isocat`'s vigne
 `isocat` is currently available on github. To install without a vignette, use the following code:
 `devtools::install_github("cjcampbell/isocat")`
 
+The `isocat` package provides multiple tools in `R` for creating and quantitatively analyzing and summarizing probability-of-origin surfaces generated from stable isotope analyses of animal tissue.
+
 ## Vignette
 
 To install `isocat` and its vignette directly from github, use the following code in R when using devtools >= 2.0.0:
 
 `devtools::install_github("cjcampbell/isocat", build = TRUE, force = TRUE, build_opts = c("--no-resave-data", "--no-manual"))`
+
 
 The vignette requires the certain packages to be installed in order to compile. The code chunk below will automatically check for and install packages needed to form the vignette.
 
