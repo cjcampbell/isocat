@@ -4,7 +4,7 @@ Title: Isotope Clustering and Assignment Tools
 Version: 0.2.3
 Author: Caitlin J. Campbell
 Maintainer: Caitlin J. Campbell <caitjcampbell@gmail.com>
-Description: This package provides tools to create, compare, and post-process spatial isotope assignment models of animal origin.
+Description: This resource provides tools to create, compare, and post-process spatial isotope assignment models of animal origin.
 License: CC0
 Encoding: UTF-8
 LazyData: true
@@ -28,10 +28,10 @@ Suggests:
 	gridExtra,
 	kableExtra,
 	knitr,
+	parallel,
 	purrr,
 	pvclust,
   rmarkdown,
-  snow,
   rasterVis,
   viridisLite
 VignetteBuilder: knitr
