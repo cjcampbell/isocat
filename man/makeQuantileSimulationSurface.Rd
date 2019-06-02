@@ -17,7 +17,7 @@ makeQuantileSimulationSurface(probabilitySurface, ValidationQuantiles,
 \item{rescale}{If rescale = TRUE, returns surface showing proportion of times each surface cell value fell within the validation quantiles distribution. If rescale = FALSE, returns discrete number of times the cell fell within the distribution.}
 }
 \value{
-Returns rasterLayer rescaled to quantile values.
+Returns RasterLayer rescaled to quantile values.
 }
 \description{
 Converts normalized probability surfaces (e.g. one layer output of

@@ -19,9 +19,9 @@ isotopeAssignmentModel(ID, isotopeValue, SD_indv, precip_raster,
 
 \item{precip_SD_raster}{precipitation isoscape standard deviation raster.}
 
-\item{additionalModel}{optional additional model raster (e.g. an SDM or rasterized rangemap). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.}
+\item{additionalModel}{optional additional model raster (e.g. an SDM, rasterized range map). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.}
 
-\item{savePath}{If specified, function will save results to this path as a .grd.}
+\item{savePath}{If specified, function will save results to this path as a '.grd' file.}
 
 \item{nClusters}{integer of cores to run in parallel with doParallel. Default FALSE.}
 }

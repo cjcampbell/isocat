@@ -1,7 +1,7 @@
 ---
 title: "Overview of package `isocat` (Isotope Clustering and Assignment Tools)"
 author: "Caitlin J. Campbell"
-date: "2019-05-07"
+date: "2019-06-02"
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -159,7 +159,7 @@ gplot(assignmentModels) + gglayers + ggProb
 
 ## Metric of surface similarity
 
-To compare probability-of-origin surfaces, we apply Schoener's D metric. To simply compare two surfaces, we can apply `isocat`'s `schoenersD` function, which determine's Schoener's D-metric of similarity between two surfaces. The D-value varies between 0 (completely dissimilar surfaces) and 1 (identical surfaces).
+To compare probability-of-origin surfaces, we apply Schoener's D metric. To simply compare two surfaces, we can apply `isocat`'s `schoenersD` function, which determines Schoener's D-metric of similarity between two surfaces. The D-value varies between 0 (completely dissimilar surfaces) and 1 (identical surfaces).
 
 
 ```r
@@ -170,7 +170,7 @@ schoenersD(assignmentModels[[1]], assignmentModels[[2]])
 #> [1] 0.5777822
 ```
 
-To compare multiple surfaces to one another, `isocat` includes a `simmatrixMaker` function to create a similarity matrix of the surfaces. The output is a symmetric matrix with row and column names corresponding to the layernames of the surfaces to be compared. The `nClusters` specification, as in the `isotopeAssignmentModel` function, generates a number of parallel processing clusters equal to the numeric value specified. If `csvSavePath` is included, a .csv file will also be written to the path specified. For large rasterStacks, this function can be quite processing-intensive and take some time.
+To compare multiple surfaces to one another, `isocat` includes a `simmatrixMaker` function to create a similarity matrix of the surfaces. The output is a symmetric matrix with row and column names corresponding to the layer names of the surfaces to be compared. The `nClusters` specification, as in the `isotopeAssignmentModel` function, generates a number of parallel processing clusters equal to the numeric value specified. If `csvSavePath` is included, a .csv file will also be written to the path specified. For large rasterStacks, this function can be quite processing-intensive and take some time.
 
 
 ```r
@@ -197,7 +197,7 @@ mySimilarityMatrix
 ```
 ## Clustering by similar origins
 
-To cluster individuals by similar origins, `isocat` relies on the titular function of the package `pvclust`. The input to this function is the simmilarity matrix (here, "simmatrix"). Distance measures and clustering methods are detailed in the `pvclust` package, so for more information on methods discussed here, see:
+To cluster individuals by similar origins, `isocat` relies on the titular function of the package `pvclust`. The input to this function is the similarity matrix (here, "simmatrix"). Distance measures and clustering methods are detailed in the `pvclust` package, so for more information on methods discussed here, see:
 
 
 ```r
@@ -206,7 +206,7 @@ help(pvclust)
 
 ### Clustering with bootstrapping
 
-The default distance measure built into this function is correlational distance, and 'average' as a clustering method. The number of bootstrap replications default to 1000, and nClusters specifies how many clusters to enitiate for parallel processing through `doParallel`. The output of this is an object of class "pvclust".
+The default distance measure built into this function is correlational distance, and 'average' as a clustering method. The number of bootstrap replications default to 1000, and nClusters specifies how many clusters to initiate for parallel processing through `doParallel`. The output of this is an object of class "pvclust".
 
 
 ```r
@@ -351,7 +351,6 @@ gplot(summaryMap) +
 
 # Post-processing surfaces
 
-Once probability-of-origin models are created, several *post-hoc* approaches exist to relativize and/or summarize individual origins by transforming the probabilities of each probabability-of-origin surface. Here, we explore four approaches, termed:
 
 - Cumulative Sum
 

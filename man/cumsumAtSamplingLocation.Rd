@@ -7,7 +7,7 @@
 cumsumAtSamplingLocation(indivraster, Lat, Lon)
 }
 \arguments{
-\item{indivraster}{rasterlayer representing normalized probability of origin surface}
+\item{indivraster}{RasterLayer representing normalized probability of origin surface}
 
 \item{Lat}{Integer latitude}
 

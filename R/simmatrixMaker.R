@@ -1,6 +1,6 @@
 #' Generates similarity matrix for rasterStack
 #'
-#' Applies pairwise comparisons of scheoner's D-metric amongst each rasterLayer in a RasterStack to populate a similarity matrix.
+#' Applies pairwise comparisons of scheoner's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
 #' @param assignmentRasters Input rasterStack
 #' @param nClusters Clusters to create run in parallel using 'doParallel'. Defaults to FALSE.
 #' @param csvSavePath Optional savepath to write similarity matrix to csv file. Defaults to FALSE, will not create csv.

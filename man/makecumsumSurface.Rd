@@ -14,10 +14,10 @@ makecumsumSurface(indivraster, rescale = FALSE, rename = FALSE)
 \item{rename}{Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.}
 }
 \value{
-Returns rasterLayer rescaled to Cumulative Sum values.
+Returns RasterLayer rescaled to Cumulative Sum values.
 }
 \description{
-Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or eual to the old value of the cell.
+Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or equal to the old value of the cell.
 }
 \examples{
 # Generate example probability surfaces.

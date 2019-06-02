@@ -24,13 +24,13 @@ cumsumbelow <- function(vals){
 
 #' Create cumulative sum probability surface
 #'
-#' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or eual to the old value of the cell.
+#' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or equal to the old value of the cell.
 #'
 #' @param indivraster Normalized probability surface RasterLayer
 #' @param rescale Rescale between 0 and 1? Defaults to FALSE.
 #' @param rename Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.
 #'
-#' @return Returns rasterLayer rescaled to Cumulative Sum values.
+#' @return Returns RasterLayer rescaled to Cumulative Sum values.
 #'
 #' @inheritParams cumsumbelow
 #' @importFrom magrittr %>%
@@ -100,7 +100,7 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 #'
 #'
 #'
-#' @param indivraster rasterlayer representing normalized probability of origin surface
+#' @param indivraster RasterLayer representing normalized probability of origin surface
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
 #'

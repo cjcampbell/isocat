@@ -12,7 +12,7 @@ makeOddsSurfaces(probabilitySurface, rename = FALSE)
 \item{rename}{Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.}
 }
 \value{
-Returns rasterLayer rescaled to Odds Ratio values.
+Returns RasterLayer rescaled to Odds Ratio values.
 }
 \description{
 Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to Odds Ratio surfaces.

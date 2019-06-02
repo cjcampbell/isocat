@@ -8,7 +8,7 @@
 #' @param rename Character value to append to raster name (e.g. "_quantileSimulation"). Defaults to FALSE.
 #' @param rescale If rescale = TRUE, returns surface showing proportion of times each surface cell value fell within the validation quantiles distribution. If rescale = FALSE, returns discrete number of times the cell fell within the distribution.
 #'
-#' @return Returns rasterLayer rescaled to quantile values.
+#' @return Returns RasterLayer rescaled to quantile values.
 #'
 #'
 #' @examples

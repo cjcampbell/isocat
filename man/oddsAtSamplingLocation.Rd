@@ -7,12 +7,12 @@
 oddsAtSamplingLocation(indivraster, Lat, Lon)
 }
 \arguments{
-\item{indivraster}{rasterlayer representing normalized probability of origin surface}
+\item{indivraster}{Rasterlayer representing normalized probability of origin surface}
 
 \item{Lat}{Integer latitude}
 
 \item{Lon}{Integer longitude}
 }
 \description{
-Function estimates percentile of each non-NA value within a rasterLayer using the empirical cumulative distribution function, and extracts value at location specified. For more information, see help(ecdf).
+Function estimates percentile of each non-NA value within a RasterLayer using the empirical cumulative distribution function, and extracts value at location specified. For more information, see help(ecdf).
 }

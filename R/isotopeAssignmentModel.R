@@ -6,8 +6,8 @@
 #' @param SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
 #' @param precip_raster precipitation isoscape raster.
 #' @param precip_SD_raster precipitation isoscape standard deviation raster.
-#' @param additionalModel optional additional model raster (e.g. an SDM or rasterized rangemap). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.
-#' @param savePath If specified, function will save results to this path as a .grd.
+#' @param additionalModel optional additional model raster (e.g. an SDM, rasterized range map). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.
+#' @param savePath If specified, function will save results to this path as a '.grd' file.
 #' @param nClusters integer of cores to run in parallel with doParallel. Default FALSE.
 #'
 #' @importFrom foreach foreach

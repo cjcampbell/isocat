@@ -5,7 +5,7 @@
 #' @param probabilitySurface Normalized probability surface RasterLayer
 #' @param rename Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.
 #'
-#' @return Returns rasterLayer rescaled to Odds Ratio values.
+#' @return Returns RasterLayer rescaled to Odds Ratio values.
 #'
 #' @importFrom magrittr %>%
 #'

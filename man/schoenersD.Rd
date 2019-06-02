@@ -2,25 +2,25 @@
 % Please edit documentation in R/schoenersD.R
 \name{schoenersD}
 \alias{schoenersD}
-\title{Calculates Schoener's D-value between two rasterLayers.}
+\title{Calculates Schoener's D-value between two RasterLayers.}
 \usage{
 schoenersD(rast1, rast2)
 }
 \arguments{
-\item{rast1}{Input rasterlayer}
+\item{rast1}{Input Rasterlayer}
 
-\item{rast2}{Input rasterlayer 2}
+\item{rast2}{Input Rasterlayer 2}
 }
 \description{
 RasterLayers must have identical resolutions and extents.
 }
 \details{
-Applies pairwise comparisons of scheoner's D-metric amongst each rasterLayer in a RasterStack to populate a similarity matrix.
+Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
 }
 \examples{
 # Generate example probability surfaces.
-myiso <- rasterFromXYZ(isoscape)
-myiso_sd <- rasterFromXYZ(isoscape_sd)
+myiso <- RasterFromXYZ(isoscape)
+myiso_sd <- RasterFromXYZ(isoscape_sd)
 df <- data.frame(
         ID = c(-100, -80, -50),
         isotopeValue = c(-100, -80, -50),
@@ -30,8 +30,8 @@ assignmentModels <- isotopeAssignmentModel(
         ID = df$ID,
         isotopeValue = df$isotopeValue,
         SD_indv = df$SD_indv,
-        precip_raster = myiso,
-        precip_SD_raster = myiso_sd,
+        precip_Raster = myiso,
+        precip_SD_Raster = myiso_sd,
         nClusters = FALSE
         )
 

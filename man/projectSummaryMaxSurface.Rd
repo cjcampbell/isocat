@@ -13,7 +13,7 @@ projectSummaryMaxSurface(surfaces, nClust = FALSE)
 }
 \description{
 Create a summary surface showing which RasterLayer in a Stack has the highest value at a given location.
-For each cell in a RasterStack, this function returns the identity of the RasterLayer with the highest value at that cel.
+For each cell in a RasterStack, this function returns the identity of the RasterLayer with the highest value at that cell.
 This surface is intended as a visual summary of common origins, not a basis for quantitative analysis.
 }
 \examples{

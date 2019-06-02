@@ -1,8 +1,8 @@
 #' Quantile at coordinates function
 #'
-#' Function estimates percentile of each non-NA value within a rasterLayer using the empirical cumulative distribution function, and extracts value at location specified.
+#' Function estimates percentile of each non-NA value within a RasterLayer using the empirical cumulative distribution function, and extracts value at location specified.
 #' For more information, see help(ecdf).
-#' @param indivraster rasterlayer representing normalized probability of origin surface
+#' @param indivraster A Rasterlayer representing normalized probability of origin surface
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
 #'

@@ -57,7 +57,7 @@ df <- data.frame(
   )
 kableExtra::kable(df)
 
-## ----prob_of_orgin_surface, fig.width=6, fig.height=6--------------------
+## ----prob_of_orgin_surface, fig.width=6, fig.height=3--------------------
 assignmentModels <- isotopeAssignmentModel(
   ID = df$ID,
   isotopeValue = df$isotopeValue, 

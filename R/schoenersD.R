@@ -1,15 +1,15 @@
-#' Calculates Schoener's D-value between two rasterLayers.
+#' Calculates Schoener's D-value between two RasterLayers.
 #'
 #' RasterLayers must have identical resolutions and extents.
 #'
-#' Applies pairwise comparisons of scheoner's D-metric amongst each rasterLayer in a RasterStack to populate a similarity matrix.
-#' @param rast1 Input rasterlayer
-#' @param rast2 Input rasterlayer 2
+#' Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
+#' @param rast1 Input Rasterlayer
+#' @param rast2 Input Rasterlayer 2
 #'
 #' @examples
 #' # Generate example probability surfaces.
-#' myiso <- rasterFromXYZ(isoscape)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso <- RasterFromXYZ(isoscape)
+#' myiso_sd <- RasterFromXYZ(isoscape_sd)
 #' df <- data.frame(
 #'         ID = c(-100, -80, -50),
 #'         isotopeValue = c(-100, -80, -50),
@@ -19,8 +19,8 @@
 #'         ID = df$ID,
 #'         isotopeValue = df$isotopeValue,
 #'         SD_indv = df$SD_indv,
-#'         precip_raster = myiso,
-#'         precip_SD_raster = myiso_sd,
+#'         precip_Raster = myiso,
+#'         precip_SD_Raster = myiso_sd,
 #'         nClusters = FALSE
 #'         )
 #'

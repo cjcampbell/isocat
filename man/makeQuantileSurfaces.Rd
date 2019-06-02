@@ -12,7 +12,7 @@ makeQuantileSurfaces(probabilitySurface, rename = FALSE)
 \item{rename}{Character value to append to raster name (e.g. "_quantile"). Defaults to FALSE.}
 }
 \value{
-Returns rasterLayer rescaled to quantile values.
+Returns RasterLayer rescaled to quantile values.
 }
 \description{
 Converts normalized probability surface (e.g. one layer output of

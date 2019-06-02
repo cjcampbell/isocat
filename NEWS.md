@@ -5,10 +5,13 @@
 * Updated data file to realistic isoscape standard deviations.
 * Fixed dependency / import issues throughout.
 * Adjusted file names for cross-platform compatibility.
-* Replaced references to superceded `snow` package with calls to `parallel`.
+* Replaced references to superseded `snow` package with calls to `parallel`.
 
 ## Vignette updated
 * Vignette updated, TODO's resolved.
+
+## Minor Tweaks
+* Resolved spelling issues throughout package.
 
 # isocat 0.2.2
 
@@ -16,7 +19,7 @@
 * Added vignette with descriptions and example applications of all functions.
 
 ## New Functions
-* New suite of functions for workng with cumulative sums: `cumsumbelow`, `makeCumSumSurface`, `cumsumAtSamplingLocation`.
+* New suite of functions for working with cumulative sums: `cumsumbelow`, `makeCumSumSurface`, `cumsumAtSamplingLocation`.
 * Added a `meanAggregateClusterProbability` function to create mean probability-of-origin map based on cluster assignments (for individuals of similar origin).
 * Added `projectSummarySurface` function to show which RasterLayer in a stack has highest value at any given location.
 
