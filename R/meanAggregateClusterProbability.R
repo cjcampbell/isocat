@@ -9,6 +9,7 @@
 #' @importFrom raster "calc"
 #'
 #' @examples
+#' \dontrun{
 #' # Create and cluster example assignment surfaces.
 #' myiso <- rasterFromXYZ(isoscape)
 #' myiso_sd <- rasterFromXYZ(isoscape_sd)
@@ -33,14 +34,14 @@
 #' # Cut clusters.
 #' myheight <- 0.25
 #' df$cluster <- dendextend::cutree(cS$hclust, h = myheight)
-#' # Create mean aggregate surfaces.
+#' # Create mean aggregate surfaces.r p
 #' meanSurfaces <- meanAggregateClusterProbability(
 #'          indivIDs = df$ID,
 #'          clusters = df$cluster,
 #'          surfaces = assignmentModels,
 #'          nClust = FALSE
 #'          )
-#'
+#'}
 #' @export meanAggregateClusterProbability
 
 
