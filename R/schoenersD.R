@@ -19,8 +19,8 @@
 #'         ID = df$ID,
 #'         isotopeValue = df$isotopeValue,
 #'         SD_indv = df$SD_indv,
-#'         precip_Raster = myiso,
-#'         precip_SD_Raster = myiso_sd,
+#'         precip_raster = myiso,
+#'         precip_SD_raster = myiso_sd,
 #'         nClusters = FALSE
 #'         )
 #'
