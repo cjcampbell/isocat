@@ -5,6 +5,7 @@
 * Updated data file to realistic isoscape standard deviations.
 * Fixed dependency / import issues throughout.
 * Adjusted file names for cross-platform compatibility.
+* Replaced references to superceded `snow` package with calls to `parallel`.
 
 ## Vignette updated
 * Vignette updated, TODO's resolved.

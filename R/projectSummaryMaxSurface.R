@@ -5,7 +5,7 @@
 #' This surface is intended as a visual summary of common origins, not a basis for quantitative analysis.
 #'
 #' @param surfaces Object of class "RasterStack", where each layer represents a probability-of-origin surface
-#' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `snow` packages. Defaults to `FALSE` (i.e., no clustering).
+#' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `parallel` packages. Defaults to `FALSE` (i.e., no clustering).
 #'
 #' @importFrom raster calc
 #'

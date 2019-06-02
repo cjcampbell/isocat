@@ -4,7 +4,7 @@
 #' @param indivIDs Vector of individual ID variables corresponding to surface names.
 #' @param clusters Vector of cluster IDs, in an order corresponding to `indivIDs`.
 #' @param surfaces Stack of probability-of-origin surfaces for all individuals. Object of class 'RasterStack.'
-#' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `snow` packages. Defaults to `FALSE` (i.e., no clustering).
+#' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `parallel` packages. Defaults to `FALSE` (i.e., no clustering).
 #'
 #' @importFrom raster "calc"
 #'
