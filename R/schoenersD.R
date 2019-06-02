@@ -3,13 +3,13 @@
 #' RasterLayers must have identical resolutions and extents.
 #'
 #' Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
-#' @param rast1 Input Rasterlayer
-#' @param rast2 Input Rasterlayer 2
+#' @param rast1 Input RasterLayer
+#' @param rast2 Input RasterLayer 2
 #'
 #' @examples
 #' # Generate example probability surfaces.
-#' myiso <- RasterFromXYZ(isoscape)
-#' myiso_sd <- RasterFromXYZ(isoscape_sd)
+#' myiso <- raster::rasterFromXYZ(isoscape)
+#' myiso_sd <- raster::rasterFromXYZ(isoscape_sd)
 #' df <- data.frame(
 #'         ID = c(-100, -80, -50),
 #'         isotopeValue = c(-100, -80, -50),

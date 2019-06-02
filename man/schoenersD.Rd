@@ -7,9 +7,9 @@
 schoenersD(rast1, rast2)
 }
 \arguments{
-\item{rast1}{Input Rasterlayer}
+\item{rast1}{Input RasterLayer}
 
-\item{rast2}{Input Rasterlayer 2}
+\item{rast2}{Input RasterLayer 2}
 }
 \description{
 RasterLayers must have identical resolutions and extents.
@@ -19,8 +19,8 @@ Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in 
 }
 \examples{
 # Generate example probability surfaces.
-myiso <- RasterFromXYZ(isoscape)
-myiso_sd <- RasterFromXYZ(isoscape_sd)
+myiso <- raster::rasterFromXYZ(isoscape)
+myiso_sd <- raster::rasterFromXYZ(isoscape_sd)
 df <- data.frame(
         ID = c(-100, -80, -50),
         isotopeValue = c(-100, -80, -50),
