@@ -23,7 +23,7 @@ For more information, and for reproducible examples, please see `isocat`'s vigne
 
 # Installation
 
-`isocat` is currently available on github. To install without a vignette, use the following code:
+`isocat` is currently available on GitHub. To install without a vignette, use the following code:
 `devtools::install_github("cjcampbell/isocat")`
 
 The `isocat` package provides multiple tools in `R` for creating and quantitatively analyzing and summarizing probability-of-origin surfaces generated from stable isotope analyses of animal tissue.

@@ -1,7 +1,7 @@
 #' Calculate model precision at given threshold values (in parallel).
 #'
 #' Function that counts cells (number and proportion) above given values.
-#' @param rasterstack rasterStack of probability surfaces
+#' @param rasterstack RasterStack of probability surfaces
 #' @param checkVals vector of numeric 'threshold' values against which to calculate precision
 #' @param method is FALSE by default. If character vector, appends a column recording 'method' used.
 #' @param nCluster is a numeric object specifying how many clusters to form and run in parallel.
@@ -16,7 +16,7 @@ getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 2
 
   n <- NULL
 
-  # Iterate for each rasterstack layer:
+  # Iterate for each RasterStack layer:
   cl <- parallel::makeCluster(nCluster); doParallel::registerDoParallel(cl); getcells <- foreach(
     n = 1:raster::nlayers(rasterstack),
     .verbose = T,

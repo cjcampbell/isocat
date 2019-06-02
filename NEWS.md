@@ -11,7 +11,8 @@
 * Vignette updated, TODO's resolved.
 
 ## Minor Tweaks
-* Resolved spelling issues throughout package.
+* Resolved spelling errors throughout package.
+
 
 # isocat 0.2.2
 
@@ -29,16 +30,14 @@
 * Replaced buggy `projectCluster` function with alternative function (`projectSummarySurface`; see `isocat` vignette).
 
 
-
 # isocat 0.2.1
 
 ## New Functions
 * Added a `schoenersD` function that compares the spatial similarity of two surfaces.
 * Added a `makeQuantileSimulationSurface` function that converts a surface to a quantile-simulation surface.
 
-
 ## Minor Tweaks
-* Improved code readibility within several functions.
+* Improved code readability within several functions.
 
 
 # isocat 0.2.0

@@ -7,7 +7,7 @@
 getPrecisionPar(rasterstack, checkVals, method = FALSE, nCluster = 20)
 }
 \arguments{
-\item{rasterstack}{rasterStack of probability surfaces}
+\item{rasterstack}{RasterStack of probability surfaces}
 
 \item{checkVals}{vector of numeric 'threshold' values against which to calculate precision}
 

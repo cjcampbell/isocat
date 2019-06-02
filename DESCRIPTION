@@ -7,6 +7,7 @@ Maintainer: Caitlin J. Campbell <caitjcampbell@gmail.com>
 Description: This resource provides tools to create, compare, and post-process spatial isotope assignment models of animal origin.
 License: CC0
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 RoxygenNote: 6.1.1
 Depends:
