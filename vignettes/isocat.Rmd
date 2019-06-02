@@ -103,7 +103,7 @@ kableExtra::kable(df)
 
 The contents of these columns are passed to the function `isotopeAssignmentModel` as vectors, along with the object names of isoscape and isoscape-SD objects. If parallel processing is specified, the function creates and deploys clusters using the `doParallel` package. The output is a rasterStack with layers named corresponding to the individual IDs.
 
-```{r prob_of_orgin_surface, fig.width=6, fig.height=6}
+```{r prob_of_orgin_surface, fig.width=6, fig.height=3}
 assignmentModels <- isotopeAssignmentModel(
   ID = df$ID,
   isotopeValue = df$isotopeValue, 
