@@ -3,6 +3,5 @@
 ^.*\.tar.gz$
 oldFxns/*
 setup_data/*
-vignettes/isocat_cache/*
 ^README\.Rmd$
 ^cran-comments\.md$
