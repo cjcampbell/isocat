@@ -11,7 +11,9 @@
 * Vignette updated, TODO's resolved.
 
 ## Minor Tweaks
+* Expanded DESCRIPTION metadata.
 * Resolved spelling errors throughout package.
+* Fixed broken/suspect email and IsoMAP links
 
 
 # isocat 0.2.2

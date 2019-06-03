@@ -1,7 +1,7 @@
 ---
 title: "Overview of package `isocat` (Isotope Clustering and Assignment Tools)"
 author: "Caitlin J. Campbell"
-date: "2019-06-02"
+date: "2019-06-03"
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -14,7 +14,7 @@ vignette: >
 
 
 
-**Contact Information:** Caitlin J. Campbell ([caitjcampbell@gmail.com](caitjcampbell@gmail.com))
+**Contact Information:** Caitlin J. Campbell (<caitjcampbell@gmail.com>)
 
 
 # Overview

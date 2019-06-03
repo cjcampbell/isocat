@@ -32,7 +32,7 @@ library(dplyr)
 
 ```
 
-**Contact Information:** Caitlin J. Campbell ([caitjcampbell@gmail.com](caitjcampbell@gmail.com))
+**Contact Information:** Caitlin J. Campbell (<caitjcampbell@gmail.com>)
 
 
 # Overview

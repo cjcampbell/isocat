@@ -36,23 +36,23 @@ gglayers <-  list(
   scale_y_continuous(name = "Lat", expand = c(0,0))
 )
 lab1 <- list(
-  gglayers,
+  gglayers, 
   scale_fill_gradient(name = expression(paste(delta, "D (\u2030)")), low = 'grey10', high = 'grey90')
   )
 
-gridExtra::grid.arrange(
-  gplot(myiso) + lab1 + ggtitle("Example Isoscape"),
+gridExtra::grid.arrange( 
+  gplot(myiso) + lab1 + ggtitle("Example Isoscape"), 
   gplot(myiso_sd) + lab1 + ggtitle("Standard Deviation"),
   ncol = 2
   )
-
+  
 
 ## ----example_dataframe---------------------------------------------------
-n <- 6 # Number of example RasterLayers
+n <- 6 # Number of example rasters
 set.seed(1)
 df <- data.frame(
-  ID = LETTERS[1:n],
-  isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = T),
+  ID = LETTERS[1:n], 
+  isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = T), 
   SD_indv = rep(5, n)
   )
 kableExtra::kable(df)
@@ -60,23 +60,23 @@ kableExtra::kable(df)
 ## ----prob_of_orgin_surface, fig.width=6, fig.height=3--------------------
 assignmentModels <- isotopeAssignmentModel(
   ID = df$ID,
-  isotopeValue = df$isotopeValue,
-  SD_indv = df$SD_indv,
-  precip_raster = myiso,
-  precip_SD_raster = myiso_sd,
+  isotopeValue = df$isotopeValue, 
+  SD_indv = df$SD_indv, 
+  precip_raster = myiso, 
+  precip_SD_raster = myiso_sd, 
   nClusters = FALSE
   )
 
 # Plot.
 ggProb <- list(
   facet_wrap(~ variable),
-  scale_fill_gradient(name = "Probability\nOf Origin", low = 'darkblue', high = 'yellow')
+  scale_fill_gradient(name = "Probability\nOf Origin", low = 'darkblue', high = 'yellow') 
   )
 
 gplot(assignmentModels) + gglayers + ggProb
 
 ## ----schoenersD----------------------------------------------------------
-# Calculate Schoener's D-metric of spatial similarity between
+# Calculate Schoener's D-metric of spatial similarity between 
 # two of the example probability surfaces.
 
 schoenersD(assignmentModels[[1]], assignmentModels[[2]])
@@ -95,9 +95,9 @@ mySimilarityMatrix
 ## ----clusterSimmatrix, warning = F---------------------------------------
 cS <- clusterSimmatrix(
   simmatrix = mySimilarityMatrix,
-  dist_mthd = "correlation",
+  dist_mthd = "correlation", 
   hclust_mthd = "average",
-  nBoot = 1000,
+  nBoot = 1000,  
   nClusters = FALSE,
   r = seq(.7,1.4,by=.1)
   )
@@ -118,11 +118,11 @@ df$cluster <- dendextend::cutree(cS$hclust, h = myheight)
 kableExtra::kable(df)
 
 ## ----Create_mean_aggregate_surfaces--------------------------------------
-meanSurfaces <- meanAggregateClusterProbability(
-  indivIDs = df$ID,
-  clusters = df$cluster,
-  surfaces = assignmentModels,
-  nClust = FALSE
+meanSurfaces <- meanAggregateClusterProbability( 
+  indivIDs = df$ID, 
+  clusters = df$cluster, 
+  surfaces = assignmentModels, 
+  nClust = FALSE 
   )
 
 gplot(meanSurfaces) + gglayers + ggProb
@@ -130,7 +130,7 @@ gplot(meanSurfaces) + gglayers + ggProb
 ## ----summary_surface-----------------------------------------------------
 summaryMap <- projectSummaryMaxSurface(surfaces = meanSurfaces, nClust = FALSE)
 
-gplot(summaryMap) +
+gplot(summaryMap) + 
   gglayers +
   scale_fill_viridis_c(name = "Cluster")
 
@@ -138,10 +138,10 @@ gplot(summaryMap) +
 set.seed(42)
 p <- isotopeAssignmentModel(
   ID = "Example",
-  isotopeValue = sample(-125:-25, 1),
-  SD_indv = 5,
-  precip_raster = myiso,
-  precip_SD_raster = myiso_sd,
+  isotopeValue = sample(-125:-25, 1), 
+  SD_indv = 5, 
+  precip_raster = myiso, 
+  precip_SD_raster = myiso_sd, 
   nClusters = FALSE
   )[[1]]
 
@@ -149,7 +149,7 @@ p <- isotopeAssignmentModel(
 pt <- data.frame(x = -100, y = 40)
 ptDeets <- list(
   geom_point(
-    data = pt,
+    data = pt, 
     col = "red", shape = 1, size = 2,
     aes(x = x, y = y)
     )
@@ -157,7 +157,7 @@ ptDeets <- list(
 
 ex_plot <- gplot(p) + gglayers + ggProb + ptDeets
 
-ex_hist <- data.frame(x = p[]) %>%
+ex_hist <- data.frame(x = p[]) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -165,18 +165,18 @@ ex_hist <- data.frame(x = p[]) %>%
   theme_bw() +
   geom_vline(aes(xintercept = extract(p, pt)), linetype = "dashed", col = "red")
 
-gridExtra::grid.arrange(ex_plot, ex_hist, ncol = 2, widths = c(2,1))
+gridExtra::grid.arrange(ex_plot, ex_hist, ncol = 2, widths = c(2,1)) 
 
 ## ----make_cumulative_sum_surface, eval = T-------------------------------
 CumSumEx <- makecumsumSurface(p)
 
 ## ----plot_cumulative_sum_surface, eval = T-------------------------------
-cumsum_plot <- gplot(CumSumEx) +
+cumsum_plot <- gplot(CumSumEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
-    name = "Cumulative Sum\nProbability\nOf Origin", low = 'darkblue', high = 'yellow')
+    name = "Cumulative Sum\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-cumsum_hist <- data.frame(x = CumSumEx[]) %>%
+cumsum_hist <- data.frame(x = CumSumEx[]) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -184,18 +184,18 @@ cumsum_hist <- data.frame(x = CumSumEx[]) %>%
   theme_bw() +
   geom_vline(aes(xintercept = extract(CumSumEx, pt)), linetype = "dashed", col = "red")
 
-gridExtra::grid.arrange( cumsum_plot, cumsum_hist, ncol = 2, widths = c(2,1) )
+gridExtra::grid.arrange( cumsum_plot, cumsum_hist, ncol = 2, widths = c(2,1) ) 
 
 ## ----odds_ratio_surface, eval = T----------------------------------------
 OddsRatioEx <- makeOddsSurfaces(p)
 
 ## ----eval_odds_ratio_surface---------------------------------------------
-odds_plot <- gplot(OddsRatioEx) +
+odds_plot <- gplot(OddsRatioEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
-    name = "Odds-Ratio\nProbability\nOf Origin", low = 'darkblue', high = 'yellow')
+    name = "Odds-Ratio\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-odds_hist <- data.frame(x = OddsRatioEx[]) %>%
+odds_hist <- data.frame(x = OddsRatioEx[]) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -203,18 +203,18 @@ odds_hist <- data.frame(x = OddsRatioEx[]) %>%
   theme_bw() +
   geom_vline(aes(xintercept = extract(OddsRatioEx, pt)), linetype = "dashed", col = "red")
 
-gridExtra::grid.arrange( odds_plot, odds_hist, ncol = 2, widths = c(2,1) )
+gridExtra::grid.arrange( odds_plot, odds_hist, ncol = 2, widths = c(2,1) ) 
 
 ## ----quantile_surface, eval = T------------------------------------------
 QuantileEx <- makeQuantileSurfaces(p)
 
 ## ----eval_quantile_surface-----------------------------------------------
-quantile_plot <- gplot(QuantileEx) +
+quantile_plot <- gplot(QuantileEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
-    name = "Quantile\nProbability\nOf Origin", low = 'darkblue', high = 'yellow')
+    name = "Quantile\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-quantile_hist <- data.frame(x = QuantileEx[]) %>%
+quantile_hist <- data.frame(x = QuantileEx[]) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -222,7 +222,7 @@ quantile_hist <- data.frame(x = QuantileEx[]) %>%
   theme_bw() +
   geom_vline(aes(xintercept = extract(QuantileEx, pt)), linetype = "dashed", col = "red")
 
-gridExtra::grid.arrange( quantile_plot, quantile_hist, ncol = 2, widths = c(2,1) )
+gridExtra::grid.arrange( quantile_plot, quantile_hist, ncol = 2, widths = c(2,1) ) 
 
 ## ----quantsim_values, eval = T-------------------------------------------
 q <- rweibull(20000, 6, .98)
@@ -231,18 +231,18 @@ hist(q)
 
 ## ----quantsim_surface, eval = T------------------------------------------
 QuantSimEx <- makeQuantileSimulationSurface(
-  probabilitySurface = p,
+  probabilitySurface = p, 
   ValidationQuantiles = q,
   rename = FALSE, rescale = TRUE
   )
 
 ## ----eval_quantsim_surface, eval = T-------------------------------------
-quantsim_plot <- gplot(QuantSimEx) +
+quantsim_plot <- gplot(QuantSimEx) + 
   gglayers + ptDeets +
   scale_fill_gradient(
-    name = "Quantile-Simulation\nProbability\nOf Origin", low = 'darkblue', high = 'yellow')
+    name = "Quantile-Simulation\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-quantsim_hist <- data.frame(x = QuantSimEx[]) %>%
+quantsim_hist <- data.frame(x = QuantSimEx[]) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -250,5 +250,5 @@ quantsim_hist <- data.frame(x = QuantSimEx[]) %>%
   theme_bw() +
   geom_vline(aes(xintercept = extract(QuantSimEx, pt)), linetype = "dashed", col = "red")
 
-gridExtra::grid.arrange( quantsim_plot, quantsim_hist, ncol = 2, widths = c(2,1) )
+gridExtra::grid.arrange( quantsim_plot, quantsim_hist, ncol = 2, widths = c(2,1) ) 
 
