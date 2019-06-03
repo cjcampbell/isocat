@@ -7,7 +7,7 @@
 quantileAtSamplingLocation(indivraster, Lat, Lon)
 }
 \arguments{
-\item{indivraster}{A Rasterlayer representing normalized probability of origin surface}
+\item{indivraster}{A RasterLayer representing normalized probability of origin surface}
 
 \item{Lat}{Integer latitude}
 
