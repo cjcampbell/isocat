@@ -32,7 +32,6 @@ Imports:
   magrittr,
   foreach
 Suggests:
-	ClusterR,
 	dendextend,
 	doParallel,
 	ggplot2,
