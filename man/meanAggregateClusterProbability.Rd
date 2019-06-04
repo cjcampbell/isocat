@@ -20,7 +20,7 @@ meanAggregateClusterProbability(indivIDs, clusters, surfaces,
 Subset probability-of-origin surfaces by cluster assignment and find mean aggregate probability-of-origin surface for each clustered group.
 }
 \examples{
-\dontrun{
+\donttest{
 # Create and cluster example assignment surfaces.
 myiso <- rasterFromXYZ(isoscape)
 myiso_sd <- rasterFromXYZ(isoscape_sd)

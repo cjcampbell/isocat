@@ -9,7 +9,7 @@
 #' @importFrom raster "calc"
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Create and cluster example assignment surfaces.
 #' myiso <- rasterFromXYZ(isoscape)
 #' myiso_sd <- rasterFromXYZ(isoscape_sd)

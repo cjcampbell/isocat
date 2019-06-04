@@ -133,11 +133,11 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
 
   if(savePath != FALSE){
     raster::writeRaster(x = stackOfAssignments,
-                filename = paste0(savePath, "IsotopeAssignments.grd"), format = "raster",
+                filename = file.path(savePath, "IsotopeAssignments.grd"), format = "raster",
                 overwrite = TRUE)
     if(class(additionalModel) == "RasterLayer"){
       raster::writeRaster(x = stackOfCombinations,
-                  filename = paste0(savePath, "CombinedIsotope-OtherModelAssignments.grd"), format = "raster",
+                  filename = file.path(savePath, "CombinedIsotope-OtherModelAssignments.grd"), format = "raster",
                   overwrite = TRUE)
     }
     return("Success!")

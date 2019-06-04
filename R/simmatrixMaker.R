@@ -95,7 +95,7 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
   }
 
   if(csvSavePath != FALSE){
-    utils::write.csv(x, file = paste0(csvSavePath, "PairwiseComparisonMatrix.csv"))
+    utils::write.csv(x, file = file.path(csvSavePath, "PairwiseComparisonMatrix.csv"))
   }
   return(x)
 }

@@ -14,6 +14,7 @@
 * Expanded DESCRIPTION metadata.
 * Resolved spelling errors throughout package.
 * Fixed broken/suspect email and IsoMAP links
+* Corrected donttest wrappers on long analyses
 
 
 # isocat 0.2.2
