@@ -69,13 +69,15 @@ clusterSimmatrix <- function(simmatrix,
       cl <- FALSE
     }
 
-  result_ave <- pvclust::pvclust(
-    data = data.matrix(simmatrix),
-    method.hclust = hclust_mthd,
-    method.dist = dist_mthd,
-    nboot = nBoot,
-    r = seq(.7,1.4,by=.1),
-    parallel = cl
+  suppressWarnings(
+    result_ave <- pvclust::pvclust(
+      data = data.matrix(simmatrix),
+      method.hclust = hclust_mthd,
+      method.dist = dist_mthd,
+      nboot = nBoot,
+      r = seq(.7,1.4,by=.1),
+      parallel = cl
+    )
   )
 
   if(nClusters != FALSE){
