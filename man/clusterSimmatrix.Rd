@@ -24,3 +24,35 @@ clusterSimmatrix(simmatrix, dist_mthd = "correlation",
 \description{
 Function applies hierarchical clustering analysis to similarity matrix, such as one output by 'simmatrixMaker' function. Just a wrapper for pvclust. Output is a pvclust object.
 }
+\examples{
+\donttest{
+# Create probability-of-origin maps to compare.
+myiso <- rasterFromXYZ(isoscape)
+raster::plot(myiso)
+myiso_sd <- rasterFromXYZ(isoscape_sd)
+n <- 5
+set.seed(42)
+df <- data.frame(
+         ID = LETTERS[1:n],
+         isotopeValue = sample(-120:-40, n),
+         SD_indv = rep(5, n)
+         )
+assignmentModels <- isotopeAssignmentModel(
+                        ID = df$ID,
+                        isotopeValue = df$isotopeValue,
+                        SD_indv = df$SD_indv,
+                        precip_raster = myiso,
+                        precip_SD_raster = myiso_sd,
+                        nClusters = FALSE
+                        )
+raster::plot(assignmentModels)
+# Compare maps with simmatrixMaker.
+mymatrix <- simmatrixMaker(assignmentModels, nClusters = FALSE, csvSavePath = FALSE)
+# Cluster similarity matrix.
+clust_results <- clusterSimmatrix(mymatrix, dist_mthd = "correlation",
+    hclust_mthd = "average", nBoot = 1000,  nClusters = FALSE,
+    r = seq(.7,1.4,by=.1) )
+clust_results
+}
+
+}

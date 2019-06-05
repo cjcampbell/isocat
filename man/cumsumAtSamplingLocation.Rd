@@ -16,3 +16,22 @@ cumsumAtSamplingLocation(indivraster, Lat, Lon)
 \description{
 Function estimates cumulative sum of all values in a surface below the value at a specified longitude and latitude.
 }
+\examples{
+# Generate example probability surface.
+myiso <- raster::rasterFromXYZ(isoscape)
+myiso_sd <- rasterFromXYZ(isoscape_sd)
+exampleSurface <- isotopeAssignmentModel(
+         ID = "A",
+         isotopeValue = -100,
+         SD_indv = 5,
+         precip_raster = myiso,
+         precip_SD_raster = myiso_sd,
+         nClusters = FALSE
+         )
+# Calculate odds ratio at specific point.
+set.seed(1)
+x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
+pt <- raster::xyFromCell(exampleSurface, x)
+cumsumAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])
+
+}

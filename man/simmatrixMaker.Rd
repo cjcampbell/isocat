@@ -17,3 +17,29 @@ simmatrixMaker(assignmentRasters, nClusters = FALSE,
 \description{
 Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
 }
+\examples{
+# Create probability-of-origin maps to compare.
+myiso <- rasterFromXYZ(isoscape)
+raster::plot(myiso)
+myiso_sd <- rasterFromXYZ(isoscape_sd)
+n <- 5
+set.seed(42)
+df <- data.frame(
+         ID = LETTERS[1:n],
+         isotopeValue = sample(-120:-40, n),
+         SD_indv = rep(5, n)
+         )
+assignmentModels <- isotopeAssignmentModel(
+                        ID = df$ID,
+                        isotopeValue = df$isotopeValue,
+                        SD_indv = df$SD_indv,
+                        precip_raster = myiso,
+                        precip_SD_raster = myiso_sd,
+                        nClusters = FALSE
+                        )
+raster::plot(assignmentModels)
+# Compare maps with simmatrixMaker.
+simmatrixMaker(assignmentModels, nClusters = FALSE, csvSavePath = FALSE)
+
+
+}

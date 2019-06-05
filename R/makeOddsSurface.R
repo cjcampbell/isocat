@@ -33,8 +33,7 @@
 #'    )
 #' plot(odds_ratio_surface)
 #'
-#' @export makeOddsSurfaces
-
+#' @export
 makeOddsSurfaces <- function(probabilitySurface, rename = FALSE){
   p <- probabilitySurface
   odds_r <- (p/(1-p))/(raster::maxValue(p)/(1-raster::maxValue(p)))

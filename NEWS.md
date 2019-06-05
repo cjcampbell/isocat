@@ -12,9 +12,10 @@
 
 ## Minor Tweaks
 * Expanded DESCRIPTION metadata.
-* Resolved spelling errors throughout package.
+* Resolved spelling errors and improved style throughout package.
 * Fixed broken/suspect email and IsoMAP links
 * Corrected donttest wrappers on long analyses
+* Added examples to several functions
 
 
 # isocat 0.2.2
