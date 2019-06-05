@@ -41,8 +41,8 @@ The vignette requires the certain packages to be installed in order to compile. 
 vignettePackages <- c("kableExtra", "pvclust", "rasterVis", "ggplot2", "viridisLite", "gridExtra", "dplyr", "dendextend", "isocat")
 
 lapply(vignettePackages, function(pckg) {
-    if (!require(pckg, character.only = T, quietly = F)) {
-      install.packages(x, dependencies = T)
+    if (!require(pckg, character.only = TRUE, quietly = FALSE)) {
+      install.packages(x, dependencies = TRUE)
       require(pckg)
     }
   })

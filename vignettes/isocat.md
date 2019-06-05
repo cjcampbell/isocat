@@ -1,7 +1,7 @@
 ---
 title: "Overview of package `isocat` (Isotope Clustering and Assignment Tools)"
 author: "Caitlin J. Campbell"
-date: "2019-06-03"
+date: "2019-06-05"
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -45,7 +45,9 @@ myiso_sd <- rasterFromXYZ(isoscape_sd)
 ```
 
 ```r
-library(ggplot2, quietly = T); library(rasterVis, quietly = T); library(gridExtra, quietly = T)
+library(ggplot2,   quietly = TRUE)
+library(rasterVis, quietly = TRUE)
+library(gridExtra, quietly = TRUE)
 gglayers <-  list(
   geom_tile(aes(fill = value)),
   coord_equal(),
@@ -83,7 +85,7 @@ n <- 6 # Number of example rasters
 set.seed(1)
 df <- data.frame(
   ID = LETTERS[1:n], 
-  isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = T), 
+  isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = TRUE), 
   SD_indv = rep(5, n)
   )
 kableExtra::kable(df)
@@ -254,7 +256,7 @@ To divide individuals into a discrete number of groups with common origin, one m
 ```r
 myheight <- 0.05
 
-plot(as.dendrogram(cS$hclust), horiz = F)
+plot(as.dendrogram(cS$hclust), horiz = FALSE)
 abline(h = myheight, col = "red", lwd = 2, lty = 2)
 ```
 
@@ -497,7 +499,7 @@ Simulate a distribution fit to known-origin quantile values:
 
 ```r
 q <- rweibull(20000, 6, .98)
-q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = T)
+q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = TRUE)
 hist(q)
 ```
 

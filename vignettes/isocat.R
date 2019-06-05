@@ -1,6 +1,6 @@
-## ----setup, include = FALSE, cache = F-----------------------------------
+## ----setup, include = FALSE, cache = FALSE-------------------------------
 knitr::opts_chunk$set(
-  cache = F,
+  cache = FALSE,
   collapse = TRUE,
   comment = "#>",
   fig.width = 6,
@@ -27,7 +27,9 @@ myiso <- rasterFromXYZ(isoscape)
 myiso_sd <- rasterFromXYZ(isoscape_sd)
 
 ## ----plot_isoscape_data--------------------------------------------------
-library(ggplot2, quietly = T); library(rasterVis, quietly = T); library(gridExtra, quietly = T)
+library(ggplot2,   quietly = TRUE)
+library(rasterVis, quietly = TRUE)
+library(gridExtra, quietly = TRUE)
 gglayers <-  list(
   geom_tile(aes(fill = value)),
   coord_equal(),
@@ -52,7 +54,7 @@ n <- 6 # Number of example rasters
 set.seed(1)
 df <- data.frame(
   ID = LETTERS[1:n], 
-  isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = T), 
+  isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = TRUE), 
   SD_indv = rep(5, n)
   )
 kableExtra::kable(df)
@@ -110,7 +112,7 @@ plot(hS)
 ## ----cluster_cutting_code------------------------------------------------
 myheight <- 0.05
 
-plot(as.dendrogram(cS$hclust), horiz = F)
+plot(as.dendrogram(cS$hclust), horiz = FALSE)
 abline(h = myheight, col = "red", lwd = 2, lty = 2)
 
 df$cluster <- dendextend::cutree(cS$hclust, h = myheight)
@@ -226,7 +228,7 @@ gridExtra::grid.arrange( quantile_plot, quantile_hist, ncol = 2, widths = c(2,1)
 
 ## ----quantsim_values, eval = T-------------------------------------------
 q <- rweibull(20000, 6, .98)
-q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = T)
+q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = TRUE)
 hist(q)
 
 ## ----quantsim_surface, eval = T------------------------------------------
