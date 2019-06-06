@@ -16,6 +16,7 @@
 * Fixed broken/suspect email and IsoMAP links
 * Corrected donttest wrappers on long analyses
 * Added examples to several functions
+* Switched from 'installed.packages' to '!requireNamespace' to check for package loading.
 
 
 # isocat 0.2.2
