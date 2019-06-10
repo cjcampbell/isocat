@@ -1,6 +1,9 @@
 
 # isocat 0.2.3.9000
 
+## Minor tweaks
+* Added 'additionalModel_name' argument to 'isotopeAssignmentModel'
+
 
 # isocat 0.2.3
 

@@ -7,6 +7,7 @@
 #' @param precip_raster precipitation isoscape raster.
 #' @param precip_SD_raster precipitation isoscape standard deviation raster.
 #' @param additionalModel optional additional model RasterLayer (e.g. an SDM, rasterized range map). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.
+#' @param additionalModel_name optional filename for additionalModel .grd path
 #' @param savePath If specified, function will save results to this path as a '.grd' file.
 #' @param nClusters integer of cores to run in parallel with doParallel. Default FALSE.
 #'
@@ -36,7 +37,7 @@
 #'
 #'
 
-isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, precip_SD_raster, additionalModel = FALSE, savePath = FALSE, nClusters = FALSE) {
+isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, precip_SD_raster, additionalModel = FALSE, additionalModel_name = "CombinedIsotope-OtherModelAssignments", savePath = FALSE, nClusters = FALSE) {
 
   if(missing(isotopeValue)){
     stop("isotopeValue object not found.")
@@ -86,6 +87,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
           # Bring in additionalModel
           combo_prod <- prod(assign_norm, additionalModel)
           combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
+          names(combo_norm) <- names(assign_norm)
 
           return(list(isotopeAssignments = assign_norm, comboAssignments = combo_norm))
         }
@@ -116,6 +118,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
         # Bring in additionalModel
         combo_prod <- prod(assign_norm, additionalModel)
         combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
+        names(combo_norm) <- names(assign_norm)
 
         return(list(isotopeAssignments = assign_norm, comboAssignments = combo_norm))
 
@@ -137,7 +140,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
                 overwrite = TRUE)
     if(class(additionalModel) == "RasterLayer"){
       raster::writeRaster(x = stackOfCombinations,
-                  filename = file.path(savePath, "CombinedIsotope-OtherModelAssignments.grd"), format = "raster",
+                  filename = file.path(savePath, paste0( additionalModel_name, ".grd")), format = "raster",
                   overwrite = TRUE)
     }
     return("Success!")
