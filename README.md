@@ -23,12 +23,20 @@ For more information, and for reproducible examples, please see `isocat`'s vigne
 
 # Installation
 
-`isocat` is currently available on GitHub. To install without a vignette, use the following code:
+## CRAN
+
+`isocat` is available on CRAN. Install using
+`install.packages("isocat")`
+
+
+## GitHub
+
+The development version of `isocat` is available on GitHub. To install without a vignette, use:
 `devtools::install_github("cjcampbell/isocat")`
 
 The `isocat` package provides multiple tools in `R` for creating and quantitatively analyzing and summarizing probability-of-origin surfaces generated from stable isotope analyses of animal tissue.
 
-## Vignette
+### Vignette
 
 To install `isocat` and its vignette directly from github, use the following code in R when using devtools >= 2.0.0:
 
