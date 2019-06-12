@@ -2,6 +2,7 @@
 % Please edit documentation in R/oddsAtCoordinates.R
 \name{oddsAtSamplingLocation}
 \alias{oddsAtSamplingLocation}
+\alias{odds_at_point}
 \title{Odds ratio at coordinates function}
 \usage{
 oddsAtSamplingLocation(indivraster, Lat, Lon)
@@ -34,4 +35,7 @@ x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
 pt <- raster::xyFromCell(exampleSurface, x)
 oddsAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])
 
+}
+\seealso{
+\code{\link{makeOddsSurfaces}}
 }

@@ -8,6 +8,11 @@
 #'
 #' @return Returns RasterLayer rescaled to quantile values.
 #'
+#' @aliases quantile_surface
+#'
+#' @seealso \code{\link{quantileAtSamplingLocation}}
+#'
+#'
 #'
 #' @examples
 #' # Generate example probability surfaces.
@@ -31,9 +36,7 @@
 #' quantile_surface <-  raster::stack( lapply( unstack(assignmentModels), makeQuantileSurfaces) )
 #' plot(quantile_surface)
 #'
-#' @export makeQuantileSurfaces
-#'
-
+#' @export
 makeQuantileSurfaces <- function(probabilitySurface, rename = FALSE){
   p <- probabilitySurface
 

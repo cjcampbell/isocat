@@ -2,6 +2,7 @@
 % Please edit documentation in R/CumSumSuite.R
 \name{cumsumAtSamplingLocation}
 \alias{cumsumAtSamplingLocation}
+\alias{cumsum_at_point}
 \title{Cumulative sum at coordinates}
 \usage{
 cumsumAtSamplingLocation(indivraster, Lat, Lon)
@@ -34,4 +35,7 @@ x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
 pt <- raster::xyFromCell(exampleSurface, x)
 cumsumAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])
 
+}
+\seealso{
+\code{\link{makecumsumSurface}}
 }

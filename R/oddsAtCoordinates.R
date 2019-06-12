@@ -5,6 +5,10 @@
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
 #'
+#' @aliases odds_at_point
+#'
+#' @seealso \code{\link{makeOddsSurfaces}}
+#'
 #' @importFrom raster maxValue
 #'
 #' @examples

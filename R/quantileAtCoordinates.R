@@ -6,7 +6,11 @@
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
 #'
-#'#' @examples
+#' @aliases quantile_at_point
+#'
+#' @seealso \code{\link{makeQuantileSurfaces}}
+#'
+#' @examples
 #' # Generate example probability surface.
 #' myiso <- raster::rasterFromXYZ(isoscape)
 #' myiso_sd <- rasterFromXYZ(isoscape_sd)

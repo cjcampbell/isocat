@@ -9,6 +9,10 @@
 #'
 #' @importFrom magrittr %>%
 #'
+#' @aliases odds_surface odds_surface
+#'
+#' @seealso \code{\link{oddsAtSamplingLocation}}
+#'
 #' @examples
 #' # Generate example probability surfaces.
 #' myiso <- rasterFromXYZ(isoscape)

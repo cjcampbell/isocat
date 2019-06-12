@@ -2,6 +2,7 @@
 % Please edit documentation in R/makeQuantileSurface.R
 \name{makeQuantileSurfaces}
 \alias{makeQuantileSurfaces}
+\alias{quantile_surface}
 \title{Convert probability surface to probability-quantile surface}
 \usage{
 makeQuantileSurfaces(probabilitySurface, rename = FALSE)
@@ -40,4 +41,7 @@ assignmentModels <- isotopeAssignmentModel(
 quantile_surface <-  raster::stack( lapply( unstack(assignmentModels), makeQuantileSurfaces) )
 plot(quantile_surface)
 
+}
+\seealso{
+\code{\link{quantileAtSamplingLocation}}
 }

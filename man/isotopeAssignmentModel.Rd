@@ -5,8 +5,9 @@
 \title{Isotope assignment model function}
 \usage{
 isotopeAssignmentModel(ID, isotopeValue, SD_indv, precip_raster,
-  precip_SD_raster, additionalModel = FALSE, savePath = FALSE,
-  nClusters = FALSE)
+  precip_SD_raster, additionalModel = FALSE,
+  additionalModel_name = "CombinedIsotope-OtherModelAssignments",
+  savePath = FALSE, nClusters = FALSE)
 }
 \arguments{
 \item{ID}{ID value or vector of values (for naming assignment model layers). If missing, will count from 1.}
@@ -20,6 +21,8 @@ isotopeAssignmentModel(ID, isotopeValue, SD_indv, precip_raster,
 \item{precip_SD_raster}{precipitation isoscape standard deviation raster.}
 
 \item{additionalModel}{optional additional model RasterLayer (e.g. an SDM, rasterized range map). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.}
+
+\item{additionalModel_name}{optional filename for additionalModel .grd path}
 
 \item{savePath}{If specified, function will save results to this path as a '.grd' file.}
 

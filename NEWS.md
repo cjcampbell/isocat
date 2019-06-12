@@ -3,7 +3,7 @@
 
 ## Minor tweaks
 * Added 'additionalModel_name' argument to 'isotopeAssignmentModel'
-
+* Added 'seealso' and 'alias' components to function documentation.
 
 # isocat 0.2.3
 

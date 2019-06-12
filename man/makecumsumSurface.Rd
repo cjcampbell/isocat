@@ -2,6 +2,7 @@
 % Please edit documentation in R/CumSumSuite.R
 \name{makecumsumSurface}
 \alias{makecumsumSurface}
+\alias{cumsum_surface}
 \title{Create cumulative sum probability surface}
 \usage{
 makecumsumSurface(indivraster, rescale = FALSE, rename = FALSE)
@@ -43,4 +44,7 @@ cumulative_sum_surface <- stack(
      )
 plot(cumulative_sum_surface)
 
+}
+\seealso{
+\code{\link{cumsumAtSamplingLocation}}
 }

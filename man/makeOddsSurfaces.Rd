@@ -2,6 +2,7 @@
 % Please edit documentation in R/makeOddsSurface.R
 \name{makeOddsSurfaces}
 \alias{makeOddsSurfaces}
+\alias{odds_surface}
 \title{Convert probability surface to odds-ratio surface}
 \usage{
 makeOddsSurfaces(probabilitySurface, rename = FALSE)
@@ -41,4 +42,7 @@ odds_ratio_surface <- stack(
    )
 plot(odds_ratio_surface)
 
+}
+\seealso{
+\code{\link{oddsAtSamplingLocation}}
 }

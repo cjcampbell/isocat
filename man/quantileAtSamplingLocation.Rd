@@ -2,6 +2,7 @@
 % Please edit documentation in R/quantileAtCoordinates.R
 \name{quantileAtSamplingLocation}
 \alias{quantileAtSamplingLocation}
+\alias{quantile_at_point}
 \title{Quantile at coordinates function}
 \usage{
 quantileAtSamplingLocation(indivraster, Lat, Lon)
@@ -11,9 +12,13 @@ quantileAtSamplingLocation(indivraster, Lat, Lon)
 
 \item{Lat}{Integer latitude}
 
-\item{Lon}{Integer longitude
-
-#' @examples
+\item{Lon}{Integer longitude}
+}
+\description{
+Function estimates percentile of each non-NA value within a RasterLayer using the empirical cumulative distribution function, and extracts value at location specified.
+For more information, see help(ecdf).
+}
+\examples{
 # Generate example probability surface.
 myiso <- raster::rasterFromXYZ(isoscape)
 myiso_sd <- rasterFromXYZ(isoscape_sd)
@@ -29,9 +34,10 @@ exampleSurface <- isotopeAssignmentModel(
 set.seed(1)
 x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
 pt <- raster::xyFromCell(exampleSurface, x)
-quantileAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])}
+quantileAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])
+
+
 }
-\description{
-Function estimates percentile of each non-NA value within a RasterLayer using the empirical cumulative distribution function, and extracts value at location specified.
-For more information, see help(ecdf).
+\seealso{
+\code{\link{makeQuantileSurfaces}}
 }

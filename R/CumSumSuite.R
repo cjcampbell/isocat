@@ -32,6 +32,10 @@ cumsumbelow <- function(vals){
 #'
 #' @return Returns RasterLayer rescaled to Cumulative Sum values.
 #'
+#' @aliases cumsum_surface
+#'
+#' @seealso \code{\link{cumsumAtSamplingLocation}}
+#'
 #' @inheritParams cumsumbelow
 #' @importFrom magrittr %>%
 #'
@@ -102,6 +106,8 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
 #'
+#' @aliases cumsum_at_point
+#' @seealso \code{\link{makecumsumSurface}}
 #'
 #' @examples
 #' # Generate example probability surface.
