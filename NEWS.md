@@ -1,8 +1,14 @@
 
 # isocat 0.2.3.9000
 
+## Optimize 'cumsumbelow' function
+* Function deals with NA values more efficiently.
+* When imported into `makeCumSumSurface`, function iterates faster over RasterLayers.
+* Removed dependency on `purrr::map` and pipe operators within function.
+* The `purrr` package removed from suggested packages.
+
 ## Minor tweaks
-* Added 'additionalModel_name' argument to 'isotopeAssignmentModel'
+* Added 'additionalModel_name' argument to `isotopeAssignmentModel`.
 * Added 'seealso' and 'alias' components to function documentation.
 
 # isocat 0.2.3

@@ -7,7 +7,7 @@
 #'
 #' @return Returns list of values representing cumulative sum of `val` values less than or equal to the input.
 #'
-#' @importFrom magrittr %>%
+#' @importFrom stats na.omit
 #'
 #' @examples
 #' vals <- 1:10
@@ -17,7 +17,8 @@
 cumsumbelow <- function(vals){
   if(class(vals) != "numeric" & class(vals) != "integer")
     stop("values entered must be numeric")
-  vals %>% purrr::map(~ vals[ vals <= . ] %>% sum(na.rm = TRUE) )
+  unlist( lapply(vals, function(x,y){
+      if(is.na(x)){ NA } else { sum(y[y <= x], na.rm = TRUE) } }, y = na.omit(vals)) )
 }
 
 
@@ -37,7 +38,6 @@ cumsumbelow <- function(vals){
 #' @seealso \code{\link{cumsumAtSamplingLocation}}
 #'
 #' @inheritParams cumsumbelow
-#' @importFrom magrittr %>%
 #'
 #' @examples
 #' # Generate example probability surfaces.
@@ -70,17 +70,19 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
   vals <- NULL
 
   newsurface <- indivraster
-  newsurface[] <- indivraster[] %>%
-    cumsumbelow(.) %>%
-    unlist
+  newsurface[] <- cumsumbelow( indivraster[] )
 
   if(rescale == TRUE){
     new.min <- 0
     new.max <- 1
-    x.min <- vals[ vals <= raster::cellStats(indivraster, "min") ] %>%
-      sum(na.rm = TRUE)
-    x.max <- vals[ vals <= raster::cellStats(indivraster, "max") ] %>%
-      sum(na.rm = TRUE)
+    x.min <- sum(
+      vals[ vals <= raster::cellStats(indivraster, "min") ] ,
+      na.rm = TRUE
+      )
+    x.max <- sum(
+      vals[ vals <= raster::cellStats(indivraster, "max") ],
+      na.rm = TRUE
+      )
     newsurface <- new.min + (newsurface - x.min) * ((new.max - new.min) / (x.max - x.min))
   }
 

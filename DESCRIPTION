@@ -39,7 +39,6 @@ Suggests:
 	kableExtra,
 	knitr,
 	parallel,
-	purrr,
 	pvclust,
   rmarkdown,
   rasterVis,
