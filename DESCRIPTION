@@ -1,6 +1,6 @@
 Package: isocat
 Type: Package
-Title: Isotope Clustering and Assignment Tools
+Title: Isotope Origin Clustering and Assignment Tools
 Version: 0.2.3.9000
 Authors@R: person("Caitlin", "Campbell", email = "caitjcampbell@gmail.com",
   role = c("aut", "cre"))

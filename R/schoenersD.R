@@ -2,7 +2,7 @@
 #'
 #' RasterLayers must have identical resolutions and extents.
 #'
-#' Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
+#' Calculates similarity value of two RasterLayers using Schoener's D-metric.
 #' @param rast1 Input RasterLayer
 #' @param rast2 Input RasterLayer 2
 #'

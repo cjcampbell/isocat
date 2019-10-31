@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' # Generate example probability surfaces.
-#' library
+#' library(isocat)
 #' myiso <- raster::rasterFromXYZ(isoscape)
 #' myiso_sd <- raster::rasterFromXYZ(isoscape_sd)
 #' df <- data.frame(

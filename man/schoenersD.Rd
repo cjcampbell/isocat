@@ -15,7 +15,7 @@ schoenersD(rast1, rast2)
 RasterLayers must have identical resolutions and extents.
 }
 \details{
-Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
+Calculates similarity value of two RasterLayers using Schoener's D-metric.
 }
 \examples{
 # Generate example probability surfaces.

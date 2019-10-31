@@ -8,8 +8,11 @@
 * The `purrr` package removed from suggested packages.
 
 ## Minor tweaks
+* Tweaked package title.
 * Added 'additionalModel_name' argument to `isotopeAssignmentModel`.
 * Added 'seealso' and 'alias' components to function documentation.
+* Fixed typo in examples for `makeQuantileSimulationSurface` function.
+* Clarified function description for `schoenersD` function.
 
 # isocat 0.2.3
 
