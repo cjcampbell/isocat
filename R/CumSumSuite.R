@@ -127,7 +127,7 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 #' set.seed(1)
 #' x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
 #' pt <- raster::xyFromCell(exampleSurface, x)
-#' cumsumAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])
+#' cumsumAtSamplingLocation(indivraster = exampleSurface, Lat = pt[2], Lon = pt[1])
 #'
 #' @export
 cumsumAtSamplingLocation <- function(indivraster, Lat, Lon){
@@ -139,7 +139,7 @@ cumsumAtSamplingLocation <- function(indivraster, Lat, Lon){
     indivcoords <- sp::SpatialPoints(cbind(Lon,Lat))
     p_atPoint <- raster::extract(indivraster, indivcoords)
 
-    if( class(p_atPoint) == "matrix" ){
+    if( "matrix" %in% class(p_atPoint) | "array" %in% class(p_atPoint) ){
       if( length(p_atPoint) != 1) {
         stop("extracted value at coordinates must be of length one.")
       } else
