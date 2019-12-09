@@ -8,7 +8,7 @@
 * The `purrr` package removed from suggested packages.
 
 ## Bug fix for R 4.0.0
-* Modified conditional class check within `cumsumAtSamplingLocation` function, in anticipation of change to matrix objects inheriting from class "array" (which broke old version of class check).
+* Modified conditional class check within `cumsumAtSamplingLocation` and `clusterSimmatrix` functions, in anticipation of change to matrix objects inheriting from class "array" (which broke old class check code).
 
 ## Vignette updated
 * Vignette updated, examples improved, enable stage-skipping with working examples.
