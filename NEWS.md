@@ -1,5 +1,5 @@
 
-# isocat 0.2.3.9000
+# isocat 0.2.4
 
 ## Optimize 'cumsumbelow' function
 * Function deals with NA values more efficiently.
@@ -7,12 +7,20 @@
 * Removed dependency on `purrr::map` and pipe operators within function.
 * The `purrr` package removed from suggested packages.
 
+## Bug fix for R 4.0.0
+* Modified conditional class check within `cumsumAtSamplingLocation` function, in anticipation of change to matrix objects inheriting from class "array" (which broke old version of class check).
+
+## Vignette updated
+* Vignette updated, examples improved, enable stage-skipping with working examples.
+
 ## Minor tweaks
 * Tweaked package title.
 * Added 'additionalModel_name' argument to `isotopeAssignmentModel`.
 * Added 'seealso' and 'alias' components to function documentation.
 * Fixed typo in examples for `makeQuantileSimulationSurface` function.
 * Clarified function description for `schoenersD` function.
+* Tweaked wording in example for `cumsumAtSamplingLocation` function.
+
 
 # isocat 0.2.3
 
@@ -28,9 +36,9 @@
 ## Minor Tweaks
 * Expanded DESCRIPTION metadata.
 * Resolved spelling errors and improved style throughout package.
-* Fixed broken/suspect email and IsoMAP links
-* Corrected donttest wrappers on long analyses
-* Added examples to several functions
+* Fixed broken/suspect email and IsoMAP links.
+* Corrected donttest wrappers on long analyses.
+* Added examples to several functions.
 * Switched from 'installed.packages' to '!requireNamespace' to check for package loading.
 
 
