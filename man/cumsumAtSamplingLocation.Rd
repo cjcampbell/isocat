@@ -33,7 +33,7 @@ exampleSurface <- isotopeAssignmentModel(
 set.seed(1)
 x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
 pt <- raster::xyFromCell(exampleSurface, x)
-cumsumAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])
+cumsumAtSamplingLocation(indivraster = exampleSurface, Lat = pt[2], Lon = pt[1])
 
 }
 \seealso{

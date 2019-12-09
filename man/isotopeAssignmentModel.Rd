@@ -4,10 +4,17 @@
 \alias{isotopeAssignmentModel}
 \title{Isotope assignment model function}
 \usage{
-isotopeAssignmentModel(ID, isotopeValue, SD_indv, precip_raster,
-  precip_SD_raster, additionalModel = FALSE,
+isotopeAssignmentModel(
+  ID,
+  isotopeValue,
+  SD_indv,
+  precip_raster,
+  precip_SD_raster,
+  additionalModel = FALSE,
   additionalModel_name = "CombinedIsotope-OtherModelAssignments",
-  savePath = FALSE, nClusters = FALSE)
+  savePath = FALSE,
+  nClusters = FALSE
+)
 }
 \arguments{
 \item{ID}{ID value or vector of values (for naming assignment model layers). If missing, will count from 1.}

@@ -4,8 +4,7 @@
 \alias{meanAggregateClusterProbability}
 \title{Create mean aggregate probability-of-origin surfaces for each cluster.}
 \usage{
-meanAggregateClusterProbability(indivIDs, clusters, surfaces,
-  nClust = FALSE)
+meanAggregateClusterProbability(indivIDs, clusters, surfaces, nClust = FALSE)
 }
 \arguments{
 \item{indivIDs}{Vector of individual ID variables corresponding to surface names.}
