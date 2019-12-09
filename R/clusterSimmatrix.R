@@ -51,7 +51,7 @@ clusterSimmatrix <- function(simmatrix,
     stop(" The \"pvclust\" package is required for parallel processing.")
   }
 
-  if(class(simmatrix) != "matrix") stop("Object 'x' is not of class 'Matrix'")
+  if( "matrix" %in% class(simmatrix) != TRUE ) stop("Object 'x' is not of class 'Matrix'")
   if(nClusters != FALSE){
 
     if(!is.numeric(nClusters))
