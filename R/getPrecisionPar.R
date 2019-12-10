@@ -20,7 +20,7 @@ getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 2
   cl <- parallel::makeCluster(nCluster); doParallel::registerDoParallel(cl); getcells <- foreach(
     n = 1:raster::nlayers(rasterstack),
     .verbose = TRUE,
-    .packages = c("raster", "plyr","dplyr")) %dopar% {
+    .packages = c("raster", "plyr")) %dopar% {
       # Calculate number of cells above each given threshold value.
       cellsAbove <- lapply(checkVals, function(z){
         data.frame(

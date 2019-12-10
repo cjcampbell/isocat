@@ -1,7 +1,7 @@
 Package: isocat
 Type: Package
 Title: Isotope Origin Clustering and Assignment Tools
-Version: 0.2.4
+Version: 0.2.4.9000
 Authors@R: person("Caitlin", "Campbell", email = "caitjcampbell@gmail.com",
   role = c("aut", "cre"))
 Description: This resource provides tools to create, compare, and post-process 
@@ -27,13 +27,13 @@ Depends:
 Imports:
   stats,
   plyr,
-  dplyr,
   sp,
   magrittr,
   foreach
 Suggests:
 	dendextend,
 	doParallel,
+	dplyr,
 	ggplot2,
 	gridExtra,
 	kableExtra,

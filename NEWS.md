@@ -1,3 +1,7 @@
+# isocat 0.2.4.9000
+
+# Minor tweaks
+* Remove now-unnecessary import of package `dplyr`.
 
 # isocat 0.2.4
 
