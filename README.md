@@ -1,6 +1,8 @@
 # `isocat`
 `isocat`: Isotope Clustering and Assignment Tools
 
+[![DOI](https://zenodo.org/badge/130004512.svg)](https://zenodo.org/badge/latestdoi/130004512)
+
 The `isocat` package provides multiple tools in `R` for creating and quantitatively analyzing and summarizing probability-of-origin surfaces generated from stable isotope analyses of animal tissue. The package includes functions to create probability-of-origin surfaces, quantitatively compare and summarize the origins of individuals, and create and validate post-processing surfaces useful for interpreting individual origins.
 
 # Overview
