@@ -8,3 +8,4 @@ oldFxns/
 isocat_cache/
 /isocat_files/
 tests_oldFxns
+man/.*
