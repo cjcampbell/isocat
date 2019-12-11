@@ -15,6 +15,7 @@ Description: This resource provides tools to create, compare, and post-process
     (cumulative sum, odds ratio, quantile only, and quantile simulation) with 
     which users can summarize geographic origins and probable distance traveled 
     by individuals.
+Year: 2019
 License: CC0
 Encoding: UTF-8
 Language: en-US
