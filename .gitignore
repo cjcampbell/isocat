@@ -4,7 +4,9 @@
 .DS_Store
 inst/doc
 oldFxns/
-66100_caitjcampbell_Annual_NoAm_Map_H_1980_2010/
+setup_data/
+!setup_data/setup_isoscape_data.R
 isocat_cache/
 /isocat_files/
 tests_oldFxns
+man/.*

@@ -115,8 +115,13 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
 
       if(class(additionalModel) == "RasterLayer"){
 
+        # First check for projection compatibility. If needed, resample.
+        if( crs(additionalModel, asText = TRUE) != crs(assign_norm, asText = TRUE) ) stop("Projections are not the same. Compare `crs(precip_raster) to `crs(additionalModel).`" )
+
+        additionalModel0 <- resample(additionalModel, precip_raster)
+
         # Bring in additionalModel
-        combo_prod <- prod(assign_norm, additionalModel)
+        combo_prod <- prod(assign_norm, additionalModel0)
         combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
         names(combo_norm) <- names(assign_norm)
 
