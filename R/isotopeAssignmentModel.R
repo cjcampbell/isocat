@@ -39,28 +39,37 @@
 
 isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, precip_SD_raster, additionalModel = FALSE, additionalModel_name = "CombinedIsotope-OtherModelAssignments", savePath = FALSE, nClusters = FALSE) {
 
-  if(missing(isotopeValue)){
-    stop("isotopeValue object not found.")
-  }
-  if(missing(precip_raster)){
-    stop("Precipitation isoscape not found.")
-  }
-  if(missing(precip_SD_raster)){
-    stop("Precipitation isoscape error raster not found.")
-  }
+  ## Tests. ##
+  if(missing(isotopeValue)){ stop("isotopeValue object not found.") }
+  if(missing(precip_raster)){ stop("Precipitation isoscape not found.") }
+  if(missing(precip_SD_raster)){ stop("Precipitation isoscape error raster not found.") }
   if(missing(ID)) {
     ID <- seq(1, length(isotopeValue), 1)
   }
   if(missing(SD_indv)) {
     SD_indv <- rep(0, length(ID))
   }
+
   if(class(additionalModel) == "RasterLayer"){
-    # First check for projection compatibility. If needed, resample.
-    if( crs(additionalModel, asText = TRUE) != crs(assign_norm, asText = TRUE) ) stop("Projections are not the same. Compare `crs(precip_raster) to `crs(additionalModel).`" )
-    additionalModel0 <- resample(additionalModel, precip_raster)
+    if(compareRaster(additionalModel, precip_raster, stopiffalse = FALSE) != TRUE){
+      additionalModel0 <- resample(additionalModel, precip_raster)
+    } else {
+      additionalModel0 <- additionalModel
+    }
+    if( compareRaster(precip_raster, additionalModel0, stopiffalse = FALSE) != TRUE) stop ("resampling failed. Rasters don't match.")
+    # Check for projection compatibility
+    if( crs(additionalModel, asText = TRUE) != crs(precip_raster, asText = TRUE) ){ stop("Projections are not the same. Compare `crs(precip_raster) to `crs(additionalModel).`" ) }
   }
 
+  if(class(additionalModel) == "RasterLayer"){
+    compare_result <- compareRaster(precip_raster, precip_SD_raster, additionalModel0, stopiffalse = FALSE)
+  } else {
+    compare_result <- compareRaster(precip_raster, precip_SD_raster, stopiffalse = FALSE)
+  }
+  if(sum(compare_result) < 1) stop("Issue with raster comparisons Check precip_raster, precip_SD_raster, and additionalModel (if used) with raster::compareRaster().")
 
+
+  ## Apply. ##
   if(class(nClusters) == "numeric"){
     if (!requireNamespace("doParallel", quietly = TRUE)) {
       stop("Package \"doParallel\" needed for this function to work as called.",
@@ -83,14 +92,14 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
 
       names(assign_norm) <- paste0(ID[i])
 
-      if(class(additionalModel) == "RasterLayer"){
-        if(class(additionalModel) != "logical"){
-          if(missing(additionalModel))
-            stop("additionalModel raster not found.")
-          if(class(additionalModel) != "RasterLayer")
-            stop("additionalModel class not 'RasterLayer'.")
+      if(class(additionalModel0) == "RasterLayer"){
+        if(class(additionalModel0) != "logical"){
+          if(missing(additionalModel0))
+            stop("additionalModel0 raster not found.")
+          if(class(additionalModel0) != "RasterLayer")
+            stop("additionalModel0 class not 'RasterLayer'.")
 
-          # Bring in additionalModel
+          # Bring in additionalModel0
           combo_prod <- prod(assign_norm, additionalModel0)
           combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
           names(combo_norm) <- names(assign_norm)
@@ -117,7 +126,6 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
       assign_norm <- assign/raster::cellStats(assign, "sum")
 
       names(assign_norm) <- paste0(ID[i])
-
 
       if(class(additionalModel) == "RasterLayer"){
 
