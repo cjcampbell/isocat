@@ -1,5 +1,8 @@
 # isocat 0.2.4.9000
 
+# Improved secondary model incorporation in `isotopeAssignmentModel`
+* Function now checks for identical projections and resamples secondary model automatically.
+
 # Minor tweaks
 * Remove now-unnecessary import of package `dplyr`.
 
