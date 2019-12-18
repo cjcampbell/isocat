@@ -6,6 +6,9 @@
 # Minor tweaks
 * Remove now-unnecessary import of package `dplyr`.
 
+
+
+
 # isocat 0.2.4
 
 ## Optimize 'cumsumbelow' function
@@ -27,6 +30,8 @@
 * Fixed typo in examples for `makeQuantileSimulationSurface` function.
 * Clarified function description for `schoenersD` function.
 * Tweaked wording in example for `cumsumAtSamplingLocation` function.
+
+
 
 
 # isocat 0.2.3

@@ -52,7 +52,13 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
     ID <- seq(1, length(isotopeValue), 1)
   }
   if(missing(SD_indv)) {
-    SD_indv <- rep(0, length(ID)) }
+    SD_indv <- rep(0, length(ID))
+  }
+  if(class(additionalModel) == "RasterLayer"){
+    # First check for projection compatibility. If needed, resample.
+    if( crs(additionalModel, asText = TRUE) != crs(assign_norm, asText = TRUE) ) stop("Projections are not the same. Compare `crs(precip_raster) to `crs(additionalModel).`" )
+    additionalModel0 <- resample(additionalModel, precip_raster)
+  }
 
 
   if(class(nClusters) == "numeric"){
@@ -85,7 +91,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
             stop("additionalModel class not 'RasterLayer'.")
 
           # Bring in additionalModel
-          combo_prod <- prod(assign_norm, additionalModel)
+          combo_prod <- prod(assign_norm, additionalModel0)
           combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
           names(combo_norm) <- names(assign_norm)
 
@@ -114,11 +120,6 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, pre
 
 
       if(class(additionalModel) == "RasterLayer"){
-
-        # First check for projection compatibility. If needed, resample.
-        if( crs(additionalModel, asText = TRUE) != crs(assign_norm, asText = TRUE) ) stop("Projections are not the same. Compare `crs(precip_raster) to `crs(additionalModel).`" )
-
-        additionalModel0 <- resample(additionalModel, precip_raster)
 
         # Bring in additionalModel
         combo_prod <- prod(assign_norm, additionalModel0)
