@@ -1,15 +1,18 @@
-# isocat 0.2.4.9000
+# isocat 0.2.5
 
-# Improved secondary model incorporation in `isotopeAssignmentModel`
-* Function now checks for identical projections and resamples secondary model automatically.
+## Rewrote function `isotopeAssignmentModel`
+* Function now checks for identical projections and resamples secondary models automatically.
+* Multiple secondary models can be incorporated as a rasterStack.
+* Replaced parallelization package with parallel::mcmapply.
+* Removes bug where secondary models not created when running in parallel.
 
 # Minor tweaks
 * Remove now-unnecessary import of package `dplyr`.
+* Resolved bug in vignette example by adding 'stringsAsFactors = FALSE' to example dataframe.
+* Removed defunct class test for individual IDs from `meanAggregateClusterProbability` function.
 
 
-
-
-# isocat 0.2.4
+## isocat 0.2.4
 
 ## Optimize 'cumsumbelow' function
 * Function deals with NA values more efficiently.

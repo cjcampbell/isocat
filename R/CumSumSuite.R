@@ -13,7 +13,9 @@
 #' vals <- 1:10
 #' cumsumbelow(vals)
 #'
-#' @export
+#' @export cumsumbelow
+#'
+#'
 cumsumbelow <- function(vals){
   if(class(vals) != "numeric" & class(vals) != "integer")
     stop("values entered must be numeric")
@@ -37,7 +39,6 @@ cumsumbelow <- function(vals){
 #'
 #' @seealso \code{\link{cumsumAtSamplingLocation}}
 #'
-#' @inheritParams cumsumbelow
 #'
 #' @examples
 #' # Generate example probability surfaces.
@@ -63,7 +64,8 @@ cumsumbelow <- function(vals){
 #'      )
 #' plot(cumulative_sum_surface)
 #'
-#' @export
+#' @export makecumsumSurface
+#'
 makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 
   . <- "quiet" # silence 'no visible binding for global variable' call.

@@ -1,3 +1,68 @@
+#' Find Product Then Normalize Function
+#'
+#' @keywords internal
+
+#' @importFrom raster cellStats
+
+#' @export .findProductThenNormalize
+
+.findProductThenNormalize <- function(...){
+  a <- list(...)
+  if(length(a) == 1) {
+    b <- a[[1]]
+  } else {
+    b <- do.call("prod", a)
+  }
+  c <- b / raster::cellStats(b, "sum")
+  return(c)
+}
+
+
+#' Make probability-of-origin surfaces
+#'
+#' @param .ID ID value or vector of values (for naming assignment model layers). If missing, will count from 1.
+#' @param .isotopeValue Isotope precipitation value or vector of values.
+#' @param .SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
+#' @param .precip_raster precipitation isoscape raster.
+#' @param .precip_SD_raster precipitation isoscape standard deviation raster.
+#'
+#' @keywords internal
+#'
+#' @export .assignmentMaker
+
+.assignmentMaker <- function(.ID, .isotopeValue, .SD_indv, precip_raster, precip_SD_raster){
+  # Calculate total error.
+  totError <- sqrt((precip_SD_raster)^2 + .SD_indv^2)
+  # Assignment function.
+  assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (.isotopeValue - precip_raster)^2 / (2 * totError^2))
+
+  # Normalize to sum to 1.
+  assign_norm <- .findProductThenNormalize(assign)
+
+  names(assign_norm) <- paste0(.ID)
+  return(assign_norm)
+}
+
+
+#' Compare rasters by checking whether they can stack.
+#'
+#' @keywords internal
+#'
+#' @export .compareMyRasters
+
+.compareMyRasters <- function(...){
+  tryCatch(
+    expr={ raster::stack(...)},
+    error = function(e){
+      stop("Rasters included as arguments don't match up.
+             See '?compareRaster' for more. Double check precip_raster,
+             precip_SD_raster, and additionalModels!")
+    }
+  )
+}
+
+
+
 #' Isotope assignment model function
 #'
 #' Creates isotope assignment models projections of probable origin. Results returned as a RasterStack, with layer names corresponding to individual ID.
@@ -6,12 +71,12 @@
 #' @param SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
 #' @param precip_raster precipitation isoscape raster.
 #' @param precip_SD_raster precipitation isoscape standard deviation raster.
-#' @param additionalModel optional additional model RasterLayer (e.g. an SDM, rasterized range map). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.
-#' @param additionalModel_name optional filename for additionalModel .grd path
+#' @param additionalModels optional additional model raster object (e.g. an SDM, rasterized range map, or stack thereof). If specified, function will return isotope assignment rasters and the product of these additionalModels and each assignmentRaster.
+#' @param additionalModel_name optional filename for additionalModel .grd savepath
 #' @param savePath If specified, function will save results to this path as a '.grd' file.
 #' @param nClusters integer of cores to run in parallel with doParallel. Default FALSE.
 #'
-#' @importFrom foreach foreach
+#' @importFrom parallel mcmapply
 #' @importFrom foreach %dopar%
 #'
 #' @examples
@@ -19,7 +84,7 @@
 #' raster::plot(myiso)
 #' myiso_sd <- rasterFromXYZ(isoscape_sd)
 #' df <- data.frame(
-#'          ID = c(-100, -80, -50),
+#'          ID = paste0("Example.", 1:3),
 #'          isotopeValue = c(-100, -80, -50),
 #'          SD_indv = rep(5, 3)
 #'          )
@@ -28,142 +93,170 @@
 #'                         isotopeValue = df$isotopeValue,
 #'                         SD_indv = df$SD_indv,
 #'                         precip_raster = myiso,
-#'                         precip_SD_raster = myiso_sd,
-#'                         nClusters = FALSE
+#'                         precip_SD_raster = myiso_sd
 #'                         )
 #' raster::plot(assignmentModels)
 #'
+#'# Add additionalModels:
+#' range_raster <- myiso
+#' range_raster[] <- as.numeric( 1:ncell(myiso) %% 60 >= 10)
+#' plot(range_raster)
+#'
+#' sdm_raster <- myiso
+#' sdm_raster[] <- (1:ncell(sdm_raster))^2
+#' sdm_raster <- sdm_raster / raster::cellStats(sdm_raster, "sum")
+#' plot(sdm_raster)
+#'
+#' extraModels <- raster::stack(range_raster, sdm_raster)
+#' assignmentModels <- isotopeAssignmentModel(
+#'                         ID = paste0("Combo.",df$ID),
+#'                         isotopeValue = df$isotopeValue,
+#'                         SD_indv = df$SD_indv,
+#'                         precip_raster = myiso,
+#'                         precip_SD_raster = myiso_sd,
+#'                         additionalModels = extraModels
+#'                         )
+#' raster::plot(assignmentModels)
+#'
+#'
+#'
 #' @export isotopeAssignmentModel
-#'
-#'
 
-isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv, precip_raster, precip_SD_raster, additionalModel = FALSE, additionalModel_name = "CombinedIsotope-OtherModelAssignments", savePath = FALSE, nClusters = FALSE) {
 
-  ## Tests. ##
-  if(missing(isotopeValue)){ stop("isotopeValue object not found.") }
-  if(missing(precip_raster)){ stop("Precipitation isoscape not found.") }
-  if(missing(precip_SD_raster)){ stop("Precipitation isoscape error raster not found.") }
-  if(missing(ID)) {
-    ID <- seq(1, length(isotopeValue), 1)
+
+isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster, precip_SD_raster, additionalModels = FALSE, additionalModel_name = "CombinedIsotope-OtherModelAssignments", savePath = FALSE, nClusters = FALSE) {
+
+  #### Tests -------------------------------------------------------------------
+  if( missing(isotopeValue) ) {   stop("isotopeValue object not found.") }
+  if( missing(precip_raster) ) {  stop("Precipitation isoscape not found.") }
+  if( missing(precip_SD_raster)){
+    stop("Precip isoscape error raster not found.")
   }
-  if(missing(SD_indv)) {
+  if( missing(ID) ) {             ID <- seq(1, length(isotopeValue), 1)  }
+  if( length(SD_indv == 0) & SD_indv[1] == 0 ) {
     SD_indv <- rep(0, length(ID))
   }
 
-  if(class(additionalModel) == "RasterLayer"){
-    if(compareRaster(additionalModel, precip_raster, stopiffalse = FALSE) != TRUE){
-      additionalModel0 <- resample(additionalModel, precip_raster)
-    } else {
-      additionalModel0 <- additionalModel
-    }
-    if( compareRaster(precip_raster, additionalModel0, stopiffalse = FALSE) != TRUE) stop ("resampling failed. Rasters don't match.")
-    # Check for projection compatibility
-    if( crs(additionalModel, asText = TRUE) != crs(precip_raster, asText = TRUE) ){ stop("Projections are not the same. Compare `crs(precip_raster) to `crs(additionalModel).`" ) }
+  checkTheseRasters <- list(precip_raster = precip_raster, precip_SD_raster = precip_SD_raster)
+  if(class(additionalModels) != "logical"){
+    checkTheseRasters$additionalModels <- additionalModels
   }
+  .compareMyRasters(checkTheseRasters)
 
-  if(class(additionalModel) == "RasterLayer"){
-    compare_result <- compareRaster(precip_raster, precip_SD_raster, additionalModel0, stopiffalse = FALSE)
-  } else {
-    compare_result <- compareRaster(precip_raster, precip_SD_raster, stopiffalse = FALSE)
-  }
-  if(sum(compare_result) < 1) stop("Issue with raster comparisons Check precip_raster, precip_SD_raster, and additionalModel (if used) with raster::compareRaster().")
-
-
-  ## Apply. ##
+  # If parallel is to be used.
   if(class(nClusters) == "numeric"){
-    if (!requireNamespace("doParallel", quietly = TRUE)) {
-      stop("Package \"doParallel\" needed for this function to work as called.",
+    if (!requireNamespace("parallel", quietly = TRUE)) {
+      stop("Package \"parallel\" needed for this function to work when
+           nClusters argument specified.",
            call. = FALSE)
-      }
-
-    cl <- parallel::makeCluster(nClusters)
-    doParallel::registerDoParallel(cl)
-
-    i <- NULL
-    listOfAssigments <- foreach(i = 1:length(isotopeValue), .packages="raster") %dopar% {
-      # Calculate total error.
-      totError <- sqrt((precip_SD_raster)^2 + SD_indv[i]^2)
-
-      # Assignment function.
-      assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (isotopeValue[i] - precip_raster)^2 / (2 * totError^2))
-
-      # Normalize to sum to 1.
-      assign_norm <- assign/raster::cellStats(assign, "sum")
-
-      names(assign_norm) <- paste0(ID[i])
-
-      if(class(additionalModel0) == "RasterLayer"){
-        if(class(additionalModel0) != "logical"){
-          if(missing(additionalModel0))
-            stop("additionalModel0 raster not found.")
-          if(class(additionalModel0) != "RasterLayer")
-            stop("additionalModel0 class not 'RasterLayer'.")
-
-          # Bring in additionalModel0
-          combo_prod <- prod(assign_norm, additionalModel0)
-          combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
-          names(combo_norm) <- names(assign_norm)
-
-          return(list(isotopeAssignments = assign_norm, comboAssignments = combo_norm))
-        }
-      } else {
-        return(list(isotopeAssignments = assign_norm))
-      }
-
     }
+  }
+
+  # Setup. ##
+  ID0 <- make.names(ID)
+  if( all(ID0 == ID) == FALSE ) warning("ID values will be transformed on output. See '?make.names' for more.")
+
+
+  #### Apply -------------------------------------------------------------------
+
+
+  # Without running in parallel. ------------------
+  if(class(nClusters) != "numeric"){
+
+    ## Make assignments
+    listOfAssigments <- mapply(
+      FUN = .assignmentMaker,
+      ID0,  isotopeValue, SD_indv,
+      MoreArgs =  list( precip_raster = precip_raster, precip_SD_raster = precip_SD_raster )
+    )
+    stackOfAssignments <-  raster::stack(listOfAssigments)
+
+    ### Save
+    if( savePath != FALSE ) {
+      raster::writeRaster(
+        x = stackOfAssignments,
+        filename = file.path(savePath, "IsotopeAssignments.grd"),
+        format = "raster",
+        overwrite = TRUE
+      )
+    }
+
+    ## Make combo models.
+    if(class(additionalModels) != "logical") {
+      comboAssignments <- mapply(
+        FUN = .findProductThenNormalize,
+        listOfAssigments,
+        MoreArgs = list(additionalModels)
+      )
+      stackOfCombinations <- raster::stack(comboAssignments)
+
+      ### Save
+      if( savePath != FALSE ) {
+        raster::writeRaster(
+          x = stackOfCombinations,
+          filename = file.path(savePath, paste0( additionalModel_name, ".grd")),
+          format = "raster",
+          overwrite = TRUE
+        )
+      }
+
+      return(stackOfCombinations)
+    } else {
+      return(stackOfAssignments)
+    }
+  }
+
+  # With running in parallel. -----------------
+
+  if(class(nClusters) == "numeric"){
+
+    ## Make assignments
+    cl <- parallel::makeCluster(nClusters)
+
+    listOfAssigments <- parallel::mcmapply(
+      FUN = .assignmentMaker,
+      ID0, isotopeValue, SD_indv,
+      MoreArgs =  list( precip_raster, precip_SD_raster ))
+
     parallel::stopCluster(cl)
 
-  } else{
+    stackOfAssignments <-  raster::stack(listOfAssigments)
 
-    listOfAssigments <- lapply(1:length(isotopeValue), function(i){
-      # Calculate total error.
-      totError <- sqrt((precip_SD_raster)^2 + SD_indv[i]^2)
+    ### Save
+    if( savePath != FALSE ) {
+      raster::writeRaster(
+        x = stackOfAssignments,
+        filename = file.path(savePath, "IsotopeAssignments.grd"),
+        format = "raster",
+        overwrite = TRUE
+      )
+    }
 
-      # Assignment function.
-      assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (isotopeValue[i] - precip_raster)^2 / (2 * totError^2))
+    ## Make combo models.
+    if(class(additionalModels) != "logical") {
+      cl <- parallel::makeCluster(nClusters)
+      comboAssignments <- mcmapply(
+        FUN = .findProductThenNormalize,
+        listOfAssigments,
+        MoreArgs = list(additionalModels)
+      )
+      parallel::stopCluster(cl)
+      stackOfCombinations <- raster::stack(comboAssignments)
 
-      # Normalize to sum to 1.
-      assign_norm <- assign/raster::cellStats(assign, "sum")
-
-      names(assign_norm) <- paste0(ID[i])
-
-      if(class(additionalModel) == "RasterLayer"){
-
-        # Bring in additionalModel
-        combo_prod <- prod(assign_norm, additionalModel0)
-        combo_norm <- combo_prod / raster::cellStats(combo_prod, "sum")
-        names(combo_norm) <- names(assign_norm)
-
-        return(list(isotopeAssignments = assign_norm, comboAssignments = combo_norm))
-
-      } else {
-        return(list(isotopeAssignments = assign_norm))
+      ### Save
+      if( savePath != FALSE ) {
+        raster::writeRaster(
+          x = stackOfCombinations,
+          filename = file.path(savePath, paste0( additionalModel_name, ".grd")),
+          format = "raster",
+          overwrite = TRUE
+        )
       }
-    })
-  }
-
-  stackOfAssignments <-  raster::stack(lapply(listOfAssigments, function(x) x[["isotopeAssignments"]]))
-
-  if(class(additionalModel) == "RasterLayer"){
-    stackOfCombinations <- raster::stack(lapply(listOfAssigments, function(x) x[["comboAssignments"]]))
-  }
-
-  if(savePath != FALSE){
-    raster::writeRaster(x = stackOfAssignments,
-                filename = file.path(savePath, "IsotopeAssignments.grd"), format = "raster",
-                overwrite = TRUE)
-    if(class(additionalModel) == "RasterLayer"){
-      raster::writeRaster(x = stackOfCombinations,
-                  filename = file.path(savePath, paste0( additionalModel_name, ".grd")), format = "raster",
-                  overwrite = TRUE)
+      return(stackOfCombinations)
+    } else {
+      return(stackOfAssignments)
     }
-    return("Success!")
-  } else {
-    if(class(additionalModel) == "RasterLayer"){
-      return(list(
-        isotopeAssignments = stackOfAssignments,
-        productOfAdditionalModel = stackOfCombinations))
-    } else { return(stackOfAssignments)
-    }
+
   }
+
 }
