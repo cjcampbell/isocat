@@ -1,7 +1,7 @@
 ---
 title: "Overview of package `isocat` (Isotope Clustering and Assignment Tools)"
 author: "Caitlin J. Campbell"
-date: "2019-06-05"
+date: "2020-03-28"
 output:
   rmarkdown::html_vignette:
     toc: true
@@ -86,7 +86,8 @@ set.seed(1)
 df <- data.frame(
   ID = LETTERS[1:n], 
   isotopeValue = sample(cellStats(myiso, "min"):cellStats(myiso, "max"), n, replace = TRUE), 
-  SD_indv = rep(5, n)
+  SD_indv = rep(5, n),
+  stringsAsFactors = FALSE 
   )
 kableExtra::kable(df)
 ```
@@ -102,32 +103,32 @@ kableExtra::kable(df)
 <tbody>
   <tr>
    <td style="text-align:left;"> A </td>
-   <td style="text-align:right;"> -106.98399 </td>
+   <td style="text-align:right;"> -67.98399 </td>
    <td style="text-align:right;"> 5 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> B </td>
-   <td style="text-align:right;"> -94.98399 </td>
+   <td style="text-align:right;"> -96.98399 </td>
    <td style="text-align:right;"> 5 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> C </td>
-   <td style="text-align:right;"> -72.98399 </td>
+   <td style="text-align:right;"> -134.98399 </td>
    <td style="text-align:right;"> 5 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> D </td>
-   <td style="text-align:right;"> -36.98399 </td>
+   <td style="text-align:right;"> -101.98399 </td>
    <td style="text-align:right;"> 5 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> E </td>
-   <td style="text-align:right;"> -113.98399 </td>
+   <td style="text-align:right;"> -48.98399 </td>
    <td style="text-align:right;"> 5 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> F </td>
-   <td style="text-align:right;"> -37.98399 </td>
+   <td style="text-align:right;"> -92.98399 </td>
    <td style="text-align:right;"> 5 </td>
   </tr>
 </tbody>
@@ -169,7 +170,7 @@ To compare probability-of-origin surfaces, we apply Schoener's D metric. To simp
 # two of the example probability surfaces.
 
 schoenersD(assignmentModels[[1]], assignmentModels[[2]])
-#> [1] 0.5777822
+#> [1] 0.120559
 ```
 
 To compare multiple surfaces to one another, `isocat` includes a `simmatrixMaker` function to create a similarity matrix of the surfaces. The output is a symmetric matrix with row and column names corresponding to the layer names of the surfaces to be compared. The `nClusters` specification, as in the `isotopeAssignmentModel` function, generates a number of parallel processing clusters equal to the numeric value specified. If `csvSavePath` is included, a .csv file will also be written to the path specified. For large RasterStacks, this function can be quite processing-intensive and take some time.
@@ -182,20 +183,13 @@ mySimilarityMatrix <- simmatrixMaker(
   csvSavePath = FALSE
 )
 mySimilarityMatrix
-#>              A           B          C            D            E
-#> A 1.0000000000 0.577782179 0.08876164 0.0003429836 0.7639950906
-#> B 0.5777821786 1.000000000 0.24369626 0.0032380107 0.3900655057
-#> C 0.0887616430 0.243696260 1.00000000 0.0836391997 0.0470433418
-#> D 0.0003429836 0.003238011 0.08363920 1.0000000000 0.0000866323
-#> E 0.7639950906 0.390065506 0.04704334 0.0000866323 1.0000000000
-#> F 0.0004037637 0.003695405 0.09175482 0.9662229136 0.0001058838
-#>              F
-#> A 0.0004037637
-#> B 0.0036954045
-#> C 0.0917548194
-#> D 0.9662229136
-#> E 0.0001058838
-#> F 1.0000000000
+#>             A          B            C           D            E          F
+#> A 1.000000000 0.12055895 2.308768e-03 0.075836414 3.576003e-01 0.17339223
+#> B 0.120558953 1.00000000 1.259615e-01 0.814850423 1.192683e-02 0.84960437
+#> C 0.002308768 0.12596152 1.000000e+00 0.189881401 3.168732e-05 0.08466208
+#> D 0.075836414 0.81485042 1.898814e-01 1.000000000 5.518849e-03 0.67133167
+#> E 0.357600305 0.01192683 3.168732e-05 0.005518849 1.000000e+00 0.02168286
+#> F 0.173392235 0.84960437 8.466208e-02 0.671331674 2.168286e-02 1.00000000
 ```
 ## Clustering by similar origins
 
@@ -265,6 +259,9 @@ abline(h = myheight, col = "red", lwd = 2, lty = 2)
 ```r
 
 df$cluster <- dendextend::cutree(cS$hclust, h = myheight)
+#> Registered S3 method overwritten by 'dendextend':
+#>   method       from   
+#>   text.pvclust pvclust
 
 kableExtra::kable(df)
 ```
@@ -281,39 +278,39 @@ kableExtra::kable(df)
 <tbody>
   <tr>
    <td style="text-align:left;"> A </td>
-   <td style="text-align:right;"> -106.98399 </td>
+   <td style="text-align:right;"> -67.98399 </td>
    <td style="text-align:right;"> 5 </td>
    <td style="text-align:right;"> 1 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> B </td>
-   <td style="text-align:right;"> -94.98399 </td>
+   <td style="text-align:right;"> -96.98399 </td>
    <td style="text-align:right;"> 5 </td>
    <td style="text-align:right;"> 2 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> C </td>
-   <td style="text-align:right;"> -72.98399 </td>
+   <td style="text-align:right;"> -134.98399 </td>
    <td style="text-align:right;"> 5 </td>
    <td style="text-align:right;"> 3 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> D </td>
-   <td style="text-align:right;"> -36.98399 </td>
+   <td style="text-align:right;"> -101.98399 </td>
    <td style="text-align:right;"> 5 </td>
    <td style="text-align:right;"> 4 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> E </td>
-   <td style="text-align:right;"> -113.98399 </td>
+   <td style="text-align:right;"> -48.98399 </td>
    <td style="text-align:right;"> 5 </td>
    <td style="text-align:right;"> 5 </td>
   </tr>
   <tr>
    <td style="text-align:left;"> F </td>
-   <td style="text-align:right;"> -37.98399 </td>
+   <td style="text-align:right;"> -92.98399 </td>
    <td style="text-align:right;"> 5 </td>
-   <td style="text-align:right;"> 4 </td>
+   <td style="text-align:right;"> 2 </td>
   </tr>
 </tbody>
 </table>

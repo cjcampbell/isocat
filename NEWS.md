@@ -1,3 +1,9 @@
+# isocat 0.2.5.9000
+
+## Vignette improvements
+* Added some additional text on transfer functions
+
+
 # isocat 0.2.5
 
 ## Rewrote function `isotopeAssignmentModel`
@@ -6,7 +12,7 @@
 * Replaced parallelization package with parallel::mcmapply.
 * Removes bug where secondary models not created when running in parallel.
 
-# Minor tweaks
+## Minor tweaks
 * Remove now-unnecessary import of package `dplyr`.
 * Resolved bug in vignette example by adding 'stringsAsFactors = FALSE' to example dataframe.
 * Removed defunct class test for individual IDs from `meanAggregateClusterProbability` function.

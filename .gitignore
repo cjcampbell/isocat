@@ -7,6 +7,5 @@ oldFxns/
 setup_data/
 !setup_data/setup_isoscape_data.R
 isocat_cache/
-/isocat_files/
 tests_oldFxns
 man/.*
