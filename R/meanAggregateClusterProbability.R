@@ -47,8 +47,6 @@
 
 meanAggregateClusterProbability <- function(indivIDs, clusters, surfaces, nClust = FALSE){
 
-  if( class(indivIDs) %in% c("vector", "factor", "integer") != TRUE )
-    stop( "indivIDs must be of class 'vector' or 'factor'." )
   if( class(clusters) %in% c("vector", "factor", "integer") != TRUE )
     stop( "clusters must be of class 'vector' or 'factor'." )
   if( class(surfaces) != "RasterStack")

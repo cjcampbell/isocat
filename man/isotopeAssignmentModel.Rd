@@ -7,10 +7,10 @@
 isotopeAssignmentModel(
   ID,
   isotopeValue,
-  SD_indv,
+  SD_indv = 0,
   precip_raster,
   precip_SD_raster,
-  additionalModel = FALSE,
+  additionalModels = FALSE,
   additionalModel_name = "CombinedIsotope-OtherModelAssignments",
   savePath = FALSE,
   nClusters = FALSE
@@ -27,9 +27,9 @@ isotopeAssignmentModel(
 
 \item{precip_SD_raster}{precipitation isoscape standard deviation raster.}
 
-\item{additionalModel}{optional additional model RasterLayer (e.g. an SDM, rasterized range map). If specified, function will return isotope assignment rasters and the product of this additionalModel and each assignmentRaster.}
+\item{additionalModels}{optional additional model raster object (e.g. an SDM, rasterized range map, or stack thereof). If specified, function will return isotope assignment rasters and the product of these additionalModels and each assignmentRaster.}
 
-\item{additionalModel_name}{optional filename for additionalModel .grd path}
+\item{additionalModel_name}{optional filename for additionalModel .grd savepath}
 
 \item{savePath}{If specified, function will save results to this path as a '.grd' file.}
 
@@ -43,7 +43,7 @@ myiso <- rasterFromXYZ(isoscape)
 raster::plot(myiso)
 myiso_sd <- rasterFromXYZ(isoscape_sd)
 df <- data.frame(
-         ID = c(-100, -80, -50),
+         ID = paste0("Example.", 1:3),
          isotopeValue = c(-100, -80, -50),
          SD_indv = rep(5, 3)
          )
@@ -52,9 +52,31 @@ assignmentModels <- isotopeAssignmentModel(
                         isotopeValue = df$isotopeValue,
                         SD_indv = df$SD_indv,
                         precip_raster = myiso,
-                        precip_SD_raster = myiso_sd,
-                        nClusters = FALSE
+                        precip_SD_raster = myiso_sd
                         )
 raster::plot(assignmentModels)
+
+# Add additionalModels:
+range_raster <- myiso
+range_raster[] <- as.numeric( 1:ncell(myiso) \%\% 60 >= 10)
+plot(range_raster)
+
+sdm_raster <- myiso
+sdm_raster[] <- (1:ncell(sdm_raster))^2
+sdm_raster <- sdm_raster / raster::cellStats(sdm_raster, "sum")
+plot(sdm_raster)
+
+extraModels <- raster::stack(range_raster, sdm_raster)
+assignmentModels <- isotopeAssignmentModel(
+                        ID = paste0("Combo.",df$ID),
+                        isotopeValue = df$isotopeValue,
+                        SD_indv = df$SD_indv,
+                        precip_raster = myiso,
+                        precip_SD_raster = myiso_sd,
+                        additionalModels = extraModels
+                        )
+raster::plot(assignmentModels)
+
+
 
 }
