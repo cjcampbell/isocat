@@ -31,12 +31,12 @@ citEntry(
     as.person("Caitlin J. Campbell")
     ),
   year     = "2020",
-  version  = "0.2.5",
+  version  = "0.2.6",
   url      = "https://CRAN.R-project.org/package=isocat",
   textVersion = paste(
   "Caitlin J. Campbell (2020).",
   "isocat: Isotope Origin Clustering and Assignment Tools.",
-  "R package version 0.2.5.",
+  "R package version 0.2.6.",
   "https://CRAN.R-project.org/package=isocat"
   )
 )

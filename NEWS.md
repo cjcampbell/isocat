@@ -1,4 +1,4 @@
-# isocat 0.2.5.9000
+# isocat 0.2.6
 
 ## Publication update
 * Publication introducing some of isocat's functionalities is out. 
