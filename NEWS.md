@@ -1,7 +1,10 @@
 # isocat 0.2.5.9000
 
 ## Publication update
-* Publication introducing some of isocat's functionalities is out. Citation is updated.
+* Publication introducing some of isocat's functionalities is out. 
+* Package citation is created, update. See `citation("isocat")`.
+* Updated package description with links, typo fixes.
+
 
 ## Vignette improvements
 * Added some additional text on transfer functions
