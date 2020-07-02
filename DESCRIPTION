@@ -8,7 +8,6 @@ Authors@R: person(
   comment = c(ORCID = "0000-0002-8199-7775"),
   role = c("aut", "cre")
    )
-
 Description: This resource provides tools to create, compare, and post-process 
     spatial isotope assignment models of animal origin. It generates 
     probability-of-origin maps for individuals based on user-provided tissue and 
@@ -25,7 +24,7 @@ License: CC0
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Depends:
   R (>= 2.10),
   utils,

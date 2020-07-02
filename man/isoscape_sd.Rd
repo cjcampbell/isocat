@@ -4,7 +4,9 @@
 \name{isoscape_sd}
 \alias{isoscape_sd}
 \title{Example isoscape standard deviation data}
-\format{A dataframe containing 1800 observations, derived from a cropped raster object.}
+\format{
+A dataframe containing 1800 observations, derived from a cropped raster object.
+}
 \usage{
 isoscape_sd
 }

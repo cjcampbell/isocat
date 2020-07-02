@@ -4,7 +4,9 @@
 \name{isoscape}
 \alias{isoscape}
 \title{Example isoscape data}
-\format{A dataframe containing 1800 observations, derived from a cropped raster object.}
+\format{
+A dataframe containing 1800 observations, derived from a cropped raster object.
+}
 \usage{
 isoscape
 }

@@ -5,6 +5,8 @@
 
 The `isocat` package provides multiple tools in `R` for creating and quantitatively analyzing and summarizing probability-of-origin surfaces generated from stable isotope analyses of animal tissue. The package includes functions to create probability-of-origin surfaces, quantitatively compare and summarize the origins of individuals, and create and validate post-processing surfaces useful for interpreting individual origins.
 
+Many of isocat's functionalities are explored in Campbell et al. (2020) (https://doi.org/10.1515/ami-2020-0004)
+
 # Overview
 
 `isocat` relates the stable isotope ratios of animal tissues to environmental isotope data to create probability-of-origin maps for individuals.
