@@ -88,9 +88,11 @@ To create a probability-of-origin map, we first import or generate a dataframe c
 
 1) Individual IDs
 
-2) Individual-level isotope data, transformed with a transfer function to reflect isoscape values.
+2) Individual-level isotope data, transformed with a transfer function to reflect environmental isotope (e.g., precipitation) values.
 
 3) Standard deviation of isotope standard measurements, which are associated with machine accuracy.
+
+It is also common to instead use a transfer function to transform precipitation isoscapes to reflect expected tissue values. Either works; just make sure the transfer function is fit appropriately to the right predictor and response variables (and/or is a two-way regression, e.g., see `smatr::sma`).
 
 ```{r example_dataframe}
 n <- 6 # Number of example rasters
