@@ -1,0 +1,42 @@
+citHeader("To cite isocat in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "Advancing interpretation of stable isotope assignment maps: comparing and summarizing origins of known-provenance migratory bats",
+  author   = personList(
+    as.person("Caitlin J. Campbell"),
+    as.person("Matthew C. Fitzpatrick"),
+    as.person("Hannah B. Vander Zanden"),
+    as.person("David M. Nelson")
+    ),
+  journal  = "Animal Migration",
+  year     = "2020",
+  volume   = "7",
+  number   = "1",
+  pages    = "27--41",
+  publisher= "De Gruyter",
+  url      = "https://doi.org/10.1515/ami-2020-0004",
+  textVersion = paste(
+  "Campbell, Caitlin J., Matthew C. Fitzpatrick, Hannah B. Vander Zanden, and David M. Nelson.",
+  "Advancing interpretation of stable isotope assignment maps: comparing and summarizing origins of known-provenance migratory bats.",
+  "Animal Migration 7, no. 1 (2020): 27-41.",
+  "doi: 10.1515/ami-2020-0004"
+  )
+  )
+
+citEntry(
+  entry    = "Misc",
+  title    = "{isocat}: Isotope Origin Clustering and Assignment Tools",
+  author   = personList(
+    as.person("Caitlin J. Campbell")
+    ),
+  year     = "2020",
+  version  = "0.2.5",
+  url      = "https://CRAN.R-project.org/package=isocat",
+  textVersion = paste(
+  "Caitlin J. Campbell (2020).",
+  "isocat: Isotope Origin Clustering and Assignment Tools.",
+  "R package version 0.2.5.",
+  "https://CRAN.R-project.org/package=isocat"
+  )
+)

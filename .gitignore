@@ -9,3 +9,6 @@ setup_data/
 isocat_cache/
 tests_oldFxns
 man/.*
+*.png
+*.tiff
+*.pptx

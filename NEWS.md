@@ -1,5 +1,8 @@
 # isocat 0.2.5.9000
 
+## Publication update
+* Publication introducing some of isocat's functionalities is out. Citation is updated.
+
 ## Vignette improvements
 * Added some additional text on transfer functions
 
