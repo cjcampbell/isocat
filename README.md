@@ -8,7 +8,7 @@ The `isocat` package provides multiple tools in `R` for creating and quantitativ
 
 Many of isocat's functionalities are explored in Campbell et al. (2020) (https://doi.org/10.1515/ami-2020-0004)
 
-# Overview
+# Overview 
 
 `isocat` relates the stable isotope ratios of animal tissues to environmental isotope data to create probability-of-origin maps for individuals.
 
@@ -26,7 +26,7 @@ Probability-of-origin surfaces can also be transformed to several common post-pr
 
 For more information, and for reproducible examples, please see `isocat`'s vignette.
 
-# Installation
+# Installation 
 
 ## CRAN
 
