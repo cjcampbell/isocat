@@ -12,7 +12,8 @@ schoenersD(rast1, rast2)
 \item{rast2}{Input RasterLayer 2}
 }
 \description{
-RasterLayers must have identical resolutions and extents.
+RasterLayers must have identical resolutions and extents. The function will
+automatically normalize surfaces to sum to 1.
 }
 \details{
 Calculates similarity value of two RasterLayers using Schoener's D-metric.
