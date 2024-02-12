@@ -1,9 +1,10 @@
-# isocat 0.2.6.9000
+# isocat 0.3.0
 ## New function
 * New function `makeMultiMonthIsoscape` to combine multiple monthly isoscapes and error maps into one of each, for making month-specific isoscape assignments.
 
 ## Tweaks
 * `schoenersD` function now automatically normalizes surfaces to sum to 1, rather than just advising it in the documentation.
+* corrected documentation parameter names in
 
 # isocat 0.2.6
 
