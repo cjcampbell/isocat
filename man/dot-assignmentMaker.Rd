@@ -13,9 +13,9 @@
 
 \item{.SD_indv}{error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.}
 
-\item{.precip_raster}{precipitation isoscape raster.}
+\item{precip_raster}{precipitation isoscape raster.}
 
-\item{.precip_SD_raster}{precipitation isoscape standard deviation raster.}
+\item{precip_SD_raster}{precipitation isoscape standard deviation raster.}
 }
 \description{
 Make probability-of-origin surfaces

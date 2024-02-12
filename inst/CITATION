@@ -4,10 +4,10 @@ citEntry(
   entry    = "Article",
   title    = "Advancing interpretation of stable isotope assignment maps: comparing and summarizing origins of known-provenance migratory bats",
   author   = personList(
-    as.person("Caitlin J. Campbell"),
-    as.person("Matthew C. Fitzpatrick"),
-    as.person("Hannah B. Vander Zanden"),
-    as.person("David M. Nelson")
+    person("Caitlin J. Campbell"),
+    person("Matthew C. Fitzpatrick"),
+    person("Hannah B. Vander Zanden"),
+    person("David M. Nelson")
     ),
   journal  = "Animal Migration",
   year     = "2020",

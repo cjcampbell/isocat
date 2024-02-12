@@ -1,6 +1,6 @@
 ---
 title: "Overview of package `isocat` (Isotope Clustering and Assignment Tools)"
-author: "Caitlin J. Campbell"
+author: "C.J. Campbell"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:

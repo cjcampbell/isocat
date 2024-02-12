@@ -17,7 +17,7 @@ makeMultiMonthIsoscape(iso_stack, iso_se_stack, precip_stack = NULL)
 A list containing a mean isoscape and root-sum-of-square error map
 }
 \description{
-Converts a stack of monthly isoscape maps, montly isoscape standard error
+Converts a stack of monthly isoscape maps, monthly isoscape standard error
 maps, and optionally a precipitation (amount) stack. Each stack must contain
 layers corresponding to each of the target months.
 }

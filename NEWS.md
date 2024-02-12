@@ -6,6 +6,7 @@
 * `schoenersD` function now automatically normalizes surfaces to sum to 1, rather than just advising it in the documentation.
 * corrected documentation parameter names in `.assignmentMaker`
 
+
 # isocat 0.2.6
 
 ## Publication update

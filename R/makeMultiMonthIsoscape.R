@@ -1,6 +1,6 @@
 #' Make mean multi-month isoscape and error surfaces.
 #'
-#' Converts a stack of monthly isoscape maps, montly isoscape standard error
+#' Converts a stack of monthly isoscape maps, monthly isoscape standard error
 #' maps, and optionally a precipitation (amount) stack. Each stack must contain
 #' layers corresponding to each of the target months.
 #'
