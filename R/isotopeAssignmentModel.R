@@ -23,8 +23,8 @@
 #' @param .ID ID value or vector of values (for naming assignment model layers). If missing, will count from 1.
 #' @param .isotopeValue Isotope precipitation value or vector of values.
 #' @param .SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
-#' @param .precip_raster precipitation isoscape raster.
-#' @param .precip_SD_raster precipitation isoscape standard deviation raster.
+#' @param precip_raster precipitation isoscape raster.
+#' @param precip_SD_raster precipitation isoscape standard deviation raster.
 #'
 #' @keywords internal
 #'
