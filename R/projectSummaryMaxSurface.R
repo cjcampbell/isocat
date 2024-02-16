@@ -8,6 +8,7 @@
 #' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `parallel` packages. Defaults to `FALSE` (i.e., no clustering).
 #'
 #' @importFrom raster calc
+#' @importFrom methods is
 #'
 #' @examples
 #' # Create and cluster example assignment surfaces.
@@ -34,9 +35,9 @@
 
 projectSummaryMaxSurface <- function(surfaces, nClust = FALSE){
 
-  if( class(surfaces) != "RasterStack")
+  if( !is(surfaces, "RasterStack") )
     stop( "surfaces must be of class 'RasterStack'." )
-  if( nClust != FALSE & class(nClust) %in% c(FALSE, "numeric", "integer") != TRUE )
+  if( nClust != FALSE & !any(isFALSE(nClust), is(nClust, "numeric") , is(nClust, "integer")) )
     stop( "nClust class must either be FALSE, numeric, or integer." )
 
   which.max2 <- function(x, ...) ifelse( length(x) == sum( is.na(x) ), NA, raster::which.max(x))

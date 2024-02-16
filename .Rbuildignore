@@ -6,3 +6,4 @@ oldFxns/*
 setup_data/*
 ^README\.Rmd$
 ^cran-comments\.md$
+^CRAN-SUBMISSION$

@@ -34,7 +34,8 @@ Imports:
   plyr,
   sp,
   magrittr,
-  foreach
+  methods,
+  foreach,
 Suggests:
 	dendextend,
 	doParallel,

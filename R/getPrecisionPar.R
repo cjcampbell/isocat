@@ -10,6 +10,7 @@
 #'
 #' @importFrom foreach foreach
 #' @importFrom foreach %dopar%
+#' @importFrom methods is
 #'
 #' @export
 getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 20){
@@ -40,7 +41,7 @@ getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 2
     }; parallel::stopCluster()
 
   myDf <- plyr::ldply(getcells, data.frame)
-  if(method != FALSE & class(method) == "character"){
+  if(method != FALSE & is(method, "character") ){
     myDf <- cbind(myDf, method = method)
     }
   return(myDf)

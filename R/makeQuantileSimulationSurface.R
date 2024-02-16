@@ -10,6 +10,7 @@
 #'
 #' @return Returns RasterLayer rescaled to quantile values.
 #'
+#' @importFrom methods is
 #'
 #' @examples
 #' # Generate example probability surfaces.
@@ -47,7 +48,7 @@
 makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantiles, rename = FALSE, rescale = TRUE){
   if(!is.logical(rescale))
     stop("'rescale' must be a logical value.")
-  if(class(probabilitySurface) != "RasterLayer")
+  if(!is(probabilitySurface, "RasterLayer") )
     stop("'probabilitySurface' must be of class RasterLayer")
 
   p <- probabilitySurface
@@ -67,7 +68,7 @@ makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantile
   if(rename == FALSE){
     names(quantileSimulation_surface) <- names(p)
   } else {
-    if(class(rename) != "character")
+    if(!is(rename, "character"))
       stop("argument 'rename' should be of character class.")
     names(quantileSimulation_surface) <- paste0(names(p), rename)
   }

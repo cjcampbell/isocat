@@ -78,6 +78,7 @@
 #'
 #' @importFrom parallel mcmapply
 #' @importFrom foreach %dopar%
+#' @importFrom methods is
 #'
 #' @examples
 #' myiso <- rasterFromXYZ(isoscape)
@@ -138,13 +139,13 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
   }
 
   checkTheseRasters <- list(precip_raster = precip_raster, precip_SD_raster = precip_SD_raster)
-  if(class(additionalModels) != "logical"){
+  if( !is(additionalModels, "logical") ) {
     checkTheseRasters$additionalModels <- additionalModels
   }
   .compareMyRasters(checkTheseRasters)
 
   # If parallel is to be used.
-  if(class(nClusters) == "numeric"){
+  if( is(nClusters, "numeric") ) {
     if (!requireNamespace("parallel", quietly = TRUE)) {
       stop("Package \"parallel\" needed for this function to work when
            nClusters argument specified.",
@@ -161,7 +162,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
 
 
   # Without running in parallel. ------------------
-  if(class(nClusters) != "numeric"){
+  if( !is(nClusters,"numeric") ){
 
     ## Make assignments
     listOfAssigments <- mapply(
@@ -182,7 +183,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
     }
 
     ## Make combo models.
-    if(class(additionalModels) != "logical") {
+    if(!is(additionalModels, "logical") ) {
       comboAssignments <- mapply(
         FUN = .findProductThenNormalize,
         listOfAssigments,
@@ -208,7 +209,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
 
   # With running in parallel. -----------------
 
-  if(class(nClusters) == "numeric"){
+  if( is(nClusters, "numeric") ) {
 
     ## Make assignments
     cl <- parallel::makeCluster(nClusters)
@@ -233,7 +234,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
     }
 
     ## Make combo models.
-    if(class(additionalModels) != "logical") {
+    if(!is(additionalModels, "logical") ) {
       cl <- parallel::makeCluster(nClusters)
       comboAssignments <- mcmapply(
         FUN = .findProductThenNormalize,

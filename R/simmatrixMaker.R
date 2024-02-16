@@ -8,6 +8,7 @@
 #' @importFrom foreach foreach
 #' @importFrom foreach %do%
 #' @importFrom foreach %dopar%
+#' @importFrom methods is
 #'
 #'
 #' @examples
@@ -40,7 +41,7 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 
   if(missing(assignmentRasters))
     stop("Object 'assignmentRasters' not found.")
-  if(class(assignmentRasters) != "RasterStack")
+  if(!is(assignmentRasters, "RasterStack") )
     stop("Object 'assignmentRasters' is not of class 'RasterStack.'")
 
   # Run pairwise comparisons.

@@ -8,6 +8,7 @@
 #' @return Returns list of values representing cumulative sum of `val` values less than or equal to the input.
 #'
 #' @importFrom stats na.omit
+#' @importFrom methods is
 #'
 #' @examples
 #' vals <- 1:10
@@ -17,7 +18,7 @@
 #'
 #'
 cumsumbelow <- function(vals){
-  if(class(vals) != "numeric" & class(vals) != "integer")
+  if(!any(is(vals,"numeric"), is(vals, "integer")))
     stop("values entered must be numeric")
   unlist( lapply(vals, function(x,y){
       if(is.na(x)){ NA } else { sum(y[y <= x], na.rm = TRUE) } }, y = na.omit(vals)) )
@@ -39,6 +40,7 @@ cumsumbelow <- function(vals){
 #'
 #' @seealso \code{\link{cumsumAtSamplingLocation}}
 #'
+#' @importFrom methods is
 #'
 #' @examples
 #' # Generate example probability surfaces.
@@ -91,7 +93,7 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
   if(rename == FALSE){
     names(newsurface) <- names(indivraster)
   } else {
-    if(class(rename) != "character")
+    if(!is(rename,  "character") )
       stop("argument 'rename' should be of character class.")
     names(newsurface) <- paste0(names(indivraster), rename)
   }
@@ -133,7 +135,7 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 #'
 #' @export
 cumsumAtSamplingLocation <- function(indivraster, Lat, Lon){
-  if(!is.numeric(Lat) | !is.numeric(Lon))
+  if(!is(Lat, "numeric") | !is(Lon, "numeric") )
     stop("'Lat' and 'Lon' must both be numeric values.")
 
   if(is.na(Lat) | is.na(Lon)) {return(NA)} else {

@@ -12,7 +12,7 @@
 #'
 #' @seealso \code{\link{quantileAtSamplingLocation}}
 #'
-#'
+#' @importFrom methods is
 #'
 #' @examples
 #' # Generate example probability surfaces.
@@ -48,7 +48,7 @@ makeQuantileSurfaces <- function(probabilitySurface, rename = FALSE){
   if(rename == FALSE){
     names(quantile_surface) <- names(p)
   } else {
-    if(class(rename) != "character")
+    if(!is(rename,  "character") )
       stop("argument 'rename' should be of character class.")
     names(quantile_surface) <- paste0(names(p), rename)
   }

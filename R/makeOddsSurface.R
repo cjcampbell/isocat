@@ -8,6 +8,7 @@
 #' @return Returns RasterLayer rescaled to Odds Ratio values.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom methods is
 #'
 #' @aliases odds_surface odds_surface
 #'
@@ -45,7 +46,7 @@ makeOddsSurfaces <- function(probabilitySurface, rename = FALSE){
   if(rename == FALSE){
     names(odds_r) <- names(p)
   } else {
-    if(class(rename) != "character")
+    if(!is(rename, "character") )
       stop("argument 'rename' should be of character class.")
     names(odds_r) <- paste0(names(p), rename)
     }

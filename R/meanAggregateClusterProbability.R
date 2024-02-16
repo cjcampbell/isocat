@@ -7,6 +7,7 @@
 #' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `parallel` packages. Defaults to `FALSE` (i.e., no clustering).
 #'
 #' @importFrom raster "calc"
+#' @importFrom methods is
 #'
 #' @examples
 #' \donttest{
@@ -47,11 +48,12 @@
 
 meanAggregateClusterProbability <- function(indivIDs, clusters, surfaces, nClust = FALSE){
 
-  if( class(clusters) %in% c("vector", "factor", "integer") != TRUE )
+  if(!any(is(clusters,"vector"), is(clusters, "factor"), is(clusters, "integer")))
     stop( "clusters must be of class 'vector' or 'factor'." )
-  if( class(surfaces) != "RasterStack")
+  if( !is(surfaces, "RasterStack") )
     stop( "surfaces must be of class 'RasterStack'." )
-  if( nClust != FALSE & class(nClust) %in% c(FALSE, "numeric", "integer") != TRUE )
+
+  if( nClust != FALSE & !any(isFALSE(nClust), is(nClust, "numeric") , is(nClust, "integer")) )
     stop( "nClust class must either be FALSE, numeric, or integer." )
 
   which.mean <- function(x, ...) {
