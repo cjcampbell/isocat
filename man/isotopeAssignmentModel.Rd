@@ -39,9 +39,9 @@ isotopeAssignmentModel(
 Creates isotope assignment models projections of probable origin. Results returned as a RasterStack, with layer names corresponding to individual ID.
 }
 \examples{
-myiso <- rasterFromXYZ(isoscape)
-raster::plot(myiso)
-myiso_sd <- rasterFromXYZ(isoscape_sd)
+myiso <- rast(isoscape, type="xyz")
+plot(myiso)
+myiso_sd <- rast(isoscape_sd, type="xyz")
 df <- data.frame(
          ID = paste0("Example.", 1:3),
          isotopeValue = c(-100, -80, -50),
