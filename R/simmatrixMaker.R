@@ -175,8 +175,8 @@ schoenersDsimmatrix <- function(spatrast){
 
   for(i in 1:nrow(t)) {
     d <- schoenersD(
-      assignmentRasters[[t[i,1]]],
-      assignmentRasters[[t[i,2]]]
+      spatrast[[t[i,1]]],
+      spatrast[[t[i,2]]]
     )
     m[upper.tri(m)][i] <- unlist(d)
   }

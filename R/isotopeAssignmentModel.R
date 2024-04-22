@@ -2,7 +2,6 @@
 #'
 #' @keywords internal
 #'
-#' @importFrom terra summmary
 #' @importFrom terra global
 #'
 #' @export .normprodrast
@@ -56,7 +55,6 @@
 #'
 #' @importFrom methods is
 #' @importFrom terra rast
-#' @importMethodsFrom terra summary
 #'
 #' @examples
 #' myiso <- rast(isoscape, type="xyz")
