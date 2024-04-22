@@ -14,9 +14,9 @@
 #' @examples
 #' \donttest{
 #' # Create probability-of-origin maps to compare.
-#' myiso <- rasterFromXYZ(isoscape)
-#' raster::plot(myiso)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso <- rast(isoscape, type="xyz")
+#' plot(myiso)
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
 #' n <- 5
 #' set.seed(42)
 #' df <- data.frame(

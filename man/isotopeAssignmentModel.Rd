@@ -23,9 +23,9 @@ isotopeAssignmentModel(
 
 \item{SD_indv}{error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.}
 
-\item{precip_raster}{precipitation isoscape raster.}
+\item{precip_raster}{precipitation isoscape SpatRaster or raster.}
 
-\item{precip_SD_raster}{precipitation isoscape standard deviation raster.}
+\item{precip_SD_raster}{precipitation isoscape standard deviation SpatRaster or raster.}
 
 \item{additionalModels}{optional additional model raster object (e.g. an SDM, rasterized range map, or stack thereof). If specified, function will return isotope assignment rasters and the product of these additionalModels and each assignmentRaster.}
 
@@ -33,7 +33,7 @@ isotopeAssignmentModel(
 
 \item{savePath}{If specified, function will save results to this path as a '.grd' file.}
 
-\item{nClusters}{integer of cores to run in parallel with doParallel. Default FALSE.}
+\item{nClusters}{Depreciated. Formerly, integer of cores to run in parallel with doParallel. Default FALSE.}
 }
 \description{
 Creates isotope assignment models projections of probable origin. Results returned as a RasterStack, with layer names corresponding to individual ID.

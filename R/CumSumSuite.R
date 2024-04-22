@@ -44,8 +44,8 @@ cumsumbelow <- function(vals){
 #'
 #' @examples
 #' # Generate example probability surfaces.
-#' myiso <- rasterFromXYZ(isoscape)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso    <- rast( isoscape, type="xyz")
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
 #' df <- data.frame(
 #'         ID = c(-100, -80, -50),
 #'         isotopeValue = c(-100, -80, -50),
@@ -117,8 +117,8 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 #'
 #' @examples
 #' # Generate example probability surface.
-#' myiso <- raster::rasterFromXYZ(isoscape)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso <- rast(isoscape, type="xyz")
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
 #' exampleSurface <- isotopeAssignmentModel(
 #'          ID = "A",
 #'          isotopeValue = -100,
