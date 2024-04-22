@@ -52,7 +52,7 @@ assignmentModels <- isotopeAssignmentModel(
                         )
 raster::plot(assignmentModels)
 # Compare maps with simmatrixMaker.
-mymatrix <- simmatrixMaker(assignmentModels, nClusters = FALSE, csvSavePath = FALSE)
+mymatrix <- schoenersDsimmatrix(assignmentModels)
 # Cluster similarity matrix.
 clust_results <- clusterSimmatrix(mymatrix, dist_mthd = "correlation",
     hclust_mthd = "average", nBoot = 1000,  nClusters = FALSE,
