@@ -14,7 +14,7 @@ isoscape
 Example isoscape data
 }
 \examples{
-iso <- rasterFromXYZ(isoscape)
+iso <- rast(isoscape, type="xyz")
 }
 \references{
 Campbell C. J. (2018) IsoMAP job 66100, Isoscapes Modeling, Analysis and Prediction (version 1.0). The IsoMAP Project. http://isomap.org

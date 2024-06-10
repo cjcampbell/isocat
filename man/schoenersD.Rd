@@ -7,9 +7,9 @@
 schoenersD(rast1, rast2)
 }
 \arguments{
-\item{rast1}{Input RasterLayer}
+\item{rast1}{First object of class SpatRaster}
 
-\item{rast2}{Input RasterLayer 2}
+\item{rast2}{Second object of class SpatRaster}
 }
 \description{
 RasterLayers must have identical resolutions and extents. The function will
@@ -20,8 +20,8 @@ Calculates similarity value of two RasterLayers using Schoener's D-metric.
 }
 \examples{
 # Generate example probability surfaces.
-myiso <- raster::rasterFromXYZ(isoscape)
-myiso_sd <- raster::rasterFromXYZ(isoscape_sd)
+myiso <- rast(isoscape, type="xyz")
+myiso_sd <- rast(isoscape_sd, type="xyz")
 df <- data.frame(
         ID = c(-100, -80, -50),
         isotopeValue = c(-100, -80, -50),

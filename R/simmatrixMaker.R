@@ -1,6 +1,6 @@
 #' Generates similarity matrix for RasterStack
 #'
-#' Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
+#' Legacy function that runs on raster::stack. Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
 #' @param assignmentRasters Input RasterStack
 #' @param nClusters Clusters to create run in parallel using 'doParallel'. Defaults to FALSE.
 #' @param csvSavePath Optional savepath to write similarity matrix to csv file. Defaults to FALSE, will not create csv.
@@ -13,9 +13,9 @@
 #'
 #' @examples
 #' # Create probability-of-origin maps to compare.
-#' myiso <- rasterFromXYZ(isoscape)
-#' raster::plot(myiso)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso <- rast(isoscape, type="xyz")
+#' plot(myiso)
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
 #' n <- 5
 #' set.seed(42)
 #' df <- data.frame(
@@ -124,4 +124,65 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
     utils::write.csv(x, file = file.path(csvSavePath, "PairwiseComparisonMatrix.csv"))
   }
   return(x)
+}
+
+
+#' Generates similarity matrix for SpatRaster objects in environment.
+#'
+#' Applies pairwise comparisons of Schoener's D-metric for SpatRaster objects that are loaded into the environment.
+#'
+#' @param spatrast Input SpatRaster
+#'
+#' @examples
+#' # Create probability-of-origin maps to compare.
+#' myiso <- rast(isoscape, type="xyz")
+#' plot(myiso)
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
+#' n <- 5
+#' set.seed(42)
+#' df <- data.frame(
+#'          ID = LETTERS[1:n],
+#'          isotopeValue = sample(-120:-40, n),
+#'          SD_indv = rep(5, n)
+#'          )
+#' assignmentModels <- isotopeAssignmentModel(
+#'                         ID = df$ID,
+#'                         isotopeValue = df$isotopeValue,
+#'                         SD_indv = df$SD_indv,
+#'                         precip_raster = myiso,
+#'                         precip_SD_raster = myiso_sd,
+#'                         nClusters = FALSE
+#'                         )
+#' raster::plot(assignmentModels)
+#' # Compare maps with simmatrixMaker.
+#' simmatrix(assignmentModels)
+#'
+#'
+#' @export
+schoenersDsimmatrix <- function(spatrast){
+
+  stopifnot(
+    "input `spatrast` must be of class SpatRaster" = is(spatrast, "SpatRaster")
+  )
+
+  # Ensure appropriate and unique layer names.
+  names(spatrast) <- make.names(names(spatrast))
+  names(spatrast) <- make.unique(names(spatrast))
+
+  a <- names(spatrast)
+  t <- t(utils::combn(a,2))
+  m <- matrix(data = NA, nrow = length(a), ncol = length(a))
+
+  for(i in 1:nrow(t)) {
+    d <- schoenersD(
+      spatrast[[t[i,1]]],
+      spatrast[[t[i,2]]]
+    )
+    m[upper.tri(m)][i] <- unlist(d)
+  }
+  # force symmetry.
+  m[lower.tri(m)] <- t(m)[lower.tri(m)]
+  m[!lower.tri(m)&!upper.tri(m)] <- 1
+
+  return(m)
 }

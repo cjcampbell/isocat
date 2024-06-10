@@ -1,64 +1,41 @@
-#' Find Product Then Normalize Function
+#' Find product then normalize function for SpatRasters
 #'
 #' @keywords internal
+#'
+#' @importFrom terra global
+#'
+#' @export .normprodrast
 
-#' @importFrom raster cellStats
-
-#' @export .findProductThenNormalize
-
-.findProductThenNormalize <- function(...){
-  a <- list(...)
-  if(length(a) == 1) {
-    b <- a[[1]]
-  } else {
-    b <- do.call("prod", a)
-  }
-  c <- b / raster::cellStats(b, "sum")
-  return(c)
+.normprodrast <- function(variables) {
+  a <- prod(variables)
+  out <- a/unlist(terra::global(a, "sum"))
+  return(out)
 }
-
 
 #' Make probability-of-origin surfaces
 #'
 #' @param .ID ID value or vector of values (for naming assignment model layers). If missing, will count from 1.
 #' @param .isotopeValue Isotope precipitation value or vector of values.
 #' @param .SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
-#' @param precip_raster precipitation isoscape raster.
-#' @param precip_SD_raster precipitation isoscape standard deviation raster.
+#' @param precip_raster precipitation isoscape SpatRaster or raster.
+#' @param precip_SD_raster precipitation isoscape standard deviation SpatRaster or raster.
 #'
 #' @keywords internal
 #'
 #' @export .assignmentMaker
 
 .assignmentMaker <- function(.ID, .isotopeValue, .SD_indv, precip_raster, precip_SD_raster){
+
   # Calculate total error.
   totError <- sqrt((precip_SD_raster)^2 + .SD_indv^2)
   # Assignment function.
   assign <- (1 / sqrt(2 * pi * totError^2)) * exp(-1 * (.isotopeValue - precip_raster)^2 / (2 * totError^2))
 
   # Normalize to sum to 1.
-  assign_norm <- .findProductThenNormalize(assign)
+  assign_norm <- .normprodrast(assign)
 
   names(assign_norm) <- paste0(.ID)
   return(assign_norm)
-}
-
-
-#' Compare rasters by checking whether they can stack.
-#'
-#' @keywords internal
-#'
-#' @export .compareMyRasters
-
-.compareMyRasters <- function(...){
-  tryCatch(
-    expr={ raster::stack(...)},
-    error = function(e){
-      stop("Rasters included as arguments don't match up.
-             See '?compareRaster' for more. Double check precip_raster,
-             precip_SD_raster, and additionalModels!")
-    }
-  )
 }
 
 
@@ -69,21 +46,20 @@
 #' @param ID ID value or vector of values (for naming assignment model layers). If missing, will count from 1.
 #' @param isotopeValue Isotope precipitation value or vector of values.
 #' @param SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
-#' @param precip_raster precipitation isoscape raster.
-#' @param precip_SD_raster precipitation isoscape standard deviation raster.
+#' @param precip_raster precipitation isoscape SpatRaster or raster.
+#' @param precip_SD_raster precipitation isoscape standard deviation SpatRaster or raster.
 #' @param additionalModels optional additional model raster object (e.g. an SDM, rasterized range map, or stack thereof). If specified, function will return isotope assignment rasters and the product of these additionalModels and each assignmentRaster.
 #' @param additionalModel_name optional filename for additionalModel .grd savepath
 #' @param savePath If specified, function will save results to this path as a '.grd' file.
-#' @param nClusters integer of cores to run in parallel with doParallel. Default FALSE.
+#' @param nClusters Depreciated. Formerly, integer of cores to run in parallel with doParallel. Default FALSE.
 #'
-#' @importFrom parallel mcmapply
-#' @importFrom foreach %dopar%
 #' @importFrom methods is
+#' @importFrom terra rast
 #'
 #' @examples
-#' myiso <- rasterFromXYZ(isoscape)
-#' raster::plot(myiso)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso <- rast(isoscape, type="xyz")
+#' plot(myiso)
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
 #' df <- data.frame(
 #'          ID = paste0("Example.", 1:3),
 #'          isotopeValue = c(-100, -80, -50),
@@ -133,131 +109,71 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
   if( missing(precip_SD_raster)){
     stop("Precip isoscape error raster not found.")
   }
-  if( missing(ID) ) {             ID <- seq(1, length(isotopeValue), 1)  }
+  if( missing(ID) ) { ID <- seq(1, length(isotopeValue), 1)  }
   if( length(SD_indv == 0) & SD_indv[1] == 0 ) {
     SD_indv <- rep(0, length(ID))
   }
+  if(is(precip_raster, "raster"))    precip_raster <- terra::rast(precip_raster)
+  if(is(precip_SD_raster, "raster")) precip_SD_raster <- terra::rast(precip_SD_raster)
 
-  checkTheseRasters <- list(precip_raster = precip_raster, precip_SD_raster = precip_SD_raster)
-  if( !is(additionalModels, "logical") ) {
-    checkTheseRasters$additionalModels <- additionalModels
+  # Check rasts.
+  if(!compareGeom(precip_raster, precip_SD_raster)) {
+    stop("precip_raster and precip_SD_raster are not compatible as arguments.
+             See '?compareGeom' for more.")
   }
-  .compareMyRasters(checkTheseRasters)
-
-  # If parallel is to be used.
-  if( is(nClusters, "numeric") ) {
-    if (!requireNamespace("parallel", quietly = TRUE)) {
-      stop("Package \"parallel\" needed for this function to work when
-           nClusters argument specified.",
-           call. = FALSE)
+  if( !is(additionalModels, "logical") ) {
+    if(!compareGeom(precip_raster, precip_SD_raster, additionalModels)) {
+      stop("precip_raster and precip_SD_raster are not compatible as arguments
+           with the specified additionalModels. See '?compareGeom' for more.")
     }
   }
 
-  # Setup. ##
+  # Include message about parallel not working.
+  if( is(nClusters, "numeric") ) {
+    message("Within-function parallelization is depreciated. Sorry! Proceeding without parallelization.")
+  }
+
+  # Setup. ## ------------------
   ID0 <- make.names(ID)
   if( all(ID0 == ID) == FALSE ) warning("ID values will be transformed on output. See '?make.names' for more.")
 
+  ## Make assignments
+  listOfAssigments <- mapply(
+    FUN = .assignmentMaker,
+    ID0,  isotopeValue, SD_indv,
+    MoreArgs =  list( precip_raster = precip_raster, precip_SD_raster = precip_SD_raster )
+  )
 
-  #### Apply -------------------------------------------------------------------
-
-
-  # Without running in parallel. ------------------
-  if( !is(nClusters,"numeric") ){
-
-    ## Make assignments
-    listOfAssigments <- mapply(
-      FUN = .assignmentMaker,
-      ID0,  isotopeValue, SD_indv,
-      MoreArgs =  list( precip_raster = precip_raster, precip_SD_raster = precip_SD_raster )
+  stackOfAssignments <-  terra::rast(listOfAssigments)
+  ### Save
+  if( savePath != FALSE ) {
+    terra::writeRaster(
+      x = stackOfAssignments,
+      filename = file.path(savePath, "IsotopeAssignments.grd"),
+      format = "raster",
+      overwrite = TRUE
     )
-    stackOfAssignments <-  raster::stack(listOfAssigments)
-
-    ### Save
-    if( savePath != FALSE ) {
-      raster::writeRaster(
-        x = stackOfAssignments,
-        filename = file.path(savePath, "IsotopeAssignments.grd"),
-        format = "raster",
-        overwrite = TRUE
-      )
-    }
-
-    ## Make combo models.
-    if(!is(additionalModels, "logical") ) {
-      comboAssignments <- mapply(
-        FUN = .findProductThenNormalize,
-        listOfAssigments,
-        MoreArgs = list(additionalModels)
-      )
-      stackOfCombinations <- raster::stack(comboAssignments)
-
-      ### Save
-      if( savePath != FALSE ) {
-        raster::writeRaster(
-          x = stackOfCombinations,
-          filename = file.path(savePath, paste0( additionalModel_name, ".grd")),
-          format = "raster",
-          overwrite = TRUE
-        )
-      }
-
-      return(stackOfCombinations)
-    } else {
-      return(stackOfAssignments)
-    }
   }
 
-  # With running in parallel. -----------------
+  ## Make combo models.
+  if(!is(additionalModels, "logical") ) {
+    comboAssignments <-  lapply(listOfAssigments, function(x) {
+      .normprodrast(c(x, additionalModels))
+    })
 
-  if( is(nClusters, "numeric") ) {
-
-    ## Make assignments
-    cl <- parallel::makeCluster(nClusters)
-
-    listOfAssigments <- parallel::mcmapply(
-      FUN = .assignmentMaker,
-      ID0, isotopeValue, SD_indv,
-      MoreArgs =  list( precip_raster, precip_SD_raster ))
-
-    parallel::stopCluster(cl)
-
-    stackOfAssignments <-  raster::stack(listOfAssigments)
-
+    stackOfCombinations <- terra::rast(comboAssignments)
     ### Save
     if( savePath != FALSE ) {
-      raster::writeRaster(
-        x = stackOfAssignments,
-        filename = file.path(savePath, "IsotopeAssignments.grd"),
+      terra::writeRaster(
+        x = stackOfCombinations,
+        filename = file.path(savePath, paste0( additionalModel_name, ".grd")),
         format = "raster",
         overwrite = TRUE
       )
     }
-
-    ## Make combo models.
-    if(!is(additionalModels, "logical") ) {
-      cl <- parallel::makeCluster(nClusters)
-      comboAssignments <- mcmapply(
-        FUN = .findProductThenNormalize,
-        listOfAssigments,
-        MoreArgs = list(additionalModels)
-      )
-      parallel::stopCluster(cl)
-      stackOfCombinations <- raster::stack(comboAssignments)
-
-      ### Save
-      if( savePath != FALSE ) {
-        raster::writeRaster(
-          x = stackOfCombinations,
-          filename = file.path(savePath, paste0( additionalModel_name, ".grd")),
-          format = "raster",
-          overwrite = TRUE
-        )
-      }
-      return(stackOfCombinations)
-    } else {
-      return(stackOfAssignments)
-    }
-
+    return(stackOfCombinations)
+  } else {
+    return(stackOfAssignments)
   }
 
 }

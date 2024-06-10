@@ -16,8 +16,8 @@
 #'
 #' @examples
 #' # Generate example probability surfaces.
-#' myiso <- rasterFromXYZ(isoscape)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso <- rast(isoscape, type="xyz")
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
 #' df <- data.frame(
 #'          ID = c(-100, -80, -50),
 #'          isotopeValue = c(-100, -80, -50),

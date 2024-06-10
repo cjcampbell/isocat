@@ -12,8 +12,8 @@
 #'
 #' @examples
 #' # Create and cluster example assignment surfaces.
-#' myiso <- rasterFromXYZ(isoscape)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso <- rast(isoscape, type="xyz")
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
 #' assignmentModels <- isotopeAssignmentModel(
 #'         ID = LETTERS[1:4],
 #'         isotopeValue = seq(-120,-25,length.out = 4),

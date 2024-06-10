@@ -1,3 +1,12 @@
+# isocat 2.0.0.9000
+## Updates to rely on `terra` and `sf` for long-term package stability
+* `isotopeAssignmentModel` now relies on terra instead of raster. Depreciated the  parallel processing capability within this function
+* `schoenersD` now expects inputs of SpatRasters, will automatically convert raster-class objects.
+* New function `schoenersDsimmatrix` generates a similarity matrix comprising Schoener's D values for all layers in a SpatRaster. Function `simmatrixMaker` retained as a legacy/depreciated function that still uses rasterStacks as input.
+
+TODO -- make schoenersDsimmatrix that runs in parallel
+
+
 # isocat 0.3.0
 ## New function
 * New function `makeMultiMonthIsoscape` to combine multiple monthly isoscapes and error maps into one of each, for making month-specific isoscape assignments.

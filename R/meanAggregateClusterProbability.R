@@ -12,8 +12,8 @@
 #' @examples
 #' \donttest{
 #' # Create and cluster example assignment surfaces.
-#' myiso <- rasterFromXYZ(isoscape)
-#' myiso_sd <- rasterFromXYZ(isoscape_sd)
+#' myiso <- rast(isoscape, type="xyz")
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
 #' df <- data.frame(
 #'         ID = LETTERS[1:9],
 #'         isotopeValue = seq(-120,-25,length.out = 9),
