@@ -113,8 +113,8 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
   if( length(SD_indv == 0) & SD_indv[1] == 0 ) {
     SD_indv <- rep(0, length(ID))
   }
-  if(is(precip_raster, "raster"))    precip_raster <- terra::rast(precip_raster)
-  if(is(precip_SD_raster, "raster")) precip_SD_raster <- terra::rast(precip_SD_raster)
+  if(is(precip_raster, "Raster"))    precip_raster <- terra::rast(precip_raster)
+  if(is(precip_SD_raster, "Raster")) precip_SD_raster <- terra::rast(precip_SD_raster)
 
   # Check rasts.
   if(!compareGeom(precip_raster, precip_SD_raster)) {

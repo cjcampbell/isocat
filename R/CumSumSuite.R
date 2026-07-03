@@ -30,11 +30,11 @@ cumsumbelow <- function(vals){
 #'
 #' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or equal to the old value of the cell.
 #'
-#' @param indivraster Normalized probability surface RasterLayer
+#' @param indivraster Normalized probability surface SpatRaster
 #' @param rescale Rescale between 0 and 1? Defaults to FALSE.
 #' @param rename Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.
 #'
-#' @return Returns RasterLayer rescaled to Cumulative Sum values.
+#' @return Returns SpatRaster rescaled to Cumulative Sum values.
 #'
 #' @aliases cumsum_surface
 #'
@@ -61,8 +61,8 @@ cumsumbelow <- function(vals){
 #'         )
 #'
 #' # Convert to cumulative sum surface.
-#' cumulative_sum_surface <- stack(
-#'      lapply( unstack( assignmentModels ), makecumsumSurface )
+#' cumulative_sum_surface <- terra::rast(
+#'      lapply( terra::as.list( assignmentModels ), makecumsumSurface )
 #'      )
 #' plot(cumulative_sum_surface)
 #'
@@ -70,24 +70,17 @@ cumsumbelow <- function(vals){
 #'
 makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 
-  . <- "quiet" # silence 'no visible binding for global variable' call.
-  vals <- NULL
+  if(is(indivraster, "Raster")) indivraster <- terra::rast(indivraster)
 
   newsurface <- indivraster
-  newsurface[] <- cumsumbelow( indivraster[] )
+  newsurface[] <- cumsumbelow( as.vector(indivraster[]) )
 
   if(rescale == TRUE){
-    new.min <- 0
-    new.max <- 1
-    x.min <- sum(
-      vals[ vals <= raster::cellStats(indivraster, "min") ] ,
-      na.rm = TRUE
-      )
-    x.max <- sum(
-      vals[ vals <= raster::cellStats(indivraster, "max") ],
-      na.rm = TRUE
-      )
-    newsurface <- new.min + (newsurface - x.min) * ((new.max - new.min) / (x.max - x.min))
+    # Rescale the cumulative-sum surface to [0, 1]; its minimum and maximum are the
+    # cumulative sums at the smallest and largest input cell values.
+    r_min <- terra::global(newsurface, "min", na.rm = TRUE)[1, 1]
+    r_max <- terra::global(newsurface, "max", na.rm = TRUE)[1, 1]
+    newsurface <- (newsurface - r_min) / (r_max - r_min)
   }
 
   if(rename == FALSE){

@@ -12,7 +12,7 @@ makeQuantileSimulationSurface(
 )
 }
 \arguments{
-\item{probabilitySurface}{Normalized probability surface RasterLayer.}
+\item{probabilitySurface}{Normalized probability surface SpatRaster.}
 
 \item{ValidationQuantiles}{Vector of quantile values from known-origin individuals, against which to compare each value within the probability surface. Each value must be between 0 and 1.}
 
@@ -21,7 +21,7 @@ makeQuantileSimulationSurface(
 \item{rescale}{If rescale = TRUE, returns surface showing proportion of times each surface cell value fell within the validation quantiles distribution. If rescale = FALSE, returns discrete number of times the cell fell within the distribution.}
 }
 \value{
-Returns RasterLayer rescaled to quantile values.
+Returns SpatRaster rescaled to quantile values.
 }
 \description{
 Converts normalized probability surfaces (e.g. one layer output of
@@ -51,9 +51,9 @@ q <- sample( q[ q >=0 & q <= 1 ], 10000, replace = TRUE)
 hist(q)
 
 # Convert to quantile surfaces.
-quantileSimulation_surface <-  raster::stack(
+quantileSimulation_surface <-  terra::rast(
                   lapply(
-                            unstack(assignmentModels),
+                            terra::as.list(assignmentModels),
                             makeQuantileSimulationSurface,
                             ValidationQuantiles = q)
                         )
