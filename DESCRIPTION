@@ -24,7 +24,7 @@ License: CC0
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.2.2
+RoxygenNote: 7.3.3
 Depends:
   R (>= 3.0),
   utils,
@@ -36,6 +36,7 @@ Imports:
   magrittr,
   methods,
   foreach,
+  raster,
 Suggests:
 	dendextend,
 	doParallel,
@@ -47,8 +48,8 @@ Suggests:
 	parallel,
 	pvclust,
   rmarkdown,
-  raster,
   rasterVis,
+  testthat (>= 3.0.0),
   viridisLite
 VignetteBuilder: knitr
-
+Config/testthat/edition: 3
