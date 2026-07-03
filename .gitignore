@@ -12,3 +12,5 @@ man/.*
 *.png
 *.tiff
 *.pptx
+CLAUDE.md
+dev/
