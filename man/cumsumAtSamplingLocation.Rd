@@ -8,7 +8,7 @@
 cumsumAtSamplingLocation(indivraster, Lat, Lon)
 }
 \arguments{
-\item{indivraster}{RasterLayer representing normalized probability of origin surface}
+\item{indivraster}{SpatRaster representing normalized probability of origin surface}
 
 \item{Lat}{Integer latitude}
 
@@ -29,10 +29,10 @@ exampleSurface <- isotopeAssignmentModel(
          precip_SD_raster = myiso_sd,
          nClusters = FALSE
          )
-# Calculate odds ratio at specific point.
+# Calculate cumulative sum at specific point.
 set.seed(1)
 x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
-pt <- raster::xyFromCell(exampleSurface, x)
+pt <- terra::xyFromCell(exampleSurface, x)
 cumsumAtSamplingLocation(indivraster = exampleSurface, Lat = pt[2], Lon = pt[1])
 
 }
