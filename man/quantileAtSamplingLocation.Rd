@@ -21,7 +21,7 @@ For more information, see help(ecdf).
 \examples{
 # Generate example probability surface.
 myiso <- rast(isoscape, type="xyz")
-myiso_sd <- rast(isoscape_sd, type="xyz")s
+myiso_sd <- rast(isoscape_sd, type="xyz")
 exampleSurface <- isotopeAssignmentModel(
          ID = "A",
          isotopeValue = -100,
