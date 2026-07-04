@@ -7,9 +7,9 @@
 projectSummaryMaxSurface(surfaces, nClust = FALSE)
 }
 \arguments{
-\item{surfaces}{Object of class "RasterStack", where each layer represents a probability-of-origin surface}
+\item{surfaces}{SpatRaster where each layer represents a probability-of-origin surface}
 
-\item{nClust}{Create and apply a multi-core cluster for faster processing using `raster` and `parallel` packages. Defaults to `FALSE` (i.e., no clustering).}
+\item{nClust}{Depreciated. Formerly enabled multi-core processing; retained for back-compatibility. A non-`FALSE` value now issues a message and proceeds serially.}
 }
 \description{
 Create a summary surface showing which RasterLayer in a Stack has the highest value at a given location.
@@ -28,13 +28,13 @@ assignmentModels <- isotopeAssignmentModel(
         precip_SD_raster = myiso_sd,
         nClusters = FALSE
         )
-raster::plot(assignmentModels)
+plot(assignmentModels)
 
 # Project mean aggregate surfaces into space.
 summaryMap <- projectSummaryMaxSurface(
         surfaces = assignmentModels,
         nClust = FALSE
         )
-raster::plot(summaryMap)
+plot(summaryMap)
 
 }
