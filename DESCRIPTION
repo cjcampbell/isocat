@@ -26,9 +26,9 @@ Language: en-US
 LazyData: true
 RoxygenNote: 7.3.3
 Depends:
-  R (>= 3.0),
-  utils,
-  terra
+    R (>= 3.5),
+    utils,
+    terra
 Imports:
   stats,
   plyr,

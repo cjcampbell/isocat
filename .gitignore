@@ -5,6 +5,7 @@
 inst/doc
 oldFxns/
 setup_data/
+data_archive/
 !setup_data/setup_isoscape_data.R
 isocat_cache/
 tests_oldFxns

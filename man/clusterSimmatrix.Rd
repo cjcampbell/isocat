@@ -50,8 +50,8 @@ assignmentModels <- isotopeAssignmentModel(
                         precip_SD_raster = myiso_sd,
                         nClusters = FALSE
                         )
-raster::plot(assignmentModels)
-# Compare maps with simmatrixMaker.
+plot(assignmentModels)
+# Build a similarity matrix with schoenersDsimmatrix.
 mymatrix <- schoenersDsimmatrix(assignmentModels)
 # Cluster similarity matrix.
 clust_results <- clusterSimmatrix(mymatrix, dist_mthd = "correlation",

@@ -32,9 +32,9 @@ assignmentModels <- isotopeAssignmentModel(
                         precip_SD_raster = myiso_sd,
                         nClusters = FALSE
                         )
-raster::plot(assignmentModels)
-# Compare maps with simmatrixMaker.
-simmatrix(assignmentModels)
+plot(assignmentModels)
+# Compare maps with schoenersDsimmatrix.
+schoenersDsimmatrix(assignmentModels)
 
 
 }

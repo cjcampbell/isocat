@@ -17,28 +17,23 @@ simmatrixMaker(assignmentRasters, nClusters = FALSE, csvSavePath = FALSE)
 Legacy function that runs on raster::stack. Applies pairwise comparisons of Schoener's D-metric between each RasterLayer in a RasterStack to populate a similarity matrix.
 }
 \examples{
-# Create probability-of-origin maps to compare.
-myiso <- rast(isoscape, type="xyz")
-plot(myiso)
-myiso_sd <- rast(isoscape_sd, type="xyz")
-n <- 5
-set.seed(42)
-df <- data.frame(
-         ID = LETTERS[1:n],
-         isotopeValue = sample(-120:-40, n),
-         SD_indv = rep(5, n)
-         )
-assignmentModels <- isotopeAssignmentModel(
-                        ID = df$ID,
-                        isotopeValue = df$isotopeValue,
-                        SD_indv = df$SD_indv,
-                        precip_raster = myiso,
-                        precip_SD_raster = myiso_sd,
-                        nClusters = FALSE
-                        )
-raster::plot(assignmentModels)
-# Compare maps with simmatrixMaker.
-simmatrixMaker(assignmentModels, nClusters = FALSE, csvSavePath = FALSE)
-
+\donttest{
+# simmatrixMaker() is a legacy function for raster::stack input;
+# for SpatRaster input use schoenersDsimmatrix() instead.
+if (requireNamespace("raster", quietly = TRUE)) {
+  myiso <- rast(isoscape, type = "xyz")
+  myiso_sd <- rast(isoscape_sd, type = "xyz")
+  set.seed(42)
+  assignmentModels <- isotopeAssignmentModel(
+    ID = LETTERS[1:5],
+    isotopeValue = sample(-120:-40, 5),
+    SD_indv = rep(5, 5),
+    precip_raster = myiso,
+    precip_SD_raster = myiso_sd
+  )
+  # Coerce to a RasterStack for the legacy interface.
+  simmatrixMaker(raster::stack(assignmentModels))
+}
+}
 
 }

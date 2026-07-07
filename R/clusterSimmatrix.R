@@ -32,8 +32,8 @@
 #'                         precip_SD_raster = myiso_sd,
 #'                         nClusters = FALSE
 #'                         )
-#' raster::plot(assignmentModels)
-#' # Compare maps with simmatrixMaker.
+#' plot(assignmentModels)
+#' # Build a similarity matrix with schoenersDsimmatrix.
 #' mymatrix <- schoenersDsimmatrix(assignmentModels)
 #' # Cluster similarity matrix.
 #' clust_results <- clusterSimmatrix(mymatrix, dist_mthd = "correlation",
@@ -47,8 +47,8 @@ clusterSimmatrix <- function(simmatrix,
                              dist_mthd = "correlation", hclust_mthd = "average",
                              nBoot = 1000,  nClusters = FALSE, r=seq(.7,1.4,by=.1)){
 
-  if (!requireNamespace("pvclust")) {
-    stop(" The \"pvclust\" package is required for parallel processing.")
+  if (!requireNamespace("pvclust", quietly = TRUE)) {
+    stop(" The \"pvclust\" package is required for this function.")
   }
 
   if( "matrix" %in% class(simmatrix) != TRUE ) stop("Object 'x' is not of class 'Matrix'")
@@ -76,7 +76,7 @@ clusterSimmatrix <- function(simmatrix,
       method.hclust = hclust_mthd,
       method.dist = dist_mthd,
       nboot = nBoot,
-      r = seq(.7,1.4,by=.1),
+      r = r,
       parallel = cl
     )
   )

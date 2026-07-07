@@ -4,6 +4,7 @@
 ^.*\.tar.gz$
 oldFxns/*
 setup_data/*
+data_archive/*
 ^README\.Rmd$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
