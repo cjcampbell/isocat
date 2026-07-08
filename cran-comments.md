@@ -9,7 +9,8 @@ listed in NEWS.md.
 ## Test environments
 * local macOS, R 4.4.3
 * win-builder (devel and release)
-* GitHub Actions / R-hub: Ubuntu, Windows, and macOS (R release and devel)
+* R-hub v2 (GitHub Actions), R-devel: Linux, Windows, macOS, macOS (arm64),
+  and macOS M1 with sanitizers (m1-san)
 
 ## R CMD check results
 0 errors | 0 warnings | 2 notes
