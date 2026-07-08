@@ -30,13 +30,13 @@ bibentry(
   author   = c(
     as.person("Caitlin J. Campbell")
     ),
-  year     = "2020",
-  version  = "0.2.6",
+  year     = "2026",
+  version  = meta$Version,
   url      = "https://CRAN.R-project.org/package=isocat",
-  textVersion = paste(
-  "Caitlin J. Campbell (2020).",
-  "isocat: Isotope Origin Clustering and Assignment Tools.",
-  "R package version 0.2.6.",
+  textVersion = paste0(
+  "Caitlin J. Campbell (2026). ",
+  "isocat: Isotope Origin Clustering and Assignment Tools. ",
+  "R package version ", meta$Version, ". ",
   "https://CRAN.R-project.org/package=isocat"
   )
 )
