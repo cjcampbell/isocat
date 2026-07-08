@@ -19,7 +19,7 @@ Legacy function that runs on raster::stack. Applies pairwise comparisons of Scho
 \examples{
 \donttest{
 # simmatrixMaker() is a legacy function for raster::stack input;
-# for SpatRaster input use schoenersDsimmatrix() instead.
+# for SpatRaster input use surfaceSimilarityMatrix() instead.
 if (requireNamespace("raster", quietly = TRUE)) {
   myiso <- rast(isoscape, type = "xyz")
   myiso_sd <- rast(isoscape_sd, type = "xyz")

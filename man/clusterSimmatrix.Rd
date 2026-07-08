@@ -51,8 +51,8 @@ assignmentModels <- isotopeAssignmentModel(
                         nClusters = FALSE
                         )
 plot(assignmentModels)
-# Build a similarity matrix with schoenersDsimmatrix.
-mymatrix <- schoenersDsimmatrix(assignmentModels)
+# Build a similarity matrix with surfaceSimilarityMatrix.
+mymatrix <- surfaceSimilarityMatrix(assignmentModels)
 # Cluster similarity matrix.
 clust_results <- clusterSimmatrix(mymatrix, dist_mthd = "correlation",
     hclust_mthd = "average", nBoot = 1000,  nClusters = FALSE,

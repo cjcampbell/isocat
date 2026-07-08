@@ -45,7 +45,7 @@
 #' Creates isotope assignment models projections of probable origin. Results returned as a SpatRaster, with layer names corresponding to individual ID.
 #' @param ID ID value or vector of values (for naming assignment model layers). If missing, will count from 1.
 #' @param isotopeValue Isotope precipitation value or vector of values.
-#' @param SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
+#' @param SD_indv error associated with transfer function fit. Value or vector of values. If NULL (default), no individual-level error is included (isoscape error only).
 #' @param precip_raster precipitation isoscape SpatRaster or raster.
 #' @param precip_SD_raster precipitation isoscape standard deviation SpatRaster or raster.
 #' @param additionalModels optional additional model raster object (e.g. an SDM, rasterized range map, or stack thereof). If specified, function will return isotope assignment rasters and the product of these additionalModels and each assignmentRaster.
@@ -101,7 +101,7 @@
 
 
 
-isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster, precip_SD_raster, additionalModels = FALSE, additionalModel_name = "CombinedIsotope-OtherModelAssignments", savePath = FALSE, nClusters = FALSE) {
+isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = NULL, precip_raster, precip_SD_raster, additionalModels = FALSE, additionalModel_name = "CombinedIsotope-OtherModelAssignments", savePath = FALSE, nClusters = FALSE) {
 
   #### Tests -------------------------------------------------------------------
   if( missing(isotopeValue) ) {   stop("isotopeValue object not found.") }
@@ -110,7 +110,7 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
     stop("Precip isoscape error raster not found.")
   }
   if( missing(ID) ) { ID <- seq(1, length(isotopeValue), 1)  }
-  if( length(SD_indv == 0) & SD_indv[1] == 0 ) {
+  if( is.null(SD_indv) ) {
     SD_indv <- rep(0, length(ID))
   }
   if(is(precip_raster, "Raster"))    precip_raster <- terra::rast(precip_raster)
@@ -151,7 +151,6 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
     terra::writeRaster(
       x = stackOfAssignments,
       filename = file.path(savePath, "IsotopeAssignments.grd"),
-      format = "raster",
       overwrite = TRUE
     )
   }
@@ -168,7 +167,6 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
       terra::writeRaster(
         x = stackOfCombinations,
         filename = file.path(savePath, paste0( additionalModel_name, ".grd")),
-        format = "raster",
         overwrite = TRUE
       )
     }

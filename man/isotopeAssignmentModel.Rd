@@ -7,7 +7,7 @@
 isotopeAssignmentModel(
   ID,
   isotopeValue,
-  SD_indv = 0,
+  SD_indv = NULL,
   precip_raster,
   precip_SD_raster,
   additionalModels = FALSE,
@@ -21,7 +21,7 @@ isotopeAssignmentModel(
 
 \item{isotopeValue}{Isotope precipitation value or vector of values.}
 
-\item{SD_indv}{error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.}
+\item{SD_indv}{error associated with transfer function fit. Value or vector of values. If NULL (default), no individual-level error is included (isoscape error only).}
 
 \item{precip_raster}{precipitation isoscape SpatRaster or raster.}
 
@@ -36,7 +36,7 @@ isotopeAssignmentModel(
 \item{nClusters}{Depreciated. Formerly, integer of cores to run in parallel with doParallel. Default FALSE.}
 }
 \description{
-Creates isotope assignment models projections of probable origin. Results returned as a RasterStack, with layer names corresponding to individual ID.
+Creates isotope assignment models projections of probable origin. Results returned as a SpatRaster, with layer names corresponding to individual ID.
 }
 \examples{
 myiso <- rast(isoscape, type="xyz")
@@ -54,7 +54,7 @@ assignmentModels <- isotopeAssignmentModel(
                         precip_raster = myiso,
                         precip_SD_raster = myiso_sd
                         )
-raster::plot(assignmentModels)
+plot(assignmentModels)
 
 # Add additionalModels:
 range_raster <- myiso
@@ -63,10 +63,10 @@ plot(range_raster)
 
 sdm_raster <- myiso
 sdm_raster[] <- (1:ncell(sdm_raster))^2
-sdm_raster <- sdm_raster / raster::cellStats(sdm_raster, "sum")
+sdm_raster <- sdm_raster / terra::global(sdm_raster, "sum", na.rm = TRUE)[1, 1]
 plot(sdm_raster)
 
-extraModels <- raster::stack(range_raster, sdm_raster)
+extraModels <- c(range_raster, sdm_raster)
 assignmentModels <- isotopeAssignmentModel(
                         ID = paste0("Combo.",df$ID),
                         isotopeValue = df$isotopeValue,
@@ -75,7 +75,7 @@ assignmentModels <- isotopeAssignmentModel(
                         precip_SD_raster = myiso_sd,
                         additionalModels = extraModels
                         )
-raster::plot(assignmentModels)
+plot(assignmentModels)
 
 
 

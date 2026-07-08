@@ -36,7 +36,7 @@ assignmentModels <- isotopeAssignmentModel(
          precip_SD_raster = myiso_sd,
          nClusters = FALSE
          )
-mySimilarityMatrix <- schoenersDsimmatrix(assignmentModels)
+mySimilarityMatrix <- surfaceSimilarityMatrix(assignmentModels)
 cS <- clusterSimmatrix(
          simmatrix = mySimilarityMatrix,
          r = seq(.7,1.4,by=.1)

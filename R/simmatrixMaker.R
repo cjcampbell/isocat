@@ -14,7 +14,7 @@
 #' @examples
 #' \donttest{
 #' # simmatrixMaker() is a legacy function for raster::stack input;
-#' # for SpatRaster input use schoenersDsimmatrix() instead.
+#' # for SpatRaster input use surfaceSimilarityMatrix() instead.
 #' if (requireNamespace("raster", quietly = TRUE)) {
 #'   myiso <- rast(isoscape, type = "xyz")
 #'   myiso_sd <- rast(isoscape_sd, type = "xyz")
@@ -37,7 +37,7 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
   if(missing(assignmentRasters))
     stop("Object 'assignmentRasters' not found.")
   if (!requireNamespace("raster", quietly = TRUE))
-    stop("Package 'raster' is required for the legacy simmatrixMaker(); use schoenersDsimmatrix() for SpatRaster input.", call. = FALSE)
+    stop("Package 'raster' is required for the legacy simmatrixMaker(); use surfaceSimilarityMatrix() for SpatRaster input.", call. = FALSE)
   if(!is(assignmentRasters, "RasterStack") )
     stop("Object 'assignmentRasters' is not of class 'RasterStack.'")
 
@@ -124,9 +124,10 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 }
 
 
-#' Generates similarity matrix for SpatRaster objects in environment.
+#' Generate a similarity matrix for the layers of a SpatRaster
 #'
-#' Applies pairwise comparisons of Schoener's D-metric for SpatRaster objects that are loaded into the environment.
+#' Populates a similarity matrix from pairwise Schoener's D comparisons between the
+#' layers of a SpatRaster.
 #'
 #' @param spatrast Input SpatRaster
 #'
@@ -151,34 +152,36 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 #'                         nClusters = FALSE
 #'                         )
 #' plot(assignmentModels)
-#' # Compare maps with schoenersDsimmatrix.
-#' schoenersDsimmatrix(assignmentModels)
+#' # Compare maps with surfaceSimilarityMatrix.
+#' surfaceSimilarityMatrix(assignmentModels)
 #'
 #'
 #' @export
-schoenersDsimmatrix <- function(spatrast){
+surfaceSimilarityMatrix <- function(spatrast){
 
   stopifnot(
     "input `spatrast` must be of class SpatRaster" = is(spatrast, "SpatRaster")
   )
 
-  # Ensure appropriate and unique layer names.
-  names(spatrast) <- make.names(names(spatrast))
-  names(spatrast) <- make.unique(names(spatrast))
-
+  # Ensure valid, unique layer names for the matrix dimnames.
+  names(spatrast) <- make.unique(make.names(names(spatrast)))
   a <- names(spatrast)
   n <- length(a)
-  m <- matrix(1, nrow = n, ncol = n, dimnames = list(a, a))
 
-  # Fill each pair by explicit (i, j) index. (Indexing into upper.tri() by
-  # position mis-places values for n >= 4, because upper.tri() enumerates cells
-  # in column-major order while combn() enumerates pairs in a different order.)
-  pairs <- utils::combn(n, 2)
-  for(k in seq_len(ncol(pairs))) {
-    i <- pairs[1, k]; j <- pairs[2, k]
-    d <- unlist(schoenersD(spatrast[[i]], spatrast[[j]]))
-    m[i, j] <- d
-    m[j, i] <- d
+  # Extract all layer values once (cells x layers) and normalize each surface to
+  # sum to 1, matching schoenersD(). Working on the extracted matrix avoids the
+  # n*(n-1)/2 terra subset/global calls that dominated the old pairwise loop.
+  v <- terra::values(spatrast)
+  v <- sweep(v, 2, colSums(v), "/")
+
+  # Pairwise Schoener's D = 1 - 0.5 * sum|p_i - p_j| over cells.
+  m <- matrix(1, nrow = n, ncol = n, dimnames = list(a, a))
+  for (i in seq_len(n - 1L)) {
+    for (j in (i + 1L):n) {
+      d <- 1 - 0.5 * sum(abs(v[, i] - v[, j]))
+      m[i, j] <- d
+      m[j, i] <- d
+    }
   }
 
   return(m)
