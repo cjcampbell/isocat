@@ -15,7 +15,7 @@ bibentry(
   number   = "1",
   pages    = "27--41",
   publisher= "De Gruyter",
-  url      = "https://doi.org/10.1515/ami-2020-0004",
+  doi      = "10.1515/ami-2020-0004",
   textVersion = paste(
   "Campbell, Caitlin J., Matthew C. Fitzpatrick, Hannah B. Vander Zanden, and David M. Nelson.",
   "Advancing interpretation of stable isotope assignment maps: comparing and summarizing origins of known-provenance migratory bats.",
