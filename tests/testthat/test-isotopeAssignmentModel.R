@@ -24,7 +24,9 @@ test_that("legacy Raster* inputs are coerced to the same result as SpatRaster in
   )
 
   expect_s4_class(rr, "SpatRaster")
-  expect_equal(terra::values(rr), terra::values(spat), tolerance = 1e-10)
+  # Loose tolerance: the raster->terra coercion path and native terra can round a
+  # hair differently across platforms (same reason as the surfaceSimilarityMatrix test).
+  expect_equal(terra::values(rr), terra::values(spat), tolerance = 1e-6)
 })
 
 test_that("legacy Raster additionalModels are coerced and combined", {

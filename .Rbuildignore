@@ -13,4 +13,4 @@ data_archive/*
 ^\.claude$
 ^v2$
 ^v2/
-.github
+^\.github$

@@ -11,10 +11,13 @@ test_that("surfaceSimilarityMatrix places every pairwise D at the correct cell (
   expect_true(isSymmetric(unname(m)))
 
   # Regression for the upper.tri/combn fill-order bug: each off-diagonal entry
-  # must equal the direct pairwise schoenersD for that pair.
+  # must equal the direct pairwise schoenersD for that pair. Loose tolerance
+  # because the vectorized path (base-R sum) and schoenersD (terra global sum)
+  # accumulate ~ncell terms in a different order — bit-identical on some
+  # platforms, ~1e-9 apart on others. A mis-placed cell would differ by O(0.01+).
   for (i in 1:4) for (j in (i + 1):5) {
     expect_equal(m[i, j], as.numeric(unlist(schoenersD(a[[i]], a[[j]]))),
-                 tolerance = 1e-10, info = paste("cell", i, j))
+                 tolerance = 1e-6, info = paste("cell", i, j))
   }
 })
 
