@@ -11,3 +11,5 @@ data_archive/*
 ^CLAUDE\.md$
 ^dev$
 ^\.claude$
+^v2$
+^v2/

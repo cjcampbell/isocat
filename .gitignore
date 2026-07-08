@@ -15,3 +15,9 @@ man/.*
 *.pptx
 CLAUDE.md
 dev/
+
+# vignette build artifacts (only the .Rmd source is tracked)
+vignettes/*.html
+vignettes/*.md
+vignettes/*.R
+vignettes/*_files/
