@@ -21,3 +21,6 @@ vignettes/*.html
 vignettes/*.md
 vignettes/*.R
 vignettes/*_files/
+
+# Hold onto some things for v2
+v2/*
