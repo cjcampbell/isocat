@@ -7,20 +7,34 @@
 makeMultiMonthIsoscape(iso_stack, iso_se_stack, precip_stack = NULL)
 }
 \arguments{
-\item{iso_stack}{A RasterStack containing n layers corresponding to isoscape models for n months.}
+\item{iso_stack}{A SpatRaster containing n layers corresponding to isoscape models for n months.}
 
-\item{iso_se_stack}{A RasterStack containing n layers corresponding to isoscape standard error maps for n months.}
+\item{iso_se_stack}{A SpatRaster containing n layers corresponding to isoscape standard error maps for n months.}
 
-\item{precip_stack}{Either a RasterStack containing n layers corresponding to precipitation amounts for n months, or NULL (assumes equal precipitation amounts.)}
+\item{precip_stack}{Either a SpatRaster containing n layers corresponding to precipitation amounts for n months, or NULL (assumes equal precipitation amounts.)}
 }
 \value{
-A list containing a mean isoscape and root-sum-of-square error map
+A list containing a precipitation-weighted mean isoscape (`mean_iso`)
+  and a root-sum-of-square combined error map (`iso_se`).
 }
 \description{
-Converts a stack of monthly isoscape maps, monthly isoscape standard error
-maps, and optionally a precipitation (amount) stack. Each stack must contain
-layers corresponding to each of the target months.
+Combines a stack of monthly isoscape maps, monthly isoscape standard error
+maps, and optionally a precipitation (amount) stack into a single
+precipitation-weighted mean isoscape and a combined error surface. Each stack
+must contain layers corresponding to each of the target months.
 }
 \details{
-If precip_stack is NULL, model will assume equal precipitation amounts per month.
+If precip_stack is NULL, equal precipitation amounts are assumed for each month.
+}
+\examples{
+myiso <- rast(isoscape, type = "xyz")
+myiso_sd <- rast(isoscape_sd, type = "xyz")
+# Two example "months" derived from the bundled isoscape.
+iso_stack    <- c(myiso, myiso + 5)
+iso_se_stack <- c(myiso_sd, myiso_sd)
+precip_stack <- c(myiso * 0 + 1, myiso * 0 + 3)   # relative weights 1:3
+result <- makeMultiMonthIsoscape(iso_stack, iso_se_stack, precip_stack)
+plot(result$mean_iso)
+plot(result$iso_se)
+
 }

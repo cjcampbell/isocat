@@ -3,12 +3,12 @@
 #' Converts normalized probability surfaces (e.g. one layer output of
 #' isotopeAssignmentModel function) to quantile surfaces.
 #'
-#' @param probabilitySurface Normalized probability surface RasterLayer.
+#' @param probabilitySurface Normalized probability surface SpatRaster.
 #' @param ValidationQuantiles Vector of quantile values from known-origin individuals, against which to compare each value within the probability surface. Each value must be between 0 and 1.
 #' @param rename Character value to append to raster name (e.g. "_quantileSimulation"). Defaults to FALSE.
 #' @param rescale If rescale = TRUE, returns surface showing proportion of times each surface cell value fell within the validation quantiles distribution. If rescale = FALSE, returns discrete number of times the cell fell within the distribution.
 #'
-#' @return Returns RasterLayer rescaled to quantile values.
+#' @return Returns SpatRaster rescaled to quantile values.
 #'
 #' @importFrom methods is
 #'
@@ -36,9 +36,9 @@
 #' hist(q)
 #'
 #' # Convert to quantile surfaces.
-#' quantileSimulation_surface <-  raster::stack(
+#' quantileSimulation_surface <-  terra::rast(
 #'                   lapply(
-#'                             unstack(assignmentModels),
+#'                             terra::as.list(assignmentModels),
 #'                             makeQuantileSimulationSurface,
 #'                             ValidationQuantiles = q)
 #'                         )
@@ -46,10 +46,11 @@
 #'
 #' @export
 makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantiles, rename = FALSE, rescale = TRUE){
+  if(is(probabilitySurface, "Raster")) probabilitySurface <- terra::rast(probabilitySurface)
   if(!is.logical(rescale))
     stop("'rescale' must be a logical value.")
-  if(!is(probabilitySurface, "RasterLayer") )
-    stop("'probabilitySurface' must be of class RasterLayer")
+  if(!is(probabilitySurface, "SpatRaster") )
+    stop("'probabilitySurface' must be of class SpatRaster")
 
   p <- probabilitySurface
   f <- stats::ecdf(stats::na.omit(probabilitySurface[]))
@@ -62,7 +63,7 @@ makeQuantileSimulationSurface <- function(probabilitySurface, ValidationQuantile
   quantileSimulation_surface[] <- unlist(lapply(quantile_surface[], check_above) )
 
   names(quantileSimulation_surface) <- names(probabilitySurface) # make layer names match up.
-  quantileSimulation_surface <- raster::mask(quantileSimulation_surface, probabilitySurface) # Make extents line up (mask vals that should be NA).
+  quantileSimulation_surface <- terra::mask(quantileSimulation_surface, probabilitySurface) # Make extents line up (mask vals that should be NA).
 
 
   if(rename == FALSE){

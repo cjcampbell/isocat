@@ -8,14 +8,14 @@
 makecumsumSurface(indivraster, rescale = FALSE, rename = FALSE)
 }
 \arguments{
-\item{indivraster}{Normalized probability surface RasterLayer}
+\item{indivraster}{Normalized probability surface SpatRaster}
 
 \item{rescale}{Rescale between 0 and 1? Defaults to FALSE.}
 
 \item{rename}{Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.}
 }
 \value{
-Returns RasterLayer rescaled to Cumulative Sum values.
+Returns SpatRaster rescaled to Cumulative Sum values.
 }
 \description{
 Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or equal to the old value of the cell.
@@ -39,8 +39,8 @@ assignmentModels <- isotopeAssignmentModel(
         )
 
 # Convert to cumulative sum surface.
-cumulative_sum_surface <- stack(
-     lapply( unstack( assignmentModels ), makecumsumSurface )
+cumulative_sum_surface <- terra::rast(
+     lapply( terra::as.list( assignmentModels ), makecumsumSurface )
      )
 plot(cumulative_sum_surface)
 

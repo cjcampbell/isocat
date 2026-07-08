@@ -4,10 +4,9 @@
 #' For each cell in a RasterStack, this function returns the identity of the RasterLayer with the highest value at that cell.
 #' This surface is intended as a visual summary of common origins, not a basis for quantitative analysis.
 #'
-#' @param surfaces Object of class "RasterStack", where each layer represents a probability-of-origin surface
-#' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `parallel` packages. Defaults to `FALSE` (i.e., no clustering).
+#' @param surfaces SpatRaster where each layer represents a probability-of-origin surface
+#' @param nClust Depreciated. Formerly enabled multi-core processing; retained for back-compatibility. A non-`FALSE` value now issues a message and proceeds serially.
 #'
-#' @importFrom raster calc
 #' @importFrom methods is
 #'
 #' @examples
@@ -22,35 +21,30 @@
 #'         precip_SD_raster = myiso_sd,
 #'         nClusters = FALSE
 #'         )
-#' raster::plot(assignmentModels)
+#' plot(assignmentModels)
 #'
 #' # Project mean aggregate surfaces into space.
 #' summaryMap <- projectSummaryMaxSurface(
 #'         surfaces = assignmentModels,
 #'         nClust = FALSE
 #'         )
-#' raster::plot(summaryMap)
+#' plot(summaryMap)
 #'
 #' @export projectSummaryMaxSurface
 
 projectSummaryMaxSurface <- function(surfaces, nClust = FALSE){
 
-  if( !is(surfaces, "RasterStack") )
-    stop( "surfaces must be of class 'RasterStack'." )
+  if(is(surfaces, "Raster")) surfaces <- terra::rast(surfaces)
+
+  if( !is(surfaces, "SpatRaster") )
+    stop( "surfaces must be of class 'SpatRaster'." )
   if( nClust != FALSE & !any(isFALSE(nClust), is(nClust, "numeric") , is(nClust, "integer")) )
     stop( "nClust class must either be FALSE, numeric, or integer." )
+  if( nClust != FALSE )
+    message("Within-function parallelization is depreciated. Proceeding without parallelization.")
 
-  which.max2 <- function(x, ...) ifelse( length(x) == sum( is.na(x) ), NA, raster::which.max(x))
-
-  if(nClust == FALSE){
-    summaryMap <- raster::calc(surfaces, which.max2)
-  } else {
-    raster::beginCluster(nClust)
-    summaryMap <- raster::clusterR(surfaces, raster::calc, args=list(which.max2))
-    raster::endCluster()
-  }
-
-  summaryMap <- raster::ratify(summaryMap)
+  summaryMap <- terra::which.max(surfaces)
+  summaryMap <- terra::as.factor(summaryMap)
   return(summaryMap)
 
 }

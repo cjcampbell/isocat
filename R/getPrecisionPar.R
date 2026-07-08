@@ -1,44 +1,48 @@
-#' Calculate model precision at given threshold values (in parallel).
+#' Calculate model precision at given threshold values.
 #'
 #' Function that counts cells (number and proportion) above given values.
-#' @param rasterstack RasterStack of probability surfaces
+#' @param rasterstack SpatRaster of probability surfaces
 #' @param checkVals vector of numeric 'threshold' values against which to calculate precision
 #' @param method is FALSE by default. If character vector, appends a column recording 'method' used.
-#' @param nCluster is a numeric object specifying how many clusters to form and run in parallel.
+#' @param nCluster Depreciated. Formerly the number of parallel clusters; retained for back-compatibility. A non-`FALSE` value now issues a message and proceeds serially.
 #'
 #' @return Returns a dataframe of precision values at given threshold.
 #'
-#' @importFrom foreach foreach
-#' @importFrom foreach %dopar%
 #' @importFrom methods is
 #'
+#' @examples
+#' myiso <- rast(isoscape, type="xyz")
+#' myiso_sd <- rast(isoscape_sd, type="xyz")
+#' assignmentModels <- isotopeAssignmentModel(
+#'          ID = LETTERS[1:4],
+#'          isotopeValue = seq(-120, -25, length.out = 4),
+#'          SD_indv = rep(5, 4),
+#'          precip_raster = myiso,
+#'          precip_SD_raster = myiso_sd
+#'          )
+#' getPrecisionPar(assignmentModels, checkVals = c(0.001, 0.005, 0.01))
+#'
 #' @export
-getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = 20){
+getPrecisionPar <- function(rasterstack, checkVals, method = FALSE, nCluster = FALSE){
 
-  n <- NULL
+  if(is(rasterstack, "Raster")) rasterstack <- terra::rast(rasterstack)
 
-  # Iterate for each RasterStack layer:
-  cl <- parallel::makeCluster(nCluster); doParallel::registerDoParallel(cl); getcells <- foreach(
-    n = 1:raster::nlayers(rasterstack),
-    .verbose = TRUE,
-    .packages = c("raster", "plyr")) %dopar% {
-      # Calculate number of cells above each given threshold value.
-      cellsAbove <- lapply(checkVals, function(z){
-        data.frame(
-          z = z,
-          cellsAbove = sum(stats::na.omit(rasterstack[[n]][]) >= z, na.rm = TRUE))
-        }
-        )
-      cells_df <- plyr::ldply(cellsAbove, data.frame)
-      n_cells_tot <- sum(!is.na(rasterstack[[n]][]), na.rm = TRUE)
+  if( nCluster != FALSE )
+    message("Within-function parallelization is depreciated. Proceeding without parallelization.")
 
-      cbind(
-        cells_df,
-        propAbove = cells_df$cellsAbove / n_cells_tot,
-        id = names(rasterstack[[n]])
-        )
-
-    }; parallel::stopCluster()
+  # Iterate over each layer, counting cells at or above each threshold value.
+  getcells <- lapply(1:terra::nlyr(rasterstack), function(n){
+    layer_vals  <- stats::na.omit( as.vector( terra::values(rasterstack[[n]]) ) )
+    n_cells_tot <- length(layer_vals)
+    cells_df <- plyr::ldply(checkVals, function(z){
+      data.frame(z = z, cellsAbove = sum(layer_vals >= z, na.rm = TRUE))
+    })
+    cbind(
+      cells_df,
+      propAbove = cells_df$cellsAbove / n_cells_tot,
+      id = names(rasterstack[[n]])
+    )
+  })
 
   myDf <- plyr::ldply(getcells, data.frame)
   if(method != FALSE & is(method, "character") ){

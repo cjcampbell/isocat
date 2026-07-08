@@ -8,7 +8,7 @@
 quantileAtSamplingLocation(indivraster, Lat, Lon)
 }
 \arguments{
-\item{indivraster}{A RasterLayer representing normalized probability of origin surface}
+\item{indivraster}{A SpatRaster representing normalized probability of origin surface}
 
 \item{Lat}{Integer latitude}
 
@@ -21,7 +21,7 @@ For more information, see help(ecdf).
 \examples{
 # Generate example probability surface.
 myiso <- rast(isoscape, type="xyz")
-myiso_sd <- rast(isoscape_sd, type="xyz")s
+myiso_sd <- rast(isoscape_sd, type="xyz")
 exampleSurface <- isotopeAssignmentModel(
          ID = "A",
          isotopeValue = -100,
@@ -33,7 +33,7 @@ exampleSurface <- isotopeAssignmentModel(
 # Calculate quantile probability value at specific point.
 set.seed(1)
 x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
-pt <- raster::xyFromCell(exampleSurface, x)
+pt <- terra::xyFromCell(exampleSurface, x)
 quantileAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])
 
 

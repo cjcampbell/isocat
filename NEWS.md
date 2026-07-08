@@ -1,11 +1,12 @@
-# isocat 2.0.0.9000
+# isocat 1.0.0
 ## Updates to rely on `terra` and `sf` for long-term package stability
 * `isotopeAssignmentModel` now relies on terra instead of raster. Depreciated the  parallel processing capability within this function
 * `schoenersD` now expects inputs of SpatRasters, will automatically convert raster-class objects.
-* New function `schoenersDsimmatrix` generates a similarity matrix comprising Schoener's D values for all layers in a SpatRaster. Function `simmatrixMaker` retained as a legacy/depreciated function that still uses rasterStacks as input.
-
-TODO -- make schoenersDsimmatrix that runs in parallel
-
+* New function `surfaceSimilarityMatrix` generates a similarity matrix comprising Schoener's D values for all layers in a SpatRaster. Function `simmatrixMaker` retained as a legacy/depreciated function that still uses rasterStacks as input.
+* `surfaceSimilarityMatrix` is vectorized (one value extraction plus base-R pairwise arithmetic), expected ~100x faster than per-pair evaluation.
+* `makeMultiMonthIsoscape` migrated to terra and corrected: the precipitation-weighted mean previously divided by the number of months (returning half-magnitude values), and the equal-weight (`precip_stack = NULL`) path errored. Both are now fixed. The combined-error surface is unchanged (root-sum-of-square).
+* `isotopeAssignmentModel` no longer silently discards a supplied `SD_indv` vector whose first element is 0. The default is now `SD_indv = NULL` (no individual-level error; isoscape error only), replacing the ambiguous `0` that caused the bug.
+* Improves documentation and adds more testing for all functions.
 
 # isocat 0.3.0
 ## New function

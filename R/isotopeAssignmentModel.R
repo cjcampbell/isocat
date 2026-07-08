@@ -42,10 +42,10 @@
 
 #' Isotope assignment model function
 #'
-#' Creates isotope assignment models projections of probable origin. Results returned as a RasterStack, with layer names corresponding to individual ID.
+#' Creates isotope assignment models projections of probable origin. Results returned as a SpatRaster, with layer names corresponding to individual ID.
 #' @param ID ID value or vector of values (for naming assignment model layers). If missing, will count from 1.
 #' @param isotopeValue Isotope precipitation value or vector of values.
-#' @param SD_indv error associated with transfer function fit. Value or vector of values. If missing, will assume value of 0.
+#' @param SD_indv error associated with transfer function fit. Value or vector of values. If NULL (default), no individual-level error is included (isoscape error only).
 #' @param precip_raster precipitation isoscape SpatRaster or raster.
 #' @param precip_SD_raster precipitation isoscape standard deviation SpatRaster or raster.
 #' @param additionalModels optional additional model raster object (e.g. an SDM, rasterized range map, or stack thereof). If specified, function will return isotope assignment rasters and the product of these additionalModels and each assignmentRaster.
@@ -72,7 +72,7 @@
 #'                         precip_raster = myiso,
 #'                         precip_SD_raster = myiso_sd
 #'                         )
-#' raster::plot(assignmentModels)
+#' plot(assignmentModels)
 #'
 #'# Add additionalModels:
 #' range_raster <- myiso
@@ -81,10 +81,10 @@
 #'
 #' sdm_raster <- myiso
 #' sdm_raster[] <- (1:ncell(sdm_raster))^2
-#' sdm_raster <- sdm_raster / raster::cellStats(sdm_raster, "sum")
+#' sdm_raster <- sdm_raster / terra::global(sdm_raster, "sum", na.rm = TRUE)[1, 1]
 #' plot(sdm_raster)
 #'
-#' extraModels <- raster::stack(range_raster, sdm_raster)
+#' extraModels <- c(range_raster, sdm_raster)
 #' assignmentModels <- isotopeAssignmentModel(
 #'                         ID = paste0("Combo.",df$ID),
 #'                         isotopeValue = df$isotopeValue,
@@ -93,7 +93,7 @@
 #'                         precip_SD_raster = myiso_sd,
 #'                         additionalModels = extraModels
 #'                         )
-#' raster::plot(assignmentModels)
+#' plot(assignmentModels)
 #'
 #'
 #'
@@ -101,7 +101,7 @@
 
 
 
-isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster, precip_SD_raster, additionalModels = FALSE, additionalModel_name = "CombinedIsotope-OtherModelAssignments", savePath = FALSE, nClusters = FALSE) {
+isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = NULL, precip_raster, precip_SD_raster, additionalModels = FALSE, additionalModel_name = "CombinedIsotope-OtherModelAssignments", savePath = FALSE, nClusters = FALSE) {
 
   #### Tests -------------------------------------------------------------------
   if( missing(isotopeValue) ) {   stop("isotopeValue object not found.") }
@@ -110,19 +110,20 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
     stop("Precip isoscape error raster not found.")
   }
   if( missing(ID) ) { ID <- seq(1, length(isotopeValue), 1)  }
-  if( length(SD_indv == 0) & SD_indv[1] == 0 ) {
+  if( is.null(SD_indv) ) {
     SD_indv <- rep(0, length(ID))
   }
-  if(is(precip_raster, "raster"))    precip_raster <- terra::rast(precip_raster)
-  if(is(precip_SD_raster, "raster")) precip_SD_raster <- terra::rast(precip_SD_raster)
+  if(is(precip_raster, "Raster"))    precip_raster <- terra::rast(precip_raster)
+  if(is(precip_SD_raster, "Raster")) precip_SD_raster <- terra::rast(precip_SD_raster)
+  if(is(additionalModels, "Raster")) additionalModels <- terra::rast(additionalModels)
 
   # Check rasts.
-  if(!compareGeom(precip_raster, precip_SD_raster)) {
+  if(!terra::compareGeom(precip_raster, precip_SD_raster)) {
     stop("precip_raster and precip_SD_raster are not compatible as arguments.
              See '?compareGeom' for more.")
   }
   if( !is(additionalModels, "logical") ) {
-    if(!compareGeom(precip_raster, precip_SD_raster, additionalModels)) {
+    if(!terra::compareGeom(precip_raster, precip_SD_raster, additionalModels)) {
       stop("precip_raster and precip_SD_raster are not compatible as arguments
            with the specified additionalModels. See '?compareGeom' for more.")
     }
@@ -150,7 +151,6 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
     terra::writeRaster(
       x = stackOfAssignments,
       filename = file.path(savePath, "IsotopeAssignments.grd"),
-      format = "raster",
       overwrite = TRUE
     )
   }
@@ -167,7 +167,6 @@ isotopeAssignmentModel <- function(ID, isotopeValue, SD_indv = 0, precip_raster,
       terra::writeRaster(
         x = stackOfCombinations,
         filename = file.path(savePath, paste0( additionalModel_name, ".grd")),
-        format = "raster",
         overwrite = TRUE
       )
     }

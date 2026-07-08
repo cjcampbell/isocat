@@ -3,10 +3,9 @@
 #' Subset probability-of-origin surfaces by cluster assignment and find mean aggregate probability-of-origin surface for each clustered group.
 #' @param indivIDs Vector of individual ID variables corresponding to surface names.
 #' @param clusters Vector of cluster IDs, in an order corresponding to `indivIDs`.
-#' @param surfaces Stack of probability-of-origin surfaces for all individuals. Object of class 'RasterStack.'
-#' @param nClust Create and apply a multi-core cluster for faster processing using `raster` and `parallel` packages. Defaults to `FALSE` (i.e., no clustering).
+#' @param surfaces SpatRaster of probability-of-origin surfaces for all individuals.
+#' @param nClust Depreciated. Formerly enabled multi-core processing; retained for back-compatibility. A non-`FALSE` value now issues a message and proceeds serially.
 #'
-#' @importFrom raster "calc"
 #' @importFrom methods is
 #'
 #' @examples
@@ -27,7 +26,7 @@
 #'          precip_SD_raster = myiso_sd,
 #'          nClusters = FALSE
 #'          )
-#' mySimilarityMatrix <- simmatrixMaker(assignmentModels)
+#' mySimilarityMatrix <- surfaceSimilarityMatrix(assignmentModels)
 #' cS <- clusterSimmatrix(
 #'          simmatrix = mySimilarityMatrix,
 #'          r = seq(.7,1.4,by=.1)
@@ -48,30 +47,25 @@
 
 meanAggregateClusterProbability <- function(indivIDs, clusters, surfaces, nClust = FALSE){
 
+  if(is(surfaces, "Raster")) surfaces <- terra::rast(surfaces)
+
   if(!any(is(clusters,"vector"), is(clusters, "factor"), is(clusters, "integer")))
     stop( "clusters must be of class 'vector' or 'factor'." )
-  if( !is(surfaces, "RasterStack") )
-    stop( "surfaces must be of class 'RasterStack'." )
+  if( !is(surfaces, "SpatRaster") )
+    stop( "surfaces must be of class 'SpatRaster'." )
 
   if( nClust != FALSE & !any(isFALSE(nClust), is(nClust, "numeric") , is(nClust, "integer")) )
     stop( "nClust class must either be FALSE, numeric, or integer." )
-
-  which.mean <- function(x, ...) {
-    ifelse( length(x) == sum( is.na(x) ), NA, mean(x, na.rm = TRUE))
-  }
+  if( nClust != FALSE )
+    message("Within-function parallelization is depreciated. Proceeding without parallelization.")
 
   meanRasts_list <- lapply(1:length(unique(clusters)), function(z){
-    clustStack <- raster::subset(surfaces, indivIDs[ clusters == z])
-    if(nClust == FALSE){
-      meanRasts <- raster::calc(clustStack, which.mean)
-    } else {
-     raster::beginCluster(nClust)
-      meanRasts <- raster::clusterR(clustStack, raster::calc, args=list(which.mean))
-      raster::endCluster()
-    }
-    return(meanRasts)
+    clustStack <- surfaces[[ indivIDs[ clusters == z] ]]
+    meanRast <- terra::mean(clustStack, na.rm = TRUE)
+    # terra::mean returns NaN where every layer is NA; keep the legacy NA there.
+    terra::ifel(is.nan(meanRast), NA, meanRast)
   })
 
-  raster::stack(meanRasts_list)
+  terra::rast(meanRasts_list)
 
   }

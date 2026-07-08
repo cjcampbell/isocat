@@ -2,22 +2,35 @@
 % Please edit documentation in R/getPrecisionPar.R
 \name{getPrecisionPar}
 \alias{getPrecisionPar}
-\title{Calculate model precision at given threshold values (in parallel).}
+\title{Calculate model precision at given threshold values.}
 \usage{
-getPrecisionPar(rasterstack, checkVals, method = FALSE, nCluster = 20)
+getPrecisionPar(rasterstack, checkVals, method = FALSE, nCluster = FALSE)
 }
 \arguments{
-\item{rasterstack}{RasterStack of probability surfaces}
+\item{rasterstack}{SpatRaster of probability surfaces}
 
 \item{checkVals}{vector of numeric 'threshold' values against which to calculate precision}
 
 \item{method}{is FALSE by default. If character vector, appends a column recording 'method' used.}
 
-\item{nCluster}{is a numeric object specifying how many clusters to form and run in parallel.}
+\item{nCluster}{Depreciated. Formerly the number of parallel clusters; retained for back-compatibility. A non-`FALSE` value now issues a message and proceeds serially.}
 }
 \value{
 Returns a dataframe of precision values at given threshold.
 }
 \description{
 Function that counts cells (number and proportion) above given values.
+}
+\examples{
+myiso <- rast(isoscape, type="xyz")
+myiso_sd <- rast(isoscape_sd, type="xyz")
+assignmentModels <- isotopeAssignmentModel(
+         ID = LETTERS[1:4],
+         isotopeValue = seq(-120, -25, length.out = 4),
+         SD_indv = rep(5, 4),
+         precip_raster = myiso,
+         precip_SD_raster = myiso_sd
+         )
+getPrecisionPar(assignmentModels, checkVals = c(0.001, 0.005, 0.01))
+
 }

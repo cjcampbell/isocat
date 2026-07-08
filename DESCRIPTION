@@ -1,7 +1,7 @@
 Package: isocat
 Type: Package
 Title: Isotope Origin Clustering and Assignment Tools
-Version: 2.0.0.9000
+Version: 1.0.0.9000
 Authors@R: person(
   "Caitlin", "Campbell", 
   email = "caitjcampbell@gmail.com",
@@ -24,15 +24,14 @@ License: CC0
 Encoding: UTF-8
 Language: en-US
 LazyData: true
-RoxygenNote: 7.2.2
+RoxygenNote: 7.3.3
 Depends:
-  R (>= 3.0),
-  utils,
-  terra
+    R (>= 3.5),
+    utils,
+    terra
 Imports:
   stats,
   plyr,
-  sp,
   magrittr,
   methods,
   foreach,
@@ -49,6 +48,7 @@ Suggests:
   rmarkdown,
   raster,
   rasterVis,
+  testthat (>= 3.0.0),
   viridisLite
 VignetteBuilder: knitr
-
+Config/testthat/edition: 3

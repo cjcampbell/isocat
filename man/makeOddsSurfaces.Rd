@@ -8,12 +8,12 @@
 makeOddsSurfaces(probabilitySurface, rename = FALSE)
 }
 \arguments{
-\item{probabilitySurface}{Normalized probability surface RasterLayer}
+\item{probabilitySurface}{Normalized probability surface SpatRaster}
 
 \item{rename}{Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.}
 }
 \value{
-Returns RasterLayer rescaled to Odds Ratio values.
+Returns SpatRaster rescaled to Odds Ratio values.
 }
 \description{
 Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to Odds Ratio surfaces.
@@ -37,8 +37,8 @@ assignmentModels <- isotopeAssignmentModel(
          )
 
 # Convert to odds ratio surfaces.
-odds_ratio_surface <- stack(
-   lapply( unstack(assignmentModels), makeOddsSurfaces )
+odds_ratio_surface <- terra::rast(
+   lapply( terra::as.list(assignmentModels), makeOddsSurfaces )
    )
 plot(odds_ratio_surface)
 

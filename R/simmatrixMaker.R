@@ -12,35 +12,32 @@
 #'
 #'
 #' @examples
-#' # Create probability-of-origin maps to compare.
-#' myiso <- rast(isoscape, type="xyz")
-#' plot(myiso)
-#' myiso_sd <- rast(isoscape_sd, type="xyz")
-#' n <- 5
-#' set.seed(42)
-#' df <- data.frame(
-#'          ID = LETTERS[1:n],
-#'          isotopeValue = sample(-120:-40, n),
-#'          SD_indv = rep(5, n)
-#'          )
-#' assignmentModels <- isotopeAssignmentModel(
-#'                         ID = df$ID,
-#'                         isotopeValue = df$isotopeValue,
-#'                         SD_indv = df$SD_indv,
-#'                         precip_raster = myiso,
-#'                         precip_SD_raster = myiso_sd,
-#'                         nClusters = FALSE
-#'                         )
-#' raster::plot(assignmentModels)
-#' # Compare maps with simmatrixMaker.
-#' simmatrixMaker(assignmentModels, nClusters = FALSE, csvSavePath = FALSE)
-#'
+#' \donttest{
+#' # simmatrixMaker() is a legacy function for raster::stack input;
+#' # for SpatRaster input use surfaceSimilarityMatrix() instead.
+#' if (requireNamespace("raster", quietly = TRUE)) {
+#'   myiso <- rast(isoscape, type = "xyz")
+#'   myiso_sd <- rast(isoscape_sd, type = "xyz")
+#'   set.seed(42)
+#'   assignmentModels <- isotopeAssignmentModel(
+#'     ID = LETTERS[1:5],
+#'     isotopeValue = sample(-120:-40, 5),
+#'     SD_indv = rep(5, 5),
+#'     precip_raster = myiso,
+#'     precip_SD_raster = myiso_sd
+#'   )
+#'   # Coerce to a RasterStack for the legacy interface.
+#'   simmatrixMaker(raster::stack(assignmentModels))
+#' }
+#' }
 #'
 #' @export
 simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = FALSE){
 
   if(missing(assignmentRasters))
     stop("Object 'assignmentRasters' not found.")
+  if (!requireNamespace("raster", quietly = TRUE))
+    stop("Package 'raster' is required for the legacy simmatrixMaker(); use surfaceSimilarityMatrix() for SpatRaster input.", call. = FALSE)
   if(!is(assignmentRasters, "RasterStack") )
     stop("Object 'assignmentRasters' is not of class 'RasterStack.'")
 
@@ -127,9 +124,10 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 }
 
 
-#' Generates similarity matrix for SpatRaster objects in environment.
+#' Generate a similarity matrix for the layers of a SpatRaster
 #'
-#' Applies pairwise comparisons of Schoener's D-metric for SpatRaster objects that are loaded into the environment.
+#' Populates a similarity matrix from pairwise Schoener's D comparisons between the
+#' layers of a SpatRaster.
 #'
 #' @param spatrast Input SpatRaster
 #'
@@ -153,36 +151,38 @@ simmatrixMaker <- function(assignmentRasters, nClusters = FALSE, csvSavePath = F
 #'                         precip_SD_raster = myiso_sd,
 #'                         nClusters = FALSE
 #'                         )
-#' raster::plot(assignmentModels)
-#' # Compare maps with simmatrixMaker.
-#' simmatrix(assignmentModels)
+#' plot(assignmentModels)
+#' # Compare maps with surfaceSimilarityMatrix.
+#' surfaceSimilarityMatrix(assignmentModels)
 #'
 #'
 #' @export
-schoenersDsimmatrix <- function(spatrast){
+surfaceSimilarityMatrix <- function(spatrast){
 
   stopifnot(
     "input `spatrast` must be of class SpatRaster" = is(spatrast, "SpatRaster")
   )
 
-  # Ensure appropriate and unique layer names.
-  names(spatrast) <- make.names(names(spatrast))
-  names(spatrast) <- make.unique(names(spatrast))
-
+  # Ensure valid, unique layer names for the matrix dimnames.
+  names(spatrast) <- make.unique(make.names(names(spatrast)))
   a <- names(spatrast)
-  t <- t(utils::combn(a,2))
-  m <- matrix(data = NA, nrow = length(a), ncol = length(a))
+  n <- length(a)
 
-  for(i in 1:nrow(t)) {
-    d <- schoenersD(
-      spatrast[[t[i,1]]],
-      spatrast[[t[i,2]]]
-    )
-    m[upper.tri(m)][i] <- unlist(d)
+  # Extract all layer values once (cells x layers) and normalize each surface to
+  # sum to 1, matching schoenersD(). Working on the extracted matrix avoids the
+  # n*(n-1)/2 terra subset/global calls that dominated the old pairwise loop.
+  v <- terra::values(spatrast)
+  v <- sweep(v, 2, colSums(v), "/")
+
+  # Pairwise Schoener's D = 1 - 0.5 * sum|p_i - p_j| over cells.
+  m <- matrix(1, nrow = n, ncol = n, dimnames = list(a, a))
+  for (i in seq_len(n - 1L)) {
+    for (j in (i + 1L):n) {
+      d <- 1 - 0.5 * sum(abs(v[, i] - v[, j]))
+      m[i, j] <- d
+      m[j, i] <- d
+    }
   }
-  # force symmetry.
-  m[lower.tri(m)] <- t(m)[lower.tri(m)]
-  m[!lower.tri(m)&!upper.tri(m)] <- 1
 
   return(m)
 }

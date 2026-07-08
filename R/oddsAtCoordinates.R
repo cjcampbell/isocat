@@ -1,7 +1,7 @@
 #' Odds ratio at coordinates function
 #'
 #' Function estimates percentile of each non-NA value within a RasterLayer using the empirical cumulative distribution function, and extracts value at location specified. For more information, see help(ecdf).
-#' @param indivraster RasterLayer representing normalized probability of origin surface
+#' @param indivraster SpatRaster representing normalized probability of origin surface
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
 #'
@@ -9,7 +9,7 @@
 #'
 #' @seealso \code{\link{makeOddsSurfaces}}
 #'
-#' @importFrom raster maxValue
+#' @importFrom methods is
 #'
 #' @examples
 #' # Generate example probability surface.
@@ -26,21 +26,23 @@
 #' # Calculate odds ratio at specific point.
 #' set.seed(1)
 #' x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
-#' pt <- raster::xyFromCell(exampleSurface, x)
+#' pt <- terra::xyFromCell(exampleSurface, x)
 #' oddsAtSamplingLocation(exampleSurface, Lat = pt[2], Lon = pt[1])
 #'
 #' @export
 oddsAtSamplingLocation <- function(indivraster, Lat, Lon){
+
+  if(is(indivraster, "Raster")) indivraster <- terra::rast(indivraster)
 
   if(!is.numeric(Lat) | !is.numeric(Lon))
     stop("'Lat' and 'Lon' must both be numeric values.")
 
   if(is.na(Lat) | is.na(Lon)) {return(NA)} else {
 
-    indivcoords <- sp::SpatialPoints(cbind(Lon,Lat))
-    p_atPoint <- raster::extract(indivraster, indivcoords)
+    p_atPoint <- terra::extract(indivraster, cbind(Lon, Lat))[1, 1]
+    maxVal    <- terra::global(indivraster, "max", na.rm = TRUE)[1, 1]
 
-    odds_r_atPoint <- (p_atPoint/(1-p_atPoint))/(maxValue(indivraster)/(1-maxValue(indivraster)))
+    odds_r_atPoint <- (p_atPoint / (1 - p_atPoint)) / (maxVal / (1 - maxVal))
 
     return(odds_r_atPoint)
   }

@@ -3,10 +3,10 @@
 #' Converts normalized probability surface (e.g. one layer output of
 #' isotopeAssignmentModel function) to quantile surfaces.
 #'
-#' @param probabilitySurface Normalized probability surface RasterLayer
+#' @param probabilitySurface Normalized probability surface SpatRaster
 #' @param rename Character value to append to raster name (e.g. "_quantile"). Defaults to FALSE.
 #'
-#' @return Returns RasterLayer rescaled to quantile values.
+#' @return Returns SpatRaster rescaled to quantile values.
 #'
 #' @aliases quantile_surface
 #'
@@ -33,11 +33,12 @@
 #'          )
 #'
 #' # Convert to quantile surfaces.
-#' quantile_surface <-  raster::stack( lapply( unstack(assignmentModels), makeQuantileSurfaces) )
+#' quantile_surface <-  terra::rast( lapply( terra::as.list(assignmentModels), makeQuantileSurfaces) )
 #' plot(quantile_surface)
 #'
 #' @export
 makeQuantileSurfaces <- function(probabilitySurface, rename = FALSE){
+  if(is(probabilitySurface, "Raster")) probabilitySurface <- terra::rast(probabilitySurface)
   p <- probabilitySurface
 
   f <- stats::ecdf(stats::na.omit(probabilitySurface[]))

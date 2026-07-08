@@ -5,7 +5,7 @@
 \alias{isoscape_sd}
 \title{Example isoscape standard deviation data}
 \format{
-A dataframe containing 1800 observations, derived from a cropped raster object.
+A data.frame with 43200 rows (x, y and a d2h_se_GS layer), derived from a cropped raster object.
 }
 \usage{
 isoscape_sd

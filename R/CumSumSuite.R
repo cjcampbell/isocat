@@ -30,11 +30,11 @@ cumsumbelow <- function(vals){
 #'
 #' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or equal to the old value of the cell.
 #'
-#' @param indivraster Normalized probability surface RasterLayer
+#' @param indivraster Normalized probability surface SpatRaster
 #' @param rescale Rescale between 0 and 1? Defaults to FALSE.
 #' @param rename Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.
 #'
-#' @return Returns RasterLayer rescaled to Cumulative Sum values.
+#' @return Returns SpatRaster rescaled to Cumulative Sum values.
 #'
 #' @aliases cumsum_surface
 #'
@@ -61,8 +61,8 @@ cumsumbelow <- function(vals){
 #'         )
 #'
 #' # Convert to cumulative sum surface.
-#' cumulative_sum_surface <- stack(
-#'      lapply( unstack( assignmentModels ), makecumsumSurface )
+#' cumulative_sum_surface <- terra::rast(
+#'      lapply( terra::as.list( assignmentModels ), makecumsumSurface )
 #'      )
 #' plot(cumulative_sum_surface)
 #'
@@ -70,24 +70,17 @@ cumsumbelow <- function(vals){
 #'
 makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 
-  . <- "quiet" # silence 'no visible binding for global variable' call.
-  vals <- NULL
+  if(is(indivraster, "Raster")) indivraster <- terra::rast(indivraster)
 
   newsurface <- indivraster
-  newsurface[] <- cumsumbelow( indivraster[] )
+  newsurface[] <- cumsumbelow( as.vector(indivraster[]) )
 
   if(rescale == TRUE){
-    new.min <- 0
-    new.max <- 1
-    x.min <- sum(
-      vals[ vals <= raster::cellStats(indivraster, "min") ] ,
-      na.rm = TRUE
-      )
-    x.max <- sum(
-      vals[ vals <= raster::cellStats(indivraster, "max") ],
-      na.rm = TRUE
-      )
-    newsurface <- new.min + (newsurface - x.min) * ((new.max - new.min) / (x.max - x.min))
+    # Rescale the cumulative-sum surface to [0, 1]; its minimum and maximum are the
+    # cumulative sums at the smallest and largest input cell values.
+    r_min <- terra::global(newsurface, "min", na.rm = TRUE)[1, 1]
+    r_max <- terra::global(newsurface, "max", na.rm = TRUE)[1, 1]
+    newsurface <- (newsurface - r_min) / (r_max - r_min)
   }
 
   if(rename == FALSE){
@@ -108,12 +101,14 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 #'
 #' Function estimates cumulative sum of all values in a surface below the value at a specified longitude and latitude.
 #'
-#' @param indivraster RasterLayer representing normalized probability of origin surface
+#' @param indivraster SpatRaster representing normalized probability of origin surface
 #' @param Lat Integer latitude
 #' @param Lon Integer longitude
 #'
 #' @aliases cumsum_at_point
 #' @seealso \code{\link{makecumsumSurface}}
+#'
+#' @importFrom methods is
 #'
 #' @examples
 #' # Generate example probability surface.
@@ -127,31 +122,26 @@ makecumsumSurface <- function(indivraster, rescale = FALSE, rename = FALSE){
 #'          precip_SD_raster = myiso_sd,
 #'          nClusters = FALSE
 #'          )
-#' # Calculate odds ratio at specific point.
+#' # Calculate cumulative sum at specific point.
 #' set.seed(1)
 #' x <- sample( which( !is.na(exampleSurface[]) ), size = 1)
-#' pt <- raster::xyFromCell(exampleSurface, x)
+#' pt <- terra::xyFromCell(exampleSurface, x)
 #' cumsumAtSamplingLocation(indivraster = exampleSurface, Lat = pt[2], Lon = pt[1])
 #'
 #' @export
 cumsumAtSamplingLocation <- function(indivraster, Lat, Lon){
+
+  if(is(indivraster, "Raster")) indivraster <- terra::rast(indivraster)
+
   if(!is(Lat, "numeric") | !is(Lon, "numeric") )
     stop("'Lat' and 'Lon' must both be numeric values.")
 
   if(is.na(Lat) | is.na(Lon)) {return(NA)} else {
 
-    indivcoords <- sp::SpatialPoints(cbind(Lon,Lat))
-    p_atPoint <- raster::extract(indivraster, indivcoords)
-
-    if( "matrix" %in% class(p_atPoint) | "array" %in% class(p_atPoint) ){
-      if( length(p_atPoint) != 1) {
-        stop("extracted value at coordinates must be of length one.")
-      } else
-        p_atPoint <- as.numeric( p_atPoint )
-    }
+    p_atPoint <- terra::extract(indivraster, cbind(Lon, Lat))[1, 1]
 
     vals <- stats::na.omit( indivraster[] )
-    cumsumAtPoint <- vals[ vals <= p_atPoint ] %>% sum(na.rm = TRUE)
+    cumsumAtPoint <- sum( vals[ vals <= p_atPoint ], na.rm = TRUE )
 
     return(cumsumAtPoint)
   }

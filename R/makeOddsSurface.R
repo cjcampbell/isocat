@@ -2,10 +2,10 @@
 #'
 #' Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to Odds Ratio surfaces.
 #'
-#' @param probabilitySurface Normalized probability surface RasterLayer
+#' @param probabilitySurface Normalized probability surface SpatRaster
 #' @param rename Character value to append to raster name (e.g. "_odds"). Defaults to FALSE.
 #'
-#' @return Returns RasterLayer rescaled to Odds Ratio values.
+#' @return Returns SpatRaster rescaled to Odds Ratio values.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom methods is
@@ -33,15 +33,17 @@
 #'          )
 #'
 #' # Convert to odds ratio surfaces.
-#' odds_ratio_surface <- stack(
-#'    lapply( unstack(assignmentModels), makeOddsSurfaces )
+#' odds_ratio_surface <- terra::rast(
+#'    lapply( terra::as.list(assignmentModels), makeOddsSurfaces )
 #'    )
 #' plot(odds_ratio_surface)
 #'
 #' @export
 makeOddsSurfaces <- function(probabilitySurface, rename = FALSE){
+  if(is(probabilitySurface, "Raster")) probabilitySurface <- terra::rast(probabilitySurface)
   p <- probabilitySurface
-  odds_r <- (p/(1-p))/(raster::maxValue(p)/(1-raster::maxValue(p)))
+  maxVal <- terra::global(p, "max", na.rm = TRUE)[1, 1]
+  odds_r <- (p/(1-p))/(maxVal/(1-maxVal))
 
   if(rename == FALSE){
     names(odds_r) <- names(p)
