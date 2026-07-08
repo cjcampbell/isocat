@@ -43,4 +43,4 @@ iso_monthly_se <- lapply(7:9, function(x) {
 
 
 # save( isoscape, isoscape_sd, file = "~/isocat/data/isoscape.RData" )
-usethis::use_data(isoscape, isoscape_sd, iso_monthly, iso_monthly_se, overwrite= TRUE)
+usethis::use_data(isoscape, isoscape_sd, iso_monthly, iso_monthly_se, overwrite = TRUE)
