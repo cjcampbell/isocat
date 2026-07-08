@@ -15,6 +15,28 @@ test_that("meanAggregateClusterProbability returns one mean surface per cluster"
                as.vector(terra::values(manual)), tolerance = 1e-10)
 })
 
+test_that("meanAggregateClusterProbability handles non-default cluster labels (GitHub #5)", {
+  a <- example_assignment(ids = LETTERS[1:4],
+                          values = c(-120, -115, -40, -35), sd_indv = 5)
+  # Letter labels, not 1..K: the old 1:length(unique(clusters)) loop broke here.
+  clusters <- c("x", "x", "y", "y")
+  means <- meanAggregateClusterProbability(names(a), clusters, a)
+  expect_equal(terra::nlyr(means), 2L)
+  expect_equal(names(means), c("cluster_x", "cluster_y"))
+  # cluster "x" = mean of the first two individuals (A, B).
+  manual <- terra::mean(a[[c("A", "B")]], na.rm = TRUE)
+  expect_equal(as.vector(terra::values(means[["cluster_x"]])),
+               as.vector(terra::values(manual)), tolerance = 1e-6)
+})
+
+test_that("meanAggregateClusterProbability errors clearly on indivIDs not matching surface names", {
+  a <- example_assignment(ids = LETTERS[1:3], values = c(-100, -80, -50), sd_indv = 5)
+  expect_error(
+    meanAggregateClusterProbability(c("A", "B", "Z"), c(1, 1, 2), a),
+    "must match layer names"
+  )
+})
+
 test_that("projectSummaryMaxSurface returns a categorical index within the layer range", {
   a <- example_assignment(ids = LETTERS[1:4],
                           values = seq(-120, -25, length.out = 4), sd_indv = 5)

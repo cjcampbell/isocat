@@ -21,9 +21,10 @@ Returns SpatRaster rescaled to Cumulative Sum values.
 Converts normalized probability surface (e.g. one layer output of isotopeAssignmentModel function) to cumulative sum surfaces, i.e., one where the new value of a given cell is equal to the sum of all old values less than or equal to the old value of the cell.
 }
 \examples{
-# Generate example probability surfaces.
-myiso    <- rast( isoscape, type="xyz")
-myiso_sd <- rast(isoscape_sd, type="xyz")
+# Generate example probability surfaces. The isoscape is coarsened here so the
+# example runs quickly; cumsumbelow() scales with the square of the cell count.
+myiso    <- terra::aggregate(rast(isoscape,    type = "xyz"), 5)
+myiso_sd <- terra::aggregate(rast(isoscape_sd, type = "xyz"), 5)
 df <- data.frame(
         ID = c(-100, -80, -50),
         isotopeValue = c(-100, -80, -50),
