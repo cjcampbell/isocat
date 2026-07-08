@@ -53,19 +53,27 @@ meanAggregateClusterProbability <- function(indivIDs, clusters, surfaces, nClust
     stop( "clusters must be of class 'vector' or 'factor'." )
   if( !is(surfaces, "SpatRaster") )
     stop( "surfaces must be of class 'SpatRaster'." )
+  if( !all(indivIDs %in% names(surfaces)) )
+    stop( "All 'indivIDs' must match layer names of 'surfaces'. Missing: ",
+          paste(setdiff(indivIDs, names(surfaces)), collapse = ", ") )
 
   if( nClust != FALSE & !any(isFALSE(nClust), is(nClust, "numeric") , is(nClust, "integer")) )
     stop( "nClust class must either be FALSE, numeric, or integer." )
   if( nClust != FALSE )
     message("Within-function parallelization is depreciated. Proceeding without parallelization.")
 
-  meanRasts_list <- lapply(1:length(unique(clusters)), function(z){
+  # Iterate over the actual cluster labels (not seq_len(K)), so any cluster coding
+  # -- integers, letters, or factors -- selects the right individuals (GitHub #5).
+  clusterIDs <- unique(clusters)
+  meanRasts_list <- lapply(clusterIDs, function(z){
     clustStack <- surfaces[[ indivIDs[ clusters == z] ]]
     meanRast <- terra::mean(clustStack, na.rm = TRUE)
     # terra::mean returns NaN where every layer is NA; keep the legacy NA there.
     terra::ifel(is.nan(meanRast), NA, meanRast)
   })
 
-  terra::rast(meanRasts_list)
+  out <- terra::rast(meanRasts_list)
+  names(out) <- paste0("cluster_", clusterIDs)
+  out
 
   }

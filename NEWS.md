@@ -6,6 +6,7 @@
 * `surfaceSimilarityMatrix` is vectorized (one value extraction plus base-R pairwise arithmetic), expected ~100x faster than per-pair evaluation.
 * `makeMultiMonthIsoscape` migrated to terra and corrected: the precipitation-weighted mean previously divided by the number of months (returning half-magnitude values), and the equal-weight (`precip_stack = NULL`) path errored. Both are now fixed. The combined-error surface is unchanged (root-sum-of-square).
 * `isotopeAssignmentModel` no longer silently discards a supplied `SD_indv` vector whose first element is 0. The default is now `SD_indv = NULL` (no individual-level error; isoscape error only), replacing the ambiguous `0` that caused the bug.
+* `meanAggregateClusterProbability` now accepts any cluster labels (integers, letters, factors), not just `1..K`; the previous version indexed clusters by position and silently failed for other codings (GitHub #5). It also errors clearly when `indivIDs` do not match the surface layer names, and names each output layer by its cluster.
 * Improves documentation and adds more testing for all functions.
 
 # isocat 0.3.0
