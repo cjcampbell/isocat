@@ -108,7 +108,7 @@ df <- data.frame(
 kableExtra::kable(df)
 ```
 
-The contents of these columns are passed to the function `isotopeAssignmentModel` as vectors, along with the object names of isoscape and isoscape-SD objects. If parallel processing is specified, the function creates and deploys clusters using the `doParallel` package. The output is a RasterStack with layers named corresponding to the individual IDs.
+The contents of these columns are passed to the function `isotopeAssignmentModel` as vectors, along with the object names of isoscape and isoscape-SD objects. The output is a SpatRaster with layers named corresponding to the individual IDs.
 
 ```{r prob_of_orgin_surface, fig.width=6, fig.height=3}
 assignmentModels <- isotopeAssignmentModel(
@@ -142,14 +142,10 @@ To compare probability-of-origin surfaces, we apply Schoener's D metric. To simp
 schoenersD(assignmentModels[[1]], assignmentModels[[2]])
 ```
 
-To compare multiple surfaces to one another, `isocat` includes a `simmatrixMaker` function to create a similarity matrix of the surfaces. The output is a symmetric matrix with row and column names corresponding to the layer names of the surfaces to be compared. The `nClusters` specification, as in the `isotopeAssignmentModel` function, generates a number of parallel processing clusters equal to the numeric value specified. If `csvSavePath` is included, a .csv file will also be written to the path specified. For large RasterStacks, this function can be quite processing-intensive and take some time.
+To compare multiple surfaces to one another, `isocat` includes a `surfaceSimilarityMatrix` function to create a similarity matrix of the surfaces. The output is a symmetric matrix with row and column names corresponding to the layer names of the surfaces to be compared. (The legacy `simmatrixMaker` function returns the same result for `RasterStack` inputs.)
 
 ```{r simmatrix}
-mySimilarityMatrix <- simmatrixMaker(
-  assignmentModels,
-  nClusters = FALSE,
-  csvSavePath = FALSE
-)
+mySimilarityMatrix <- surfaceSimilarityMatrix(assignmentModels)
 mySimilarityMatrix
 ```
 ## Clustering by similar origins
@@ -205,7 +201,7 @@ kableExtra::kable(df)
 
 #### Aggregate Surfaces
 
-For each group of individuals of common origin, create an aggregate surface of mean within-group probability of origin using the `meanAggregateClusterProbability` function. This function returns a RasterStack corresponding to each cluster fed into it. If specified as an integer, `nClust` parameter interfaces with `raster::clusterR` to create and apply apply $n$ multi-core clusters for faster processing.
+For each group of individuals of common origin, create an aggregate surface of mean within-group probability of origin using the `meanAggregateClusterProbability` function. This function returns a SpatRaster with a layer for each cluster fed into it.
 
 ```{r Create_mean_aggregate_surfaces}
 meanSurfaces <- meanAggregateClusterProbability( 
@@ -220,7 +216,7 @@ gplot(meanSurfaces) + gglayers + ggProb
 
 #### Aggregate Summary Surfaces
 
-To visualize the general regions of a spatial range most associated with each aggregate surface, `isocat` includes a `projectSummaryMaxSurface` function. This function associates each cell of a spatial extent with the identity of a discrete RasterLayer the highest relative value at that location. The output is a ratified raster that, in this context, shows the regions of highest relative association with the aggregated origins of groups of individuals. This summary surface is not appropriate for summary statistics (which we recommend be applied to mean aggregate surfaces for individuals sharing common origins, if not to the individual origin maps themselves), but does serve as a visual summary of the relative regions of probable origins of each group.
+To visualize the general regions of a spatial range most associated with each aggregate surface, `isocat` includes a `projectSummaryMaxSurface` function. This function associates each cell of a spatial extent with the identity of the discrete layer with the highest relative value at that location. The output is a categorical SpatRaster that, in this context, shows the regions of highest relative association with the aggregated origins of groups of individuals. This summary surface is not appropriate for summary statistics (which we recommend be applied to mean aggregate surfaces for individuals sharing common origins, if not to the individual origin maps themselves), but does serve as a visual summary of the relative regions of probable origins of each group.
 
 ```{r summary_surface}
 summaryMap <- projectSummaryMaxSurface(surfaces = meanSurfaces, nClust = FALSE)
@@ -270,13 +266,13 @@ ptDeets <- list(
 
 ex_plot <- gplot(p) + gglayers + ggProb + ptDeets
 
-ex_hist <- data.frame(x = p[]) %>% 
+ex_hist <- data.frame(x = as.vector(p[])) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
   scale_x_continuous(name = "Probability Value") +
   theme_bw() +
-  geom_vline(aes(xintercept = extract(p, pt)), linetype = "dashed", col = "red")
+  geom_vline(aes(xintercept = terra::extract(p, cbind(pt$x, pt$y))[1, 1]), linetype = "dashed", col = "red")
 
 gridExtra::grid.arrange(ex_plot, ex_hist, ncol = 2, widths = c(2,1)) 
 ```
@@ -295,13 +291,13 @@ cumsum_plot <- gplot(CumSumEx) +
   scale_fill_gradient(
     name = "Cumulative Sum\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-cumsum_hist <- data.frame(x = CumSumEx[]) %>% 
+cumsum_hist <- data.frame(x = as.vector(CumSumEx[])) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
   scale_x_continuous(name = "Cumulative Sum\nProbability Value") +
   theme_bw() +
-  geom_vline(aes(xintercept = extract(CumSumEx, pt)), linetype = "dashed", col = "red")
+  geom_vline(aes(xintercept = terra::extract(CumSumEx, cbind(pt$x, pt$y))[1, 1]), linetype = "dashed", col = "red")
 
 gridExtra::grid.arrange( cumsum_plot, cumsum_hist, ncol = 2, widths = c(2,1) ) 
 ```
@@ -321,13 +317,13 @@ odds_plot <- gplot(OddsRatioEx) +
   scale_fill_gradient(
     name = "Odds-Ratio\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-odds_hist <- data.frame(x = OddsRatioEx[]) %>% 
+odds_hist <- data.frame(x = as.vector(OddsRatioEx[])) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
   scale_x_continuous(name = "Odds Ratio Value") +
   theme_bw() +
-  geom_vline(aes(xintercept = extract(OddsRatioEx, pt)), linetype = "dashed", col = "red")
+  geom_vline(aes(xintercept = terra::extract(OddsRatioEx, cbind(pt$x, pt$y))[1, 1]), linetype = "dashed", col = "red")
 
 gridExtra::grid.arrange( odds_plot, odds_hist, ncol = 2, widths = c(2,1) ) 
 ```
@@ -347,13 +343,13 @@ quantile_plot <- gplot(QuantileEx) +
   scale_fill_gradient(
     name = "Quantile\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-quantile_hist <- data.frame(x = QuantileEx[]) %>% 
+quantile_hist <- data.frame(x = as.vector(QuantileEx[])) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
   scale_x_continuous(name = "Quantile Value") +
   theme_bw() +
-  geom_vline(aes(xintercept = extract(QuantileEx, pt)), linetype = "dashed", col = "red")
+  geom_vline(aes(xintercept = terra::extract(QuantileEx, cbind(pt$x, pt$y))[1, 1]), linetype = "dashed", col = "red")
 
 gridExtra::grid.arrange( quantile_plot, quantile_hist, ncol = 2, widths = c(2,1) ) 
 ```
@@ -385,13 +381,13 @@ quantsim_plot <- gplot(QuantSimEx) +
   scale_fill_gradient(
     name = "Quantile-Simulation\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-quantsim_hist <- data.frame(x = QuantSimEx[]) %>% 
+quantsim_hist <- data.frame(x = as.vector(QuantSimEx[])) %>% 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
   scale_x_continuous(name = "Quantile-Simulation Value") +
   theme_bw() +
-  geom_vline(aes(xintercept = extract(QuantSimEx, pt)), linetype = "dashed", col = "red")
+  geom_vline(aes(xintercept = terra::extract(QuantSimEx, cbind(pt$x, pt$y))[1, 1]), linetype = "dashed", col = "red")
 
 gridExtra::grid.arrange( quantsim_plot, quantsim_hist, ncol = 2, widths = c(2,1) ) 
 ```
