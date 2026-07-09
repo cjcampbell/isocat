@@ -39,3 +39,30 @@ test_that("simmatrixMaker rejects non-RasterStack input", {
   a <- example_assignment(ids = LETTERS[1:3], values = c(-100, -80, -50), sd_indv = 5)
   expect_error(simmatrixMaker(a))  # a SpatRaster is not a RasterStack
 })
+
+test_that("surfaceSimilarityMatrix handles surfaces with NA cells (no NA off-diagonal)", {
+  # Before the na.rm fix, colSums()/sum() over any NA cell made every off-diagonal
+  # entry NA on masked surfaces.
+  m <- surfaceSimilarityMatrix(example_assignment_na())
+  expect_false(any(is.na(m)))
+  expect_equal(unname(diag(m)), rep(1, 3))
+  expect_true(all(m >= 0 & m <= 1))
+})
+
+test_that("schoenersD handles NA-cell surfaces and agrees with surfaceSimilarityMatrix", {
+  # Before the na.rm fix, global(rast, "sum") was NA and `if (NA != 1)` errored.
+  am <- example_assignment_na()
+  d  <- as.numeric(unlist(schoenersD(am[[1]], am[[2]])))
+  expect_true(is.finite(d) && d >= 0 && d <= 1)
+  expect_equal(d, surfaceSimilarityMatrix(am)["A", "B"], tolerance = 1e-6)
+})
+
+test_that("schoenersD coerces legacy Raster* input (raster -> Raster fix)", {
+  skip_if_not_installed("raster")
+  a <- example_assignment(ids = LETTERS[1:2], values = c(-100, -60), sd_indv = 5)
+  expect_equal(
+    as.numeric(unlist(schoenersD(raster::raster(a[[1]]), raster::raster(a[[2]])))),
+    as.numeric(unlist(schoenersD(a[[1]], a[[2]]))),
+    tolerance = 1e-6
+  )
+})

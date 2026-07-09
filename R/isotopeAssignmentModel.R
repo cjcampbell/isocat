@@ -8,7 +8,7 @@
 
 .normprodrast <- function(variables) {
   a <- prod(variables)
-  out <- a/unlist(terra::global(a, "sum"))
+  out <- a/unlist(terra::global(a, "sum", na.rm = TRUE))
   return(out)
 }
 
