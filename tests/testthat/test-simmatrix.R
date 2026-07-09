@@ -66,3 +66,19 @@ test_that("schoenersD coerces legacy Raster* input (raster -> Raster fix)", {
     tolerance = 1e-6
   )
 })
+
+test_that("schoenersD returns a numeric scalar, not a data.frame", {
+  # terra::global() yields a 1x1 data.frame; before the as.numeric() fix schoenersD
+  # returned that data.frame (column "sum"), contradicting its documented scalar value
+  # and letting guards like all(res$D > x) pass vacuously.
+  a <- example_assignment(ids = c("A", "B"), values = c(-100, -80), sd_indv = 5)
+  d <- schoenersD(a[[1]], a[[2]])
+  expect_true(is.numeric(d))
+  expect_length(d, 1)
+  expect_false(is.data.frame(d))
+  expect_equal(d, surfaceSimilarityMatrix(a)["A", "B"], tolerance = 1e-6, ignore_attr = TRUE)
+  # The natural idiom keeps the value under the caller's column name.
+  df <- data.frame(D = schoenersD(a[[1]], a[[2]]))
+  expect_identical(names(df), "D")
+  expect_true(is.numeric(df$D))
+})
