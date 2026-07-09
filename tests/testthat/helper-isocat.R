@@ -46,3 +46,19 @@ example_assignment_na <- function(ids = c("A", "B", "C"),
     precip_raster = iso, precip_SD_raster = iso_sd
   )
 }
+
+# A hand-built isocat_transfer for exercising the point path of
+# makeAssignmentSurface() and the S3 methods without fitting a brms model.
+example_transfer <- function(intercept = 20, slope = 1.1, sigma = 6) {
+  structure(
+    list(
+      fit         = NULL,
+      formula_str = "fur | mi(fur_me) ~ me(iso, iso_se, gr = NULL)",
+      vars        = list(tissue = "fur", iso = "iso", tissue_se = "fur_me",
+                         iso_se = "iso_se", weights = NULL),
+      point       = list(intercept = intercept, slope = slope, sigma = sigma),
+      n           = 30L
+    ),
+    class = "isocat_transfer"
+  )
+}

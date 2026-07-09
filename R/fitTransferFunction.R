@@ -111,13 +111,14 @@ fitTransferFunction <- function(data, tissue, iso,
   if (!is.data.frame(data))
     stop("'data' must be a data.frame.")
 
-  # Validate that every named column exists. c() drops NULL arguments, so this
-  # collects only the columns the caller actually supplied.
-  provided <- c(tissue = tissue, iso = iso, tissue_se = tissue_se,
-                iso_se = iso_se, weights = weights)
+  # Validate the column-name arguments as a list (not c(), which would flatten a
+  # multi-element argument and hide a length error), keeping only those supplied.
+  provided <- list(tissue = tissue, iso = iso, tissue_se = tissue_se,
+                   iso_se = iso_se, weights = weights)
+  provided <- provided[!vapply(provided, is.null, logical(1))]
   if (!all(vapply(provided, function(x) is.character(x) && length(x) == 1L, logical(1))))
     stop("'tissue', 'iso', and any *_se/'weights' arguments must each be a single column name.")
-  missingCols <- setdiff(unname(provided), names(data))
+  missingCols <- setdiff(unlist(provided), names(data))
   if (length(missingCols))
     stop("Columns not found in 'data': ", paste(missingCols, collapse = ", "))
 
