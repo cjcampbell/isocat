@@ -1,3 +1,8 @@
+# isocat 2.0.0
+
+
+
+
 # isocat 1.0.0
 ## Updates to rely on `terra` and `sf` for long-term package stability
 * `isotopeAssignmentModel` now relies on terra instead of raster. Depreciated the  parallel processing capability within this function
