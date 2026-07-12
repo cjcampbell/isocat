@@ -15,6 +15,10 @@ quick resubmission!
 
 ## Test environments
 * local macOS, R 4.4.3
+* GitHub Actions (r-lib standard matrix):
+  - macOS-latest (release)
+  - windows-latest (release)
+  - ubuntu-latest (devel, release, oldrel-1)
 * win-builder (devel and release)
 * R-hub v2 (GitHub Actions), R-devel: Linux, Windows, macOS, macOS (arm64),
   and macOS M1 with sanitizers (m1-san)
@@ -22,13 +26,15 @@ quick resubmission!
 ## R CMD check results
 0 errors | 0 warnings | 1 note
 
-The one NOTE, "unable to verify current time", is environmental (the check
-machine has no time-server access) and unrelated to the package.
+The NOTE is the CRAN incoming feasibility note flagging the short interval since
+the 1.0.0 release ("Days since last update"); the reason for the quick
+resubmission is explained above.
 
-On machines with an outdated HTML Tidy, R CMD check may additionally report HTML
-validation NOTEs about the HTML5 `<main>` element that R's own `Rd2HTML`
-generates; these do not appear with a current Tidy (e.g. on CRAN's
-infrastructure) and require no changes to the package.
+On local checks the single note is instead the environmental "unable to verify
+current time" (the check machine has no time-server access); machines with an
+outdated HTML Tidy may additionally report HTML5 `<main>` validation notes that
+R's own `Rd2HTML` generates. Neither appears on CRAN's infrastructure, and both
+are unrelated to the package.
 
 ## Reverse dependencies
 
