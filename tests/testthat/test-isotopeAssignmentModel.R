@@ -76,6 +76,18 @@ test_that("a supplied SD_indv vector is respected even when its first element is
   expect_equal(terra::values(a_vec[[1]]), terra::values(a_zero[[1]]))
 })
 
+test_that("an isoscape with NA cells yields valid (not all-NA) surfaces", {
+  # Before the .normprodrast na.rm fix, any NA cell made global(a, "sum") NA and so
+  # the whole normalized surface NA -- breaking every masked (real-world) isoscape.
+  am <- example_assignment_na()
+  expect_gt(sum(!is.na(terra::values(am)[, 1])), 0)
+  # Each layer still normalizes to 1 over its valid cells.
+  expect_equal(as.numeric(terra::global(am, "sum", na.rm = TRUE)[, 1]),
+               rep(1, terra::nlyr(am)), tolerance = 1e-8)
+  # The masked cells stay NA (not silently zero-filled).
+  expect_true(all(is.na(terra::values(am)[seq_len(200), 1])))
+})
+
 test_that("omitted (NULL) SD_indv matches an explicit all-zero vector", {
   iso <- example_isoscape()
   iso_sd <- example_isoscape_sd()

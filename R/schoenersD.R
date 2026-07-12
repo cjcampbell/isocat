@@ -41,18 +41,21 @@
 # Run pairwise comparisons.
 schoenersD <- function(rast1, rast2){
 
-  if(is(rast1, "raster")) rast1 <- terra::rast(rast1)
-  if(is(rast2, "raster")) rast2 <- terra::rast(rast2)
+  if(is(rast1, "Raster")) rast1 <- terra::rast(rast1)
+  if(is(rast2, "Raster")) rast2 <- terra::rast(rast2)
 
   stopifnot(
     "Argument rast1 is not of class 'SpatRaster'" = is(rast1, "SpatRaster"),
     "Argument rast2 is not of class 'SpatRaster'" = is(rast2, "SpatRaster")
   )
 
-  if( global(rast1, "sum") != 1 ) { rast1 <- .normprodrast(rast1) }
-  if( global(rast2, "sum") != 1 ) { rast2 <- .normprodrast(rast2) }
+  if( as.numeric(global(rast1, "sum", na.rm = TRUE)) != 1 ) { rast1 <- .normprodrast(rast1) }
+  if( as.numeric(global(rast2, "sum", na.rm = TRUE)) != 1 ) { rast2 <- .normprodrast(rast2) }
 
-  1 - (0.5 * global(abs(rast1 - rast2), "sum"))
+  # terra::global() returns a 1-row, 1-col data.frame; coerce to a plain numeric scalar
+  # so the result matches the documented value and the natural downstream idiom
+  # (e.g. data.frame(D = schoenersD(a, b))) rather than a column named "sum".
+  as.numeric(1 - (0.5 * global(abs(rast1 - rast2), "sum", na.rm = TRUE)))
 
   }
 

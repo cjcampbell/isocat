@@ -172,13 +172,13 @@ surfaceSimilarityMatrix <- function(spatrast){
   # sum to 1, matching schoenersD(). Working on the extracted matrix avoids the
   # n*(n-1)/2 terra subset/global calls that dominated the old pairwise loop.
   v <- terra::values(spatrast)
-  v <- sweep(v, 2, colSums(v), "/")
+  v <- sweep(v, 2, colSums(v, na.rm = TRUE), "/")
 
   # Pairwise Schoener's D = 1 - 0.5 * sum|p_i - p_j| over cells.
   m <- matrix(1, nrow = n, ncol = n, dimnames = list(a, a))
   for (i in seq_len(n - 1L)) {
     for (j in (i + 1L):n) {
-      d <- 1 - 0.5 * sum(abs(v[, i] - v[, j]))
+      d <- 1 - 0.5 * sum(abs(v[, i] - v[, j]), na.rm = TRUE)
       m[i, j] <- d
       m[j, i] <- d
     }
