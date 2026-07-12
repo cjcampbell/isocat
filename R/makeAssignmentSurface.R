@@ -1,53 +1,54 @@
 #' Build probability-of-origin surfaces from a fitted transfer function
 #'
-#' Turns an untransformed isoscape and a transfer function fitted with
+#' Turns an untransformed environmental surface and a transfer function fitted with
 #' \code{\link{fitTransferFunction}} into per-individual probability-of-origin
 #' surfaces. Unlike \code{\link{isotopeAssignmentModel}} (the classic path, where the
-#' caller transforms the isoscape into tissue space by hand), this applies the transfer
-#' function internally and offers a posterior-predictive path that propagates the full
-#' transfer-function uncertainty.
+#' caller transforms the environmental surface into marker space by hand), this applies
+#' the transfer function internally and offers a posterior-predictive path that
+#' propagates the full transfer-function uncertainty.
 #'
 #' \code{method} and \code{metric} are orthogonal. \code{method} sets how the predictive
-#' tissue distribution at each cell, \code{(mu, sd)}, is obtained; \code{metric} sets how
+#' marker distribution at each cell, \code{(mu, sd)}, is obtained; \code{metric} sets how
 #' the observed value is scored against it. This predictive surface does not depend on
 #' the individual, so it is computed once and reused across all individuals.
 #'
 #' \describe{
 #'   \item{\code{method = "posterior"}}{per-cell \code{brms::posterior_predict} (chunked,
 #'     \code{ndraws} draws); \code{mu}/\code{sd} are the draw mean/sd. Propagates
-#'     transfer-parameter uncertainty and isoscape error automatically. Needs \pkg{brms}.}
+#'     transfer-parameter uncertainty and environmental error automatically. Needs \pkg{brms}.}
 #'   \item{\code{method = "point"}}{point-estimate transform
-#'     \code{mu = intercept + slope*iso}, with
-#'     \code{sd = sqrt((slope*iso_se)^2 + sigma^2)} by default (see \code{iso_se_scaling}).}
-#'   \item{\code{metric = "overlap"}}{\code{2*pnorm(-|value - mu| / sqrt(2*(tissue_SD^2 +
+#'     \code{mu = intercept + slope*env}, with
+#'     \code{sd = sqrt((slope*env_se)^2 + sigma^2)} by default (see \code{env_se_scaling}).}
+#'   \item{\code{metric = "overlap"}}{\code{2*pnorm(-|value - mu| / sqrt(2*(marker_se^2 +
 #'     sd^2)))} --- an absolute, \strong{unnormalized} per-cell consistency probability.}
 #'   \item{\code{metric = "density"}}{Gaussian density
-#'     \code{dnorm(value, mu, sqrt(sd^2 + tissue_SD^2))} (see \code{tissue_SD_in_density}),
+#'     \code{dnorm(value, mu, sqrt(sd^2 + marker_se^2))} (see \code{marker_se_in_density}),
 #'     normalized by default.}
 #' }
 #'
-#' @param isotopeValue Observed tissue isotope value(s); a scalar or a vector with one
-#'   entry per individual. Names, or \code{ID}, become the output layer names.
-#' @param isoscape \code{SpatRaster} of the \strong{untransformed} isoscape mean (the
-#'   predictor the transfer function was fitted against). Legacy \code{Raster*} inputs
-#'   are coerced.
-#' @param isoscape_SD \code{SpatRaster} of the isoscape standard error, same geometry as
-#'   \code{isoscape}.
+#' @param markerValue Observed marker value(s); a scalar or a vector with one entry per
+#'   individual. Names, or \code{ID}, become the output layer names.
+#' @param env \code{SpatRaster} of the \strong{untransformed} environmental surface mean
+#'   (the predictor the transfer function was fitted against). Legacy \code{Raster*}
+#'   inputs are coerced.
+#' @param env_se \code{SpatRaster} of the environmental standard error, same geometry as
+#'   \code{env}.
 #' @param transfer An \code{isocat_transfer} object from \code{\link{fitTransferFunction}}.
 #' @param ID Optional vector of individual identifiers (defaults to the names of
-#'   \code{isotopeValue}, else \code{indv_1, indv_2, ...}).
-#' @param tissue_SD Measurement error (standard deviation) on the observed value(s);
+#'   \code{markerValue}, else \code{indv_1, indv_2, ...}).
+#' @param marker_se Measurement error (standard deviation) on the observed value(s);
 #'   scalar (recycled) or one per individual. Enters the overlap metric always, and the
-#'   density metric per \code{tissue_SD_in_density}.
+#'   density metric per \code{marker_se_in_density}.
 #' @param method One of \code{"posterior"} (default) or \code{"point"}.
 #' @param metric One of \code{"overlap"} (default) or \code{"density"}.
-#' @param iso_se_scaling Point path only. \code{"slope"} (default) propagates isoscape
-#'   error through the slope, \code{sqrt((slope*iso_se)^2 + sigma^2)}; \code{"none"} uses
-#'   \code{sqrt(iso_se^2 + sigma^2)}, reproducing the classic (published) surfaces.
-#' @param tissue_SD_in_density Density metric only. If \code{TRUE} (default), the density
-#'   spread includes \code{tissue_SD} (\code{sqrt(sd^2 + tissue_SD^2)}), matching how the
+#' @param env_se_scaling Point path only. \code{"slope"} (default) propagates
+#'   environmental error through the slope, \code{sqrt((slope*env_se)^2 + sigma^2)};
+#'   \code{"none"} uses \code{sqrt(env_se^2 + sigma^2)}, reproducing the classic
+#'   (published) surfaces.
+#' @param marker_se_in_density Density metric only. If \code{TRUE} (default), the density
+#'   spread includes \code{marker_se} (\code{sqrt(sd^2 + marker_se^2)}), matching how the
 #'   overlap metric treats it; \code{FALSE} omits it, reproducing the classic density
-#'   surface. (The overlap metric always includes \code{tissue_SD}.)
+#'   surface. (The overlap metric always includes \code{marker_se}.)
 #' @param ndraws Posterior draws per cell for \code{method = "posterior"}.
 #' @param chunkSize Cells per \code{posterior_predict} batch (memory control).
 #' @param normalize Whether to normalize each surface to sum to 1. \code{NULL} (default)
@@ -70,15 +71,15 @@
 #'
 #' # Posterior-overlap surfaces (the new default arm):
 #' surfaces <- makeAssignmentSurface(
-#'   isotopeValue = c(A = -120, B = -80),
-#'   isoscape = myiso, isoscape_SD = myiso_sd,
-#'   transfer = tf, tissue_SD = 3
+#'   markerValue = c(A = -120, B = -80),
+#'   env = myiso, env_se = myiso_sd,
+#'   transfer = tf, marker_se = 3
 #' )
 #'
 #' # Point-density surfaces (~ the classic path) for comparison:
 #' comp <- makeAssignmentSurface(
-#'   isotopeValue = c(A = -120, B = -80),
-#'   isoscape = myiso, isoscape_SD = myiso_sd,
+#'   markerValue = c(A = -120, B = -80),
+#'   env = myiso, env_se = myiso_sd,
 #'   transfer = tf, method = "point", metric = "density"
 #' )
 #' }
@@ -86,46 +87,46 @@
 #' @importFrom methods is
 #' @importFrom stats pnorm dnorm sd
 #' @export makeAssignmentSurface
-makeAssignmentSurface <- function(isotopeValue, isoscape, isoscape_SD, transfer,
-                                  ID = NULL, tissue_SD = 0,
+makeAssignmentSurface <- function(markerValue, env, env_se, transfer,
+                                  ID = NULL, marker_se = 0,
                                   method = c("posterior", "point"),
                                   metric = c("overlap", "density"),
-                                  iso_se_scaling = c("slope", "none"),
-                                  tissue_SD_in_density = TRUE,
+                                  env_se_scaling = c("slope", "none"),
+                                  marker_se_in_density = TRUE,
                                   ndraws = 1000, chunkSize = 1e4,
                                   normalize = NULL, savePath = FALSE) {
 
   if (!inherits(transfer, "isocat_transfer"))
     stop("'transfer' must be an isocat_transfer object from fitTransferFunction().")
-  if (is(isoscape, "Raster"))    isoscape    <- terra::rast(isoscape)
-  if (is(isoscape_SD, "Raster")) isoscape_SD <- terra::rast(isoscape_SD)
-  terra::compareGeom(isoscape, isoscape_SD)
+  if (is(env, "Raster"))    env    <- terra::rast(env)
+  if (is(env_se, "Raster")) env_se <- terra::rast(env_se)
+  terra::compareGeom(env, env_se)
 
   method         <- match.arg(method)
   metric         <- match.arg(metric)
-  iso_se_scaling <- match.arg(iso_se_scaling)
+  env_se_scaling <- match.arg(env_se_scaling)
 
-  n <- length(isotopeValue)
+  n <- length(markerValue)
   if (is.null(ID))
-    ID <- if (!is.null(names(isotopeValue))) names(isotopeValue) else paste0("indv_", seq_len(n))
-  if (length(tissue_SD) == 1L) tissue_SD <- rep(tissue_SD, n)
-  if (length(tissue_SD) != n)
-    stop("'tissue_SD' must be length 1 or length(isotopeValue).")
+    ID <- if (!is.null(names(markerValue))) names(markerValue) else paste0("indv_", seq_len(n))
+  if (length(marker_se) == 1L) marker_se <- rep(marker_se, n)
+  if (length(marker_se) != n)
+    stop("'marker_se' must be length 1 or length(markerValue).")
   if (is.null(normalize)) normalize <- (metric == "density")
 
-  # Predictive tissue distribution per cell -- individual-independent, computed once.
-  pred <- .predictSurface(transfer, isoscape, isoscape_SD, method = method,
-                          iso_se_scaling = iso_se_scaling, ndraws = ndraws,
+  # Predictive marker distribution per cell -- individual-independent, computed once.
+  pred <- .predictSurface(transfer, env, env_se, method = method,
+                          env_se_scaling = env_se_scaling, ndraws = ndraws,
                           chunkSize = chunkSize)
   muV <- terra::values(pred[["mu"]])[, 1]
   sdV <- terra::values(pred[["sd"]])[, 1]
 
   score_one <- function(i) {
-    y <- isotopeValue[i]; t <- tissue_SD[i]
+    y <- markerValue[i]; t <- marker_se[i]
     prob <- if (metric == "overlap") {
       .overlapProb(y, t, muV, sdV)
     } else {
-      totSD <- if (tissue_SD_in_density) sqrt(sdV^2 + t^2) else sdV
+      totSD <- if (marker_se_in_density) sqrt(sdV^2 + t^2) else sdV
       stats::dnorm(y, mean = muV, sd = totSD)
     }
     if (normalize) prob <- prob / sum(prob, na.rm = TRUE)
@@ -133,7 +134,7 @@ makeAssignmentSurface <- function(isotopeValue, isoscape, isoscape_SD, transfer,
   }
 
   if (isFALSE(savePath)) {
-    out <- terra::rast(isoscape, nlyrs = n)
+    out <- terra::rast(env, nlyrs = n)
     terra::values(out) <- vapply(seq_len(n), score_one, numeric(length(muV)))
     names(out) <- ID
     return(out)
@@ -141,7 +142,7 @@ makeAssignmentSurface <- function(isotopeValue, isoscape, isoscape_SD, transfer,
 
   if (!dir.exists(savePath)) dir.create(savePath, recursive = TRUE)
   paths <- vapply(seq_len(n), function(i) {
-    r <- terra::rast(isoscape, nlyrs = 1)
+    r <- terra::rast(env, nlyrs = 1)
     terra::values(r) <- score_one(i)
     names(r) <- ID[i]
     fp <- file.path(savePath, paste0(ID[i], ".tif"))
@@ -152,49 +153,49 @@ makeAssignmentSurface <- function(isotopeValue, isoscape, isoscape_SD, transfer,
 }
 
 
-#' Predictive tissue distribution per isoscape cell
+#' Predictive marker distribution per environmental cell
 #'
 #' Internal engine for \code{\link{makeAssignmentSurface}}. Returns a two-layer
 #' \code{SpatRaster} \code{(mu, sd)} giving, at each cell, the mean and standard
-#' deviation of the tissue value the transfer function predicts for an individual that
-#' originated there. Independent of the observed value and of \code{tissue_SD}, so it is
+#' deviation of the marker value the transfer function predicts for an individual that
+#' originated there. Independent of the observed value and of \code{marker_se}, so it is
 #' computed once per call and reused across individuals.
 #'
-#' Cells with missing isoscape values, or non-positive isoscape SE (which
+#' Cells with missing environmental values, or non-positive environmental SE (which
 #' \code{brms::posterior_predict} rejects), are returned as \code{NA}. Results are
 #' written back into a template raster by cell index rather than rebuilt from
 #' coordinates.
 #'
 #' @param transfer An \code{isocat_transfer}.
-#' @param isoscape,isoscape_SD Isoscape mean and SE \code{SpatRaster}s.
+#' @param env,env_se Environmental mean and SE \code{SpatRaster}s.
 #' @param method \code{"posterior"} or \code{"point"}.
-#' @param iso_se_scaling \code{"slope"} or \code{"none"} (point path; see
+#' @param env_se_scaling \code{"slope"} or \code{"none"} (point path; see
 #'   \code{\link{makeAssignmentSurface}}).
 #' @param ndraws,chunkSize Posterior draws per cell and cells per batch.
 #' @return A two-layer \code{SpatRaster} named \code{c("mu", "sd")}.
 #' @keywords internal
 #' @export .predictSurface
-.predictSurface <- function(transfer, isoscape, isoscape_SD,
+.predictSurface <- function(transfer, env, env_se,
                             method = c("posterior", "point"),
-                            iso_se_scaling = c("slope", "none"),
+                            env_se_scaling = c("slope", "none"),
                             ndraws = 1000, chunkSize = 1e4) {
 
   method         <- match.arg(method)
-  iso_se_scaling <- match.arg(iso_se_scaling)
+  env_se_scaling <- match.arg(env_se_scaling)
 
-  isoV <- terra::values(isoscape)[, 1]
-  seV  <- terra::values(isoscape_SD)[, 1]
-  ok   <- which(!is.na(isoV) & !is.na(seV) & seV > 0)
+  envV <- terra::values(env)[, 1]
+  seV  <- terra::values(env_se)[, 1]
+  ok   <- which(!is.na(envV) & !is.na(seV) & seV > 0)
 
-  mu <- rep(NA_real_, terra::ncell(isoscape))
-  sd <- rep(NA_real_, terra::ncell(isoscape))
+  mu <- rep(NA_real_, terra::ncell(env))
+  sd <- rep(NA_real_, terra::ncell(env))
 
   if (method == "point") {
     p <- transfer$point
     if (any(is.na(c(p$intercept, p$slope, p$sigma))))
       stop("transfer$point is missing intercept/slope/sigma; method = 'point' needs all three.")
-    mu[ok] <- p$intercept + p$slope * isoV[ok]
-    sd[ok] <- if (iso_se_scaling == "slope")
+    mu[ok] <- p$intercept + p$slope * envV[ok]
+    sd[ok] <- if (env_se_scaling == "slope")
       sqrt((p$slope * seV[ok])^2 + p$sigma^2) else sqrt(seV[ok]^2 + p$sigma^2)
 
   } else {
@@ -204,24 +205,24 @@ makeAssignmentSurface <- function(isotopeValue, isoscape, isoscape_SD, transfer,
       suppressPackageStartupMessages(attachNamespace("brms"))
       on.exit(try(detach("package:brms"), silent = TRUE), add = TRUE)
     }
-    iso_name <- transfer$vars$iso
-    se_name  <- transfer$vars$iso_se
-    tse_name <- transfer$vars$tissue_se
+    env_name <- transfer$vars$env
+    se_name  <- transfer$vars$env_se
+    mse_name <- transfer$vars$marker_se
 
     batches <- split(ok, ceiling(seq_along(ok) / chunkSize))
     for (b in batches) {
-      nd <- data.frame(isoV[b]); names(nd) <- iso_name
+      nd <- data.frame(envV[b]); names(nd) <- env_name
       if (!is.null(se_name))  nd[[se_name]]  <- seV[b]
       # brms needs the mi() response-error column present and positive, but ignores its
       # value in prediction (see project note q3-brms-no-double-counting).
-      if (!is.null(tse_name)) nd[[tse_name]] <- 1
+      if (!is.null(mse_name)) nd[[mse_name]] <- 1
       pp <- brms::posterior_predict(transfer$fit, newdata = nd, ndraws = ndraws)
       mu[b] <- colMeans(pp)
       sd[b] <- apply(pp, 2, stats::sd)
     }
   }
 
-  out <- terra::rast(isoscape, nlyrs = 2)
+  out <- terra::rast(env, nlyrs = 2)
   terra::values(out) <- cbind(mu, sd)
   names(out) <- c("mu", "sd")
   out

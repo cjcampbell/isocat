@@ -54,8 +54,8 @@ example_transfer <- function(intercept = 20, slope = 1.1, sigma = 6) {
     list(
       fit         = NULL,
       formula_str = "fur | mi(fur_me) ~ me(iso, iso_se, gr = NULL)",
-      vars        = list(tissue = "fur", iso = "iso", tissue_se = "fur_me",
-                         iso_se = "iso_se", weights = NULL),
+      vars        = list(marker = "fur", env = "iso", marker_se = "fur_me",
+                         env_se = "iso_se", weights = NULL),
       point       = list(intercept = intercept, slope = slope, sigma = sigma),
       n           = 30L
     ),

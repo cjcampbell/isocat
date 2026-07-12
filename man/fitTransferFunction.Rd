@@ -2,14 +2,14 @@
 % Please edit documentation in R/fitTransferFunction.R
 \name{fitTransferFunction}
 \alias{fitTransferFunction}
-\title{Fit a tissue-isoscape transfer function as a Bayesian errors-in-variables regression}
+\title{Fit a marker-environment transfer function as a Bayesian errors-in-variables regression}
 \usage{
 fitTransferFunction(
   data,
-  tissue,
-  iso,
-  tissue_se = NULL,
-  iso_se = NULL,
+  marker,
+  env,
+  marker_se = NULL,
+  env_se = NULL,
   weights = NULL,
   prior = NULL,
   family = stats::gaussian(),
@@ -20,17 +20,17 @@ fitTransferFunction(
 \arguments{
 \item{data}{A data frame of known-origin individuals (one row per sample).}
 
-\item{tissue}{Column name (string) of the observed tissue isotope value, the
-regression response (e.g. \code{"fur"}).}
+\item{marker}{Column name (string) of the observed marker value, the regression
+response (e.g. \code{"fur"}).}
 
-\item{iso}{Column name (string) of the isoscape value at each sample's known
-origin, the regression predictor (e.g. \code{"iso"}).}
+\item{env}{Column name (string) of the environmental surface value at each sample's
+known origin, the regression predictor (e.g. \code{"iso"}).}
 
-\item{tissue_se}{Optional column name of the tissue measurement error (standard
-deviation). When supplied, enters the model as \code{tissue | mi(tissue_se)}.}
+\item{marker_se}{Optional column name of the marker measurement error (standard
+deviation). When supplied, enters the model as \code{marker | mi(marker_se)}.}
 
-\item{iso_se}{Optional column name of the isoscape standard error. When supplied,
-the predictor enters as \code{me(iso, iso_se, gr = NULL)}.}
+\item{env_se}{Optional column name of the environmental standard error. When
+supplied, the predictor enters as \code{me(env, env_se, gr = NULL)}.}
 
 \item{weights}{Optional column name of case weights (e.g. down-weighting samples
 collected outside a moult window). Enters as \code{weights(weights)}.}
@@ -44,8 +44,8 @@ reach for this over an ordinary regression when known-origin samples are few.}
 \item{family}{A \code{brms}/\code{glm} family. Defaults to \code{gaussian()}.}
 
 \item{formula}{Optional escape hatch: a full \code{brms::bf()} formula that
-overrides the column-name builder. When supplied, \code{tissue}/\code{iso}/
-\code{tissue_se}/\code{iso_se}/\code{weights} are used only to label the returned
+overrides the column-name builder. When supplied, \code{marker}/\code{env}/
+\code{marker_se}/\code{env_se}/\code{weights} are used only to label the returned
 object and to locate the point estimates.}
 
 \item{...}{Passed to \code{brms::brm()} (e.g. \code{chains}, \code{iter},
@@ -56,9 +56,9 @@ An S3 object of class \code{isocat_transfer}: a list with elements
   \describe{
     \item{\code{fit}}{the underlying \code{brmsfit}.}
     \item{\code{formula_str}}{the assembled model formula, as a string.}
-    \item{\code{vars}}{named list of the column names (\code{tissue}, \code{iso},
-      \code{tissue_se}, \code{iso_se}, \code{weights}), used to build prediction
-      data from isoscape layers at assignment time.}
+    \item{\code{vars}}{named list of the column names (\code{marker}, \code{env},
+      \code{marker_se}, \code{env_se}, \code{weights}), used to build prediction
+      data from environmental layers at assignment time.}
     \item{\code{point}}{cached point estimates \code{list(intercept, slope, sigma)}
       (posterior means), used by the point-estimate assignment path.}
     \item{\code{n}}{number of observations fitted.}
@@ -67,22 +67,26 @@ An S3 object of class \code{isocat_transfer}: a list with elements
   \code{pp_check} (delegates to \code{brms::pp_check()}).
 }
 \description{
-Fits the transfer function that maps environmental isoscape values to tissue
-isotope values (e.g. precipitation \eqn{\delta^2}H to fur \eqn{\delta^2}H), the
+Fits the transfer function that maps an environmental surface value to a measured
+marker value (e.g. precipitation \eqn{\delta^2}H to fur \eqn{\delta^2}H), the
 relationship isocat needs to build probability-of-origin surfaces. Unlike the
 classic workflow---where the user fits an ordinary regression themselves, hand-
-applies \code{slope * iso + intercept} to the isoscape, and passes the result to
-\code{\link{isotopeAssignmentModel}}---this fits the relationship as a Bayesian
-regression that propagates measurement error in \emph{both} the tissue values and
-the isoscape values (an errors-in-variables model), and returns an object that
-\code{\link{makeAssignmentSurface}} consumes directly.
+applies \code{slope * env + intercept} to the environmental surface, and passes the
+result to \code{\link{isotopeAssignmentModel}}---this fits the relationship as a
+Bayesian regression that propagates measurement error in \emph{both} the marker
+values and the environmental values (an errors-in-variables model), and returns an
+object that \code{\link{makeAssignmentSurface}} consumes directly.
 }
 \details{
+"Marker" is deliberately generic: it is whatever measured quantity (a stable-isotope
+ratio, a trace element, etc.) is being related to an environmental surface. "Env" is
+that environmental predictor surface (an isoscape being the canonical example).
+
 The function is a thin, opinionated wrapper around \pkg{brms}: you name the columns
 of your known-origin data frame and it assembles the \code{brms} formula for you,
-using \code{mi()} for tissue measurement error (a modelled response error) and
-\code{me()} for isoscape error (a measured predictor). Power users who already know
-\pkg{brms} can bypass the builder entirely with \code{formula}.
+using \code{mi()} for marker measurement error (a modelled response error) and
+\code{me()} for environmental error (a measured predictor). Power users who already
+know \pkg{brms} can bypass the builder entirely with \code{formula}.
 
 \pkg{brms} is a \code{Suggests} dependency and is loaded only when this function is
 called; it (and a working Stan backend such as \pkg{cmdstanr} or \pkg{rstan}) must
@@ -90,7 +94,7 @@ be installed.
 }
 \examples{
 \dontrun{
-# Known-origin individuals: observed tissue value, isoscape value at origin,
+# Known-origin individuals: observed marker value, environmental value at origin,
 # and measurement error on each.
 set.seed(42)
 known <- data.frame(
@@ -102,10 +106,10 @@ known <- data.frame(
 
 tf <- fitTransferFunction(
   data      = known,
-  tissue    = "fur",
-  iso       = "iso",
-  tissue_se = "fur_me",
-  iso_se    = "iso_se",
+  marker    = "fur",
+  env       = "iso",
+  marker_se = "fur_me",
+  env_se    = "iso_se",
   chains    = 2, iter = 1000, seed = 42
 )
 
@@ -116,8 +120,8 @@ pp_check(tf)       # posterior-predictive check (via brms); needs brms attached
 # Anchor a small sample on an informative slope prior, e.g. a published
 # transfer-function slope (see transferPrior()):
 tf_anchored <- fitTransferFunction(
-  data = known, tissue = "fur", iso = "iso",
-  tissue_se = "fur_me", iso_se = "iso_se",
+  data = known, marker = "fur", env = "iso",
+  marker_se = "fur_me", env_se = "iso_se",
   prior = transferPrior(slope = c(1.1, 0.05)),
   chains = 2, iter = 1000, seed = 42
 )

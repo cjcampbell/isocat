@@ -7,7 +7,7 @@ test_that("point-overlap surface: one layer per ID, values in [0,1], and unnorma
   iso    <- example_isoscape()
   iso_sd <- example_isoscape_sd()
   s <- makeAssignmentSurface(c(A = -120, B = -80), iso, iso_sd, tf,
-                             method = "point", metric = "overlap", tissue_SD = 3)
+                             method = "point", metric = "overlap", marker_se = 3)
   expect_s4_class(s, "SpatRaster")
   expect_equal(terra::nlyr(s), 2L)
   expect_equal(names(s), c("A", "B"))
@@ -30,33 +30,33 @@ test_that("point x density (published propagation) reproduces isotopeAssignmentM
   iso    <- example_isoscape()
   iso_sd <- example_isoscape_sd()
   new <- makeAssignmentSurface(-100, iso, iso_sd, tf, ID = "A", method = "point",
-                               metric = "density", iso_se_scaling = "none", normalize = TRUE)
+                               metric = "density", env_se_scaling = "none", normalize = TRUE)
   legacy <- isotopeAssignmentModel(ID = "A", isotopeValue = -100, SD_indv = 6,
                                    precip_raster = 1.1 * iso + 20, precip_SD_raster = iso_sd)
   expect_equal(terra::values(new)[, 1], terra::values(legacy)[, 1], tolerance = 1e-8)
 })
 
-test_that("iso_se_scaling = 'slope' gives a wider sd than 'none' (point path)", {
+test_that("env_se_scaling = 'slope' gives a wider sd than 'none' (point path)", {
   tf <- example_transfer(slope = 1.5, sigma = 2)  # slope far from 1 makes the factor visible
   sl <- .predictSurface(tf, example_isoscape(), example_isoscape_sd(),
-                        method = "point", iso_se_scaling = "slope")
+                        method = "point", env_se_scaling = "slope")
   no <- .predictSurface(tf, example_isoscape(), example_isoscape_sd(),
-                        method = "point", iso_se_scaling = "none")
+                        method = "point", env_se_scaling = "none")
   sdSl <- terra::values(sl[["sd"]])[, 1]; sdNo <- terra::values(no[["sd"]])[, 1]
   expect_true(all(sdSl >= sdNo, na.rm = TRUE))
   expect_gt(mean(sdSl, na.rm = TRUE), mean(sdNo, na.rm = TRUE))
 })
 
-test_that("tissue_SD_in_density widens the density (lower peak)", {
+test_that("marker_se_in_density widens the density (lower peak)", {
   tf     <- example_transfer()
   iso    <- example_isoscape()
   iso_sd <- example_isoscape_sd()
-  withSD <- makeAssignmentSurface(-100, iso, iso_sd, tf, ID = "A", tissue_SD = 8,
+  withSD <- makeAssignmentSurface(-100, iso, iso_sd, tf, ID = "A", marker_se = 8,
                                   method = "point", metric = "density",
-                                  tissue_SD_in_density = TRUE, normalize = FALSE)
-  noSD   <- makeAssignmentSurface(-100, iso, iso_sd, tf, ID = "A", tissue_SD = 8,
+                                  marker_se_in_density = TRUE, normalize = FALSE)
+  noSD   <- makeAssignmentSurface(-100, iso, iso_sd, tf, ID = "A", marker_se = 8,
                                   method = "point", metric = "density",
-                                  tissue_SD_in_density = FALSE, normalize = FALSE)
+                                  marker_se_in_density = FALSE, normalize = FALSE)
   expect_lt(max(terra::values(withSD)[, 1], na.rm = TRUE),
             max(terra::values(noSD)[, 1], na.rm = TRUE))
 })
@@ -66,7 +66,7 @@ test_that("NA cells in the isoscape are preserved, not zero-filled", {
   iso    <- example_isoscape();    iso[seq_len(200)]    <- NA
   iso_sd <- example_isoscape_sd(); iso_sd[seq_len(200)] <- NA
   s <- makeAssignmentSurface(c(A = -120, B = -80), iso, iso_sd, tf,
-                             method = "point", metric = "overlap", tissue_SD = 3)
+                             method = "point", metric = "overlap", marker_se = 3)
   expect_true(all(is.na(terra::values(s)[seq_len(200), 1])))
   expect_gt(sum(!is.na(terra::values(s)[, 1])), 0)
 })
@@ -111,11 +111,25 @@ test_that("posterior path runs end-to-end and preserves NA (needs brms + backend
   iso_sd <- terra::aggregate(example_isoscape_sd(), 8)
   naCells <- sum(is.na(terra::values(iso)[, 1]))
 
-  s <- makeAssignmentSurface(c(A = -100, B = -70), iso, iso_sd, tf, tissue_SD = 3,
+  s <- makeAssignmentSurface(c(A = -100, B = -70), iso, iso_sd, tf, marker_se = 3,
                              method = "posterior", metric = "overlap", ndraws = 300)
   expect_s4_class(s, "SpatRaster")
   expect_equal(terra::nlyr(s), 2L)
   expect_equal(sum(is.na(terra::values(s)[, 1])), naCells)  # NA mask preserved
   mm <- terra::minmax(s)
   expect_true(all(mm[1, ] >= 0) && all(mm[2, ] <= 1))
+
+  # Placeholder-invariance canary: .predictSurface fills the mi() response-error column
+  # with a fixed placeholder because posterior_predict ignores its value (see Q3). Pin
+  # that here -- the predictive spread must not change with it. If a future brms started
+  # using the value, these diverge and this test fails, flagging the broken assumption.
+  if (!"package:brms" %in% search()) {
+    suppressPackageStartupMessages(attachNamespace("brms"))
+    on.exit(try(detach("package:brms"), silent = TRUE), add = TRUE)
+  }
+  nd  <- data.frame(iso = seq(-120, -40, length.out = 25), iso_se = 3, fur_me = 1)
+  sdA <- apply(brms::posterior_predict(tf$fit, newdata = nd, ndraws = 300), 2, stats::sd)
+  sdB <- apply(brms::posterior_predict(tf$fit, newdata = transform(nd, fur_me = 100),
+                                       ndraws = 300), 2, stats::sd)
+  expect_equal(mean(sdA), mean(sdB), tolerance = 0.03)  # equal up to Monte-Carlo noise
 })

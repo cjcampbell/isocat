@@ -7,18 +7,18 @@
 transferPrior(slope = NULL, intercept = NULL, sigma = NULL, meanme = NULL)
 }
 \arguments{
-\item{slope}{Prior on the isoscape slope (\pkg{brms} class \code{"b"}). For an
+\item{slope}{Prior on the environmental slope (\pkg{brms} class \code{"b"}). For an
 isotope transfer function a slope near 1 is the biologically meaningful anchor.}
 
 \item{intercept}{Prior on the intercept (class \code{"Intercept"}). Note \pkg{brms}
 centres predictors internally, so this constrains the intercept at the mean
-isoscape value, not at zero.}
+environmental value, not at zero.}
 
 \item{sigma}{Prior on the residual standard deviation (class \code{"sigma"};
 automatically truncated to be positive).}
 
-\item{meanme}{Prior on the mean of the latent isoscape variable (class
-\code{"meanme"}); only valid when the model uses \code{me()} (i.e. \code{iso_se}
+\item{meanme}{Prior on the mean of the latent environmental variable (class
+\code{"meanme"}); only valid when the model uses \code{me()} (i.e. \code{env_se}
 was supplied to \code{fitTransferFunction}).}
 }
 \value{
@@ -27,10 +27,10 @@ A \code{brmsprior} object suitable for the \code{prior} argument of
 }
 \description{
 A convenience wrapper that turns familiar quantities---a slope, an intercept, a
-residual scatter, or the mean of the latent isoscape variable---into the \pkg{brms}
-priors that \code{\link{fitTransferFunction}} expects, so users can anchor a fit on
-prior knowledge (for example published transfer-function estimates for their taxon
-or functional group) without knowing \pkg{brms}'s prior-class syntax. This is
+residual scatter, or the mean of the latent environmental variable---into the
+\pkg{brms} priors that \code{\link{fitTransferFunction}} expects, so users can anchor
+a fit on prior knowledge (for example published transfer-function estimates for their
+taxon or functional group) without knowing \pkg{brms}'s prior-class syntax. This is
 especially useful when known-origin samples are too few to estimate the slope and
 intercept precisely on their own, where the slope and intercept trade off strongly.
 }

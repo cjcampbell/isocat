@@ -60,6 +60,6 @@ test_that("fitTransferFunction fits and caches point estimates (needs brms + bac
   co <- coef(tf)
   expect_named(co, c("intercept", "slope", "sigma"))
   expect_true(all(is.finite(co)))
-  expect_equal(tf$vars$iso, "iso")
+  expect_equal(tf$vars$env, "iso")
   expect_lt(abs(co[["slope"]] - 1.1), 0.3)   # recovers the simulated slope
 })

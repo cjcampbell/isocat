@@ -4,20 +4,20 @@
 \alias{.transferFormula}
 \title{Build the brms transfer-function formula from column names}
 \usage{
-.transferFormula(tissue, iso, tissue_se = NULL, iso_se = NULL, weights = NULL)
+.transferFormula(marker, env, marker_se = NULL, env_se = NULL, weights = NULL)
 }
 \arguments{
-\item{tissue, iso, tissue_se, iso_se, weights}{Column-name strings; \code{tissue_se},
-\code{iso_se}, and \code{weights} may be \code{NULL}.}
+\item{marker, env, marker_se, env_se, weights}{Column-name strings; \code{marker_se},
+\code{env_se}, and \code{weights} may be \code{NULL}.}
 }
 \value{
 A \code{brmsformula} object.
 }
 \description{
 Internal helper for \code{\link{fitTransferFunction}}. Assembles a \code{brms::bf()}
-formula, using \code{mi()} for tissue (response) measurement error, \code{me(...,
-gr = NULL)} for isoscape (predictor) measurement error, and \code{weights()} for
-case weights. Exposed (dot-prefixed, exported) so its string-building logic can be
+formula, using \code{mi()} for the marker (response) measurement error, \code{me(...,
+gr = NULL)} for the environmental (predictor) measurement error, and \code{weights()}
+for case weights. Exposed (dot-prefixed, exported) so its string-building logic can be
 tested without fitting a model.
 }
 \keyword{internal}

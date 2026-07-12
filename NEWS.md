@@ -1,7 +1,32 @@
 # isocat 2.0.0
 
+## New: Bayesian transfer functions and posterior-predictive assignment
 
+This release adds a Bayesian workflow for building probability-of-origin surfaces, as new
+functions alongside the classic `isotopeAssignmentModel()` path (which is unchanged).
 
+* New `fitTransferFunction()` fits the tissue-to-isoscape transfer function as a Bayesian
+  errors-in-variables regression -- measurement error in both the tissue and the isoscape
+  values, via `brms`'s `mi()` and `me()` terms -- returning an `isocat_transfer` object.
+  You name the columns of your known-origin data and it assembles the model formula; a
+  `formula` escape hatch and a `prior` argument support custom models and informative priors.
+* New `transferPrior()` builds informative priors (on the slope, intercept, residual sigma,
+  and/or the latent isoscape mean) from familiar `c(mean, sd)` pairs, so a fit can be
+  anchored on published estimates without knowing `brms`'s prior-class syntax -- especially
+  useful when known-origin samples are few.
+* New `makeAssignmentSurface()` builds per-individual probability-of-origin surfaces from an
+  *untransformed* isoscape plus a fitted `isocat_transfer`, applying the transfer function
+  internally. It offers a posterior-predictive `method` (propagating full transfer-function
+  uncertainty) and a point-estimate `method`, crossed with an `overlap` (unnormalized
+  consistency) or `density` (normalized Gaussian) `metric`. The per-cell predictive
+  distribution is computed once and reused across individuals rather than recomputed per
+  individual.
+* New S3 class `isocat_transfer` with `print`, `coef` (intercept/slope/sigma point
+  estimates), and `pp_check` (posterior-predictive check, via `brms`) methods.
+* Exported internal helpers `.predictSurface`, `.overlapProb`, `.transferFormula`, and
+  `.transferPoint` support the above, following the package's dot-prefixed helper convention.
+* `brms` is added to `Suggests` (guarded at runtime): it is required only for the new
+  Bayesian functions and is never loaded otherwise.
 
 # isocat 1.0.0
 ## Updates to rely on `terra` and `sf` for long-term package stability

@@ -5,16 +5,16 @@
 \title{Build probability-of-origin surfaces from a fitted transfer function}
 \usage{
 makeAssignmentSurface(
-  isotopeValue,
-  isoscape,
-  isoscape_SD,
+  markerValue,
+  env,
+  env_se,
   transfer,
   ID = NULL,
-  tissue_SD = 0,
+  marker_se = 0,
   method = c("posterior", "point"),
   metric = c("overlap", "density"),
-  iso_se_scaling = c("slope", "none"),
-  tissue_SD_in_density = TRUE,
+  env_se_scaling = c("slope", "none"),
+  marker_se_in_density = TRUE,
   ndraws = 1000,
   chunkSize = 10000,
   normalize = NULL,
@@ -22,37 +22,38 @@ makeAssignmentSurface(
 )
 }
 \arguments{
-\item{isotopeValue}{Observed tissue isotope value(s); a scalar or a vector with one
-entry per individual. Names, or \code{ID}, become the output layer names.}
+\item{markerValue}{Observed marker value(s); a scalar or a vector with one entry per
+individual. Names, or \code{ID}, become the output layer names.}
 
-\item{isoscape}{\code{SpatRaster} of the \strong{untransformed} isoscape mean (the
-predictor the transfer function was fitted against). Legacy \code{Raster*} inputs
-are coerced.}
+\item{env}{\code{SpatRaster} of the \strong{untransformed} environmental surface mean
+(the predictor the transfer function was fitted against). Legacy \code{Raster*}
+inputs are coerced.}
 
-\item{isoscape_SD}{\code{SpatRaster} of the isoscape standard error, same geometry as
-\code{isoscape}.}
+\item{env_se}{\code{SpatRaster} of the environmental standard error, same geometry as
+\code{env}.}
 
 \item{transfer}{An \code{isocat_transfer} object from \code{\link{fitTransferFunction}}.}
 
 \item{ID}{Optional vector of individual identifiers (defaults to the names of
-\code{isotopeValue}, else \code{indv_1, indv_2, ...}).}
+\code{markerValue}, else \code{indv_1, indv_2, ...}).}
 
-\item{tissue_SD}{Measurement error (standard deviation) on the observed value(s);
+\item{marker_se}{Measurement error (standard deviation) on the observed value(s);
 scalar (recycled) or one per individual. Enters the overlap metric always, and the
-density metric per \code{tissue_SD_in_density}.}
+density metric per \code{marker_se_in_density}.}
 
 \item{method}{One of \code{"posterior"} (default) or \code{"point"}.}
 
 \item{metric}{One of \code{"overlap"} (default) or \code{"density"}.}
 
-\item{iso_se_scaling}{Point path only. \code{"slope"} (default) propagates isoscape
-error through the slope, \code{sqrt((slope*iso_se)^2 + sigma^2)}; \code{"none"} uses
-\code{sqrt(iso_se^2 + sigma^2)}, reproducing the classic (published) surfaces.}
+\item{env_se_scaling}{Point path only. \code{"slope"} (default) propagates
+environmental error through the slope, \code{sqrt((slope*env_se)^2 + sigma^2)};
+\code{"none"} uses \code{sqrt(env_se^2 + sigma^2)}, reproducing the classic
+(published) surfaces.}
 
-\item{tissue_SD_in_density}{Density metric only. If \code{TRUE} (default), the density
-spread includes \code{tissue_SD} (\code{sqrt(sd^2 + tissue_SD^2)}), matching how the
+\item{marker_se_in_density}{Density metric only. If \code{TRUE} (default), the density
+spread includes \code{marker_se} (\code{sqrt(sd^2 + marker_se^2)}), matching how the
 overlap metric treats it; \code{FALSE} omits it, reproducing the classic density
-surface. (The overlap metric always includes \code{tissue_SD}.)}
+surface. (The overlap metric always includes \code{marker_se}.)}
 
 \item{ndraws}{Posterior draws per cell for \code{method = "posterior"}.}
 
@@ -69,30 +70,30 @@ A \code{SpatRaster} with one layer per individual (named by \code{ID}). With
   \code{savePath}, a \code{SpatRaster} pointing at the written files.
 }
 \description{
-Turns an untransformed isoscape and a transfer function fitted with
+Turns an untransformed environmental surface and a transfer function fitted with
 \code{\link{fitTransferFunction}} into per-individual probability-of-origin
 surfaces. Unlike \code{\link{isotopeAssignmentModel}} (the classic path, where the
-caller transforms the isoscape into tissue space by hand), this applies the transfer
-function internally and offers a posterior-predictive path that propagates the full
-transfer-function uncertainty.
+caller transforms the environmental surface into marker space by hand), this applies
+the transfer function internally and offers a posterior-predictive path that
+propagates the full transfer-function uncertainty.
 }
 \details{
 \code{method} and \code{metric} are orthogonal. \code{method} sets how the predictive
-tissue distribution at each cell, \code{(mu, sd)}, is obtained; \code{metric} sets how
+marker distribution at each cell, \code{(mu, sd)}, is obtained; \code{metric} sets how
 the observed value is scored against it. This predictive surface does not depend on
 the individual, so it is computed once and reused across all individuals.
 
 \describe{
   \item{\code{method = "posterior"}}{per-cell \code{brms::posterior_predict} (chunked,
     \code{ndraws} draws); \code{mu}/\code{sd} are the draw mean/sd. Propagates
-    transfer-parameter uncertainty and isoscape error automatically. Needs \pkg{brms}.}
+    transfer-parameter uncertainty and environmental error automatically. Needs \pkg{brms}.}
   \item{\code{method = "point"}}{point-estimate transform
-    \code{mu = intercept + slope*iso}, with
-    \code{sd = sqrt((slope*iso_se)^2 + sigma^2)} by default (see \code{iso_se_scaling}).}
-  \item{\code{metric = "overlap"}}{\code{2*pnorm(-|value - mu| / sqrt(2*(tissue_SD^2 +
+    \code{mu = intercept + slope*env}, with
+    \code{sd = sqrt((slope*env_se)^2 + sigma^2)} by default (see \code{env_se_scaling}).}
+  \item{\code{metric = "overlap"}}{\code{2*pnorm(-|value - mu| / sqrt(2*(marker_se^2 +
     sd^2)))} --- an absolute, \strong{unnormalized} per-cell consistency probability.}
   \item{\code{metric = "density"}}{Gaussian density
-    \code{dnorm(value, mu, sqrt(sd^2 + tissue_SD^2))} (see \code{tissue_SD_in_density}),
+    \code{dnorm(value, mu, sqrt(sd^2 + marker_se^2))} (see \code{marker_se_in_density}),
     normalized by default.}
 }
 }
@@ -105,15 +106,15 @@ myiso_sd <- rast(isoscape_sd, type = "xyz")
 
 # Posterior-overlap surfaces (the new default arm):
 surfaces <- makeAssignmentSurface(
-  isotopeValue = c(A = -120, B = -80),
-  isoscape = myiso, isoscape_SD = myiso_sd,
-  transfer = tf, tissue_SD = 3
+  markerValue = c(A = -120, B = -80),
+  env = myiso, env_se = myiso_sd,
+  transfer = tf, marker_se = 3
 )
 
 # Point-density surfaces (~ the classic path) for comparison:
 comp <- makeAssignmentSurface(
-  isotopeValue = c(A = -120, B = -80),
-  isoscape = myiso, isoscape_SD = myiso_sd,
+  markerValue = c(A = -120, B = -80),
+  env = myiso, env_se = myiso_sd,
   transfer = tf, method = "point", metric = "density"
 )
 }

@@ -2,14 +2,14 @@
 % Please edit documentation in R/makeAssignmentSurface.R
 \name{.predictSurface}
 \alias{.predictSurface}
-\title{Predictive tissue distribution per isoscape cell}
+\title{Predictive marker distribution per environmental cell}
 \usage{
 .predictSurface(
   transfer,
-  isoscape,
-  isoscape_SD,
+  env,
+  env_se,
   method = c("posterior", "point"),
-  iso_se_scaling = c("slope", "none"),
+  env_se_scaling = c("slope", "none"),
   ndraws = 1000,
   chunkSize = 10000
 )
@@ -17,11 +17,11 @@
 \arguments{
 \item{transfer}{An \code{isocat_transfer}.}
 
-\item{isoscape, isoscape_SD}{Isoscape mean and SE \code{SpatRaster}s.}
+\item{env, env_se}{Environmental mean and SE \code{SpatRaster}s.}
 
 \item{method}{\code{"posterior"} or \code{"point"}.}
 
-\item{iso_se_scaling}{\code{"slope"} or \code{"none"} (point path; see
+\item{env_se_scaling}{\code{"slope"} or \code{"none"} (point path; see
 \code{\link{makeAssignmentSurface}}).}
 
 \item{ndraws, chunkSize}{Posterior draws per cell and cells per batch.}
@@ -32,12 +32,12 @@ A two-layer \code{SpatRaster} named \code{c("mu", "sd")}.
 \description{
 Internal engine for \code{\link{makeAssignmentSurface}}. Returns a two-layer
 \code{SpatRaster} \code{(mu, sd)} giving, at each cell, the mean and standard
-deviation of the tissue value the transfer function predicts for an individual that
-originated there. Independent of the observed value and of \code{tissue_SD}, so it is
+deviation of the marker value the transfer function predicts for an individual that
+originated there. Independent of the observed value and of \code{marker_se}, so it is
 computed once per call and reused across individuals.
 }
 \details{
-Cells with missing isoscape values, or non-positive isoscape SE (which
+Cells with missing environmental values, or non-positive environmental SE (which
 \code{brms::posterior_predict} rejects), are returned as \code{NA}. Results are
 written back into a template raster by cell index rather than rebuilt from
 coordinates.

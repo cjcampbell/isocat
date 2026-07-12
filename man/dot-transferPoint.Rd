@@ -4,13 +4,13 @@
 \alias{.transferPoint}
 \title{Extract cached point estimates from a fitted transfer function}
 \usage{
-.transferPoint(fit, iso, iso_se = NULL)
+.transferPoint(fit, env, env_se = NULL)
 }
 \arguments{
 \item{fit}{A \code{brmsfit}.}
 
-\item{iso, iso_se}{Column names, used to find the slope row (a plain \code{b_<iso>}
-coefficient when \code{iso_se} is \code{NULL}, otherwise the \code{bsp_} special
+\item{env, env_se}{Column names, used to find the slope row (a plain \code{b_<env>}
+coefficient when \code{env_se} is \code{NULL}, otherwise the \code{bsp_} special
 effect).}
 }
 \value{
