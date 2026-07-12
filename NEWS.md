@@ -1,4 +1,4 @@
-# isocat (development version)
+# isocat 1.0.1
 
 * `isotopeAssignmentModel()`, `schoenersD()`, and `surfaceSimilarityMatrix()` now
   normalize correctly over isoscapes with masked (`NA`) cells, passing
