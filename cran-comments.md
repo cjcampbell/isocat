@@ -1,10 +1,17 @@
 ## Submission
 
-This is a significant update (0.3.0 -> 1.0.0). isocat's spatial backend has been
-migrated from the maintenance-mode `raster`/`sp` packages to `terra` (`sp` is
-removed; `raster` is now only a guarded, back-compatible `Suggests`). The release
-also fixes several bugs surfaced during the migration. User-facing changes are
-listed in NEWS.md.
+This is a patch release (1.0.0 -> 1.0.1) that fixes a data-handling regression
+introduced in the 1.0.0 raster-to-terra migration. `isotopeAssignmentModel()`,
+`schoenersD()`, and `surfaceSimilarityMatrix()` did not pass `na.rm = TRUE` in
+their internal normalizing sums, so an isoscape containing masked (NA) cells
+returns an all-NA surface (or, in `schoenersD()`, an error). `schoenersD()` also
+now returns a length-1 numeric value rather than a 1x1 data.frame. User-facing
+changes are listed in NEWS.md.
+
+I am submitting this soon after the 1.0.0 release because the regression silently
+returns incorrect probability-of-origin surfaces for the common case of a
+spatially masked study area, which affects users' results. Sorry for the
+quick resubmission!
 
 ## Test environments
 * local macOS, R 4.4.3
@@ -13,7 +20,7 @@ listed in NEWS.md.
   and macOS M1 with sanitizers (m1-san)
 
 ## R CMD check results
-0 errors | 0 warnings | 2 notes
+0 errors | 0 warnings | 1 note
 
 The one NOTE, "unable to verify current time", is environmental (the check
 machine has no time-server access) and unrelated to the package.
