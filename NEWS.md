@@ -1,15 +1,49 @@
 # isocat (development version)
 
+* `isotopeAssignmentModel()`, `schoenersD()`, and `surfaceSimilarityMatrix()` now
+  normalize correctly over isoscapes with masked (`NA`) cells, passing
+  `na.rm = TRUE` in their internal sums; previously a single `NA` cell turned the
+  whole surface `NA` (and errored in `schoenersD()`).
+* `schoenersD()` returns a length-1 numeric value rather than a 1x1 `data.frame`,
+  and coerces legacy `Raster*` inputs with the correct class check.
+
 # isocat 1.0.0
-## Updates to rely on `terra` and `sf` for long-term package stability
-* `isotopeAssignmentModel` now relies on terra instead of raster. Depreciated the  parallel processing capability within this function
-* `schoenersD` now expects inputs of SpatRasters, will automatically convert raster-class objects.
-* New function `surfaceSimilarityMatrix` generates a similarity matrix comprising Schoener's D values for all layers in a SpatRaster. Function `simmatrixMaker` retained as a legacy/depreciated function that still uses rasterStacks as input.
-* `surfaceSimilarityMatrix` is vectorized (one value extraction plus base-R pairwise arithmetic), expected ~100x faster than per-pair evaluation.
-* `makeMultiMonthIsoscape` migrated to terra and corrected: the precipitation-weighted mean previously divided by the number of months (returning half-magnitude values), and the equal-weight (`precip_stack = NULL`) path errored. Both are now fixed. The combined-error surface is unchanged (root-sum-of-square).
-* `isotopeAssignmentModel` no longer silently discards a supplied `SD_indv` vector whose first element is 0. The default is now `SD_indv = NULL` (no individual-level error; isoscape error only), replacing the ambiguous `0` that caused the bug.
-* `meanAggregateClusterProbability` now accepts any cluster labels (integers, letters, factors), not just `1..K`; the previous version indexed clusters by position and silently failed for other codings (GitHub #5). It also errors clearly when `indivIDs` do not match the surface layer names, and names each output layer by its cluster.
-* Improves documentation and adds more testing for all functions.
+
+## Breaking changes
+
+* `isotopeAssignmentModel()` now uses `terra` instead of `raster`, and its
+  in-function parallel-processing capability is deprecated.
+* `schoenersD()` now expects `SpatRaster` inputs and automatically converts
+  legacy `Raster*` objects.
+
+## New features
+
+* New `surfaceSimilarityMatrix()` builds a Schoener's D similarity matrix across
+  all layers of a `SpatRaster`. It is vectorized (one value extraction plus
+  base-R pairwise arithmetic), roughly 100x faster than per-pair evaluation. The
+  legacy `simmatrixMaker()`, which takes a `RasterStack`, is retained but
+  deprecated.
+
+## Bug fixes
+
+* `isotopeAssignmentModel()` no longer silently discards a supplied `SD_indv`
+  vector whose first element is 0. The default is now `SD_indv = NULL` (no
+  individual-level error; isoscape error only), replacing the ambiguous `0` that
+  caused the bug.
+* `makeMultiMonthIsoscape()` now uses `terra` and corrects two errors in the
+  monthly combination: the precipitation-weighted mean previously divided by the
+  number of months (returning half-magnitude values), and the equal-weight
+  (`precip_stack = NULL`) path errored. The combined-error surface is unchanged
+  (root-sum-of-square).
+* `meanAggregateClusterProbability()` accepts any cluster labels (integers,
+  letters, factors), not just `1..K`; the previous version indexed clusters by
+  position and silently failed for other codings (#5). It also errors clearly
+  when `indivIDs` do not match the surface layer names, and names each output
+  layer by its cluster.
+
+## Minor improvements
+
+* Documentation and test coverage are expanded across all functions.
 
 # isocat 0.3.0
 ## New function
