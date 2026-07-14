@@ -51,23 +51,25 @@ unweighted, isotope-only summary. A finite \code{L} requires a distance column,
 produced by passing \code{xy} to \code{\link{sampleOriginPoints}}.
 }
 \examples{
-# Sample origin points from two example surfaces and attach an env value.
-myiso <- rast(isoscape, type = "xyz")
-myiso_sd <- rast(isoscape_sd, type = "xyz")
+# The bundled isoscape is already on an equal-area grid (distances in metres).
+myiso    <- rast(isoscape,    type = "xyz", crs = attr(isoscape,    "crs"))
+myiso_sd <- rast(isoscape_sd, type = "xyz", crs = attr(isoscape_sd, "crs"))
 surfaces <- isotopeAssignmentModel(
         ID = c("A", "B"), isotopeValue = c(-100, -80), SD_indv = c(5, 5),
         precip_raster = myiso, precip_SD_raster = myiso_sd, nClusters = FALSE
         )
 env <- myiso; names(env) <- "d2H"
 
+e <- as.vector(terra::ext(surfaces))
+site <- c(x = mean(e[1:2]), y = mean(e[3:4]))
 set.seed(1)
-pts <- sampleOriginPoints(surfaces, n = 500, xy = c(-90, 45))
+pts <- sampleOriginPoints(surfaces, n = 500, xy = site)
 pts <- extractEnvPoints(pts, env)
 
 # Unweighted (isotope-only) summary...
 summarizeDistribution(pts, vars = "d2H")
-# ...and movement-weighted (L in map units, here degrees).
-summarizeDistribution(pts, vars = "d2H", L = 10)
+# ...and movement-weighted (L in map units, here metres: 300 km).
+summarizeDistribution(pts, vars = "d2H", L = 3e5)
 
 }
 \seealso{

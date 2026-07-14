@@ -39,6 +39,7 @@ Suggests:
 	dendextend,
 	doParallel,
 	dplyr,
+	ggdist,
 	ggplot2,
 	gridExtra,
 	kableExtra,

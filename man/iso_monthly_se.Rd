@@ -5,10 +5,12 @@
 \alias{iso_monthly_se}
 \title{Example monthly precipitation isoscape standard-error data}
 \format{
-A data.frame with 43200 rows and 5 columns: \code{x} and \code{y}
+A data.frame with 22500 rows and 5 columns: \code{x} and \code{y}
   coordinates plus three monthly standard-error layers \code{d2h_se_07},
-  \code{d2h_se_08}, and \code{d2h_se_09}. Convert to a multi-layer SpatRaster
-  with \code{rast(iso_monthly_se, type = "xyz")}.
+  \code{d2h_se_08}, and \code{d2h_se_09}, on a square 150 x 150 equal-area (Albers)
+  grid (edge cells \code{NA}). Coordinates are in metres; the CRS is carried in a
+  \code{"crs"} attribute. Convert to a multi-layer SpatRaster with
+  \code{rast(iso_monthly_se, type = "xyz", crs = attr(iso_monthly_se, "crs"))}.
 }
 \usage{
 iso_monthly_se
@@ -18,7 +20,7 @@ Standard-error surfaces matching \code{\link{iso_monthly}}: three months
 (July, August, September) of the d2H precipitation isoscape prediction error.
 }
 \examples{
-iso_se <- rast(iso_monthly_se, type = "xyz")
+iso_se <- rast(iso_monthly_se, type = "xyz", crs = attr(iso_monthly_se, "crs"))
 }
 \references{
 Bowen G. J., West J.B., Miller C. C., Zhao L. and Zhang T. (2018) IsoMAP: Isoscapes Modeling, Analysis and Prediction (version 1.0). The IsoMAP Project. http://isomap.org

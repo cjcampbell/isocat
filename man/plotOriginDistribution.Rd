@@ -8,6 +8,7 @@ plotOriginDistribution(
   points,
   var,
   group = "ID",
+  type = c("halfeye", "eye", "dots", "violin"),
   fill = "steelblue",
   xlab = var,
   ylab = group
@@ -22,7 +23,10 @@ plot (e.g. output of \code{\link{extractEnvPoints}}).}
 \item{group}{Name of the grouping column (typically the individual ID). Defaults to
 \code{"ID"}.}
 
-\item{fill}{Fill color for the violins. Defaults to \code{"steelblue"}.}
+\item{type}{Distribution geom: one of \code{"halfeye"} (default), \code{"eye"},
+\code{"dots"} (all via \pkg{ggdist}), or \code{"violin"} (via \pkg{ggplot2}).}
+
+\item{fill}{Fill color. Defaults to \code{"steelblue"}.}
 
 \item{xlab, ylab}{Axis labels. Default to \code{var} and \code{group}.}
 }
@@ -31,18 +35,25 @@ A \code{ggplot} object.
 }
 \description{
 Visualizes the per-individual distribution of a variable across sampled origin points
-(e.g. an environmental covariate from \code{\link{extractEnvPoints}}, or a coordinate)
-as horizontal violins, one per group. This shows the spread of plausible origin values
-for each individual, a ridgeline-style read on the point cloud from
-\code{\link{sampleOriginPoints}}.
+(e.g. an environmental covariate from \code{\link{extractEnvPoints}}, or a coordinate),
+one row per group. The sampled origin points are Monte-Carlo draws from the
+probability-of-origin surface, so the distribution-of-draws idioms from \pkg{ggdist}
+apply directly.
 }
 \details{
-The violins depict the raw sampled distribution (probability weighting is already in
-the sample). Movement-prior weighting affects the summaries from
-\code{\link{summarizeDistribution}}, not this display; overlay those summaries with a
-\code{point}/\code{errorbar} layer if desired.
+The default \code{type = "halfeye"} draws a \pkg{ggdist} slab-and-interval ("eye")
+summary: a density with a median-and-quantile-interval beneath it. Other types:
+\code{"eye"} (two-sided density), \code{"dots"} (quantile dotplot), and \code{"violin"}
+(a plain \pkg{ggplot2} violin, requiring only \pkg{ggplot2}).
 
-Requires the \pkg{ggplot2} package.
+The displayed density and intervals are computed from the \emph{raw} sampled points
+(probability weighting is already in the sample); they do \emph{not} reflect the
+movement-prior weighting applied by \code{\link{summarizeDistribution}}. To visualize a
+movement-weighted summary, overlay precomputed intervals with a
+\code{point}/\code{interval} layer instead.
+
+Requires the \pkg{ggplot2} package; the \code{"halfeye"}, \code{"eye"}, and
+\code{"dots"} types additionally require \pkg{ggdist}.
 }
 \examples{
 # Sample origin points from example surfaces and attach an env value.
@@ -58,8 +69,13 @@ set.seed(1)
 pts <- sampleOriginPoints(surfaces, n = 500)
 pts <- extractEnvPoints(pts, env)
 
-if (requireNamespace("ggplot2", quietly = TRUE)) {
+# Default "halfeye" (needs ggdist); "violin" needs only ggplot2.
+if (requireNamespace("ggplot2", quietly = TRUE) &&
+    requireNamespace("ggdist", quietly = TRUE)) {
   plotOriginDistribution(pts, var = "d2H")
+}
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  plotOriginDistribution(pts, var = "d2H", type = "violin")
 }
 
 }

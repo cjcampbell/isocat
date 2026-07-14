@@ -25,7 +25,9 @@
 #'   are eligible for sampling. Defaults to 0.
 #' @param xy Optional reference location(s). Either a length-2 numeric \code{c(x, y)}
 #'   applied to every layer, or a \code{data.frame} with columns \code{ID}, \code{x},
-#'   and \code{y} keyed to layer names. Coordinates must be in the surface's CRS.
+#'   and \code{y} keyed to layer names. Coordinates must be in the surface's CRS. A
+#'   warning is issued if \code{xy} is supplied for a geographic (lon/lat) surface, where
+#'   the returned distances would be in degrees rather than true distances.
 #'
 #' @return A long \code{data.frame} with one row per sampled point and columns
 #'   \code{ID}, \code{cell}, \code{x}, \code{y}, and \code{prob} (the surface value at
@@ -37,9 +39,10 @@
 #' @importFrom methods is
 #'
 #' @examples
-#' # Generate example probability surfaces.
-#' myiso <- rast(isoscape, type = "xyz")
-#' myiso_sd <- rast(isoscape_sd, type = "xyz")
+#' # The bundled isoscape is already on an equal-area grid, so easting/northing/dist
+#' # come out as true distances (metres).
+#' myiso    <- rast(isoscape,    type = "xyz", crs = attr(isoscape,    "crs"))
+#' myiso_sd <- rast(isoscape_sd, type = "xyz", crs = attr(isoscape_sd, "crs"))
 #' surfaces <- isotopeAssignmentModel(
 #'         ID = c("A", "B"),
 #'         isotopeValue = c(-100, -80),
@@ -49,9 +52,11 @@
 #'         nClusters = FALSE
 #'         )
 #'
-#' # Sample origin points, relative to a shared reference location.
+#' # Sample origin points relative to the centre of the study extent.
+#' e <- as.vector(terra::ext(surfaces))
+#' site <- c(x = mean(e[1:2]), y = mean(e[3:4]))
 #' set.seed(1)
-#' pts <- sampleOriginPoints(surfaces, n = 500, xy = c(-90, 45))
+#' pts <- sampleOriginPoints(surfaces, n = 500, xy = site)
 #' head(pts)
 #'
 #' @export
@@ -67,6 +72,13 @@ sampleOriginPoints <- function(surface, n = 1000, minValue = 0, xy = NULL){
 
   ids <- names(surface)
   ref <- if(is.null(xy)) NULL else .parseRefXY(xy, ids)
+
+  # Distances are Euclidean in map units, so warn if a reference location is given for a
+  # geographic (lon/lat) surface, where degree distances are not true distances.
+  if(!is.null(ref) && isTRUE(terra::is.lonlat(surface, perhaps = TRUE, warn = FALSE)))
+    warning("'surface' appears to use geographic (lon/lat) coordinates; 'easting', ",
+            "'northing', and 'dist' are Euclidean in degrees and are not true distances. ",
+            "Project 'surface' to an equal-area CRS before sampling.")
 
   vals   <- terra::values(surface)                                  # ncell x nlyr
   cellxy <- terra::xyFromCell(surface, seq_len(terra::ncell(surface)))

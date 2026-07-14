@@ -70,8 +70,8 @@ test_that("a supplied SD_indv vector is respected even when its first element is
               SD_indv = c(0, 0, 0), precip_raster = iso, precip_SD_raster = iso_sd)
   # Layers B and C carry SD 5 and 3, so they must differ from all-zero error;
   # the old guard silently overwrote c(0, 5, 3) with zeros.
-  expect_gt(max(abs(terra::values(a_vec[[2]]) - terra::values(a_zero[[2]]))), 0)
-  expect_gt(max(abs(terra::values(a_vec[[3]]) - terra::values(a_zero[[3]]))), 0)
+  expect_gt(max(abs(terra::values(a_vec[[2]]) - terra::values(a_zero[[2]])), na.rm = TRUE), 0)
+  expect_gt(max(abs(terra::values(a_vec[[3]]) - terra::values(a_zero[[3]])), na.rm = TRUE), 0)
   # Layer A carries SD 0 in both, so it is unchanged.
   expect_equal(terra::values(a_vec[[1]]), terra::values(a_zero[[1]]))
 })

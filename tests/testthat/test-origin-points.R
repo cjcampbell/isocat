@@ -138,6 +138,20 @@ test_that("finite L applies movement weighting and requires a distance column", 
   expect_false(isTRUE(all.equal(unw, wtd)))             # weighting changes the mean
 })
 
+test_that("sampleOriginPoints warns on lon/lat surfaces, not on equal-area ones", {
+  # Explicit geographic (lon/lat) surface.
+  ll <- terra::rast(terra::ext(-100, -95, 40, 45), ncol = 10, nrow = 10, crs = "EPSG:4326")
+  terra::values(ll) <- stats::runif(terra::ncell(ll))
+  names(ll) <- "A"
+  expect_warning(sampleOriginPoints(ll, n = 50, xy = c(-97, 42)), "lon/lat")
+  expect_no_warning(sampleOriginPoints(ll, n = 50))       # no xy -> no distances
+
+  # The bundled example data is equal-area -> no warning.
+  aea <- example_assignment(ids = "A", values = -100)
+  e   <- as.vector(terra::ext(aea))
+  expect_no_warning(sampleOriginPoints(aea, n = 50, xy = c(mean(e[1:2]), mean(e[3:4]))))
+})
+
 # --- legacy Raster* coercion --------------------------------------------------
 
 test_that("legacy Raster* inputs are coerced", {
@@ -150,4 +164,37 @@ test_that("legacy Raster* inputs are coerced", {
   env <- example_isoscape(); names(env) <- "d2H"
   out <- extractEnvPoints(pts, raster::raster(env))
   expect_true("d2H" %in% names(out))
+})
+
+# --- plotOriginDistribution ---------------------------------------------------
+
+test_that("plotOriginDistribution returns a ggplot for each type", {
+  skip_if_not_installed("ggplot2")
+  r <- example_assignment(ids = c("A", "B"), values = c(-100, -80))
+  set.seed(10)
+  pts <- sampleOriginPoints(r, n = 200)
+  env <- example_isoscape(); names(env) <- "d2H"
+  pts <- extractEnvPoints(pts, env)
+
+  expect_s3_class(plotOriginDistribution(pts, var = "d2H", type = "violin"), "ggplot")
+
+  skip_if_not_installed("ggdist")
+  # Default type is the ggdist "halfeye".
+  g <- plotOriginDistribution(pts, var = "d2H")
+  expect_s3_class(g, "ggplot")
+  for (ty in c("eye", "dots"))
+    expect_s3_class(plotOriginDistribution(pts, var = "d2H", type = ty), "ggplot")
+})
+
+test_that("plotOriginDistribution validates type and columns", {
+  skip_if_not_installed("ggplot2")
+  r <- example_assignment(ids = "A", values = -100)
+  set.seed(11)
+  pts <- sampleOriginPoints(r, n = 50)
+  env <- example_isoscape(); names(env) <- "d2H"
+  pts <- extractEnvPoints(pts, env)
+
+  expect_error(plotOriginDistribution(pts, var = "d2H", type = "nope"))
+  expect_error(plotOriginDistribution(pts, var = "missing", type = "violin"))
+  expect_error(plotOriginDistribution(pts, var = "d2H", group = "nogroup", type = "violin"))
 })

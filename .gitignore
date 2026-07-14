@@ -4,9 +4,10 @@
 .DS_Store
 inst/doc
 oldFxns/
-setup_data/
+setup_data/*
 data_archive/
 !setup_data/setup_isoscape_data.R
+!setup_data/setup_dem_data.R
 isocat_cache/
 tests_oldFxns
 man/.*
@@ -15,12 +16,11 @@ man/.*
 *.pptx
 CLAUDE.md
 dev/
-
 # vignette build artifacts (only the .Rmd source is tracked)
 vignettes/*.html
 vignettes/*.md
 vignettes/*.R
 vignettes/*_files/
-
 # Hold onto some things for v2
 v2/*
+.claude

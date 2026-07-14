@@ -18,7 +18,9 @@ are eligible for sampling. Defaults to 0.}
 
 \item{xy}{Optional reference location(s). Either a length-2 numeric \code{c(x, y)}
 applied to every layer, or a \code{data.frame} with columns \code{ID}, \code{x},
-and \code{y} keyed to layer names. Coordinates must be in the surface's CRS.}
+and \code{y} keyed to layer names. Coordinates must be in the surface's CRS. A
+warning is issued if \code{xy} is supplied for a geographic (lon/lat) surface, where
+the returned distances would be in degrees rather than true distances.}
 }
 \value{
 A long \code{data.frame} with one row per sampled point and columns
@@ -46,9 +48,10 @@ Sampling uses \code{\link[base]{sample.int}}; call \code{set.seed()} beforehand 
 reproducibility.
 }
 \examples{
-# Generate example probability surfaces.
-myiso <- rast(isoscape, type = "xyz")
-myiso_sd <- rast(isoscape_sd, type = "xyz")
+# The bundled isoscape is already on an equal-area grid, so easting/northing/dist
+# come out as true distances (metres).
+myiso    <- rast(isoscape,    type = "xyz", crs = attr(isoscape,    "crs"))
+myiso_sd <- rast(isoscape_sd, type = "xyz", crs = attr(isoscape_sd, "crs"))
 surfaces <- isotopeAssignmentModel(
         ID = c("A", "B"),
         isotopeValue = c(-100, -80),
@@ -58,9 +61,11 @@ surfaces <- isotopeAssignmentModel(
         nClusters = FALSE
         )
 
-# Sample origin points, relative to a shared reference location.
+# Sample origin points relative to the centre of the study extent.
+e <- as.vector(terra::ext(surfaces))
+site <- c(x = mean(e[1:2]), y = mean(e[3:4]))
 set.seed(1)
-pts <- sampleOriginPoints(surfaces, n = 500, xy = c(-90, 45))
+pts <- sampleOriginPoints(surfaces, n = 500, xy = site)
 head(pts)
 
 }

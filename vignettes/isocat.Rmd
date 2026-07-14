@@ -254,8 +254,10 @@ p <- isotopeAssignmentModel(
   nClusters = FALSE
   )[[1]]
 
-# Example Point
-pt <- data.frame(x = -100, y = 40)
+# Example point near the centre of the surface (coordinates are in the isoscape's
+# equal-area projection, in metres).
+ex_ext <- as.vector(terra::ext(p))
+pt <- data.frame(x = mean(ex_ext[1:2]), y = mean(ex_ext[3:4]))
 ptDeets <- list(
   geom_point(
     data = pt, 

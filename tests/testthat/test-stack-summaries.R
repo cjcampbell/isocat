@@ -46,11 +46,11 @@ test_that("projectSummaryMaxSurface returns a categorical index within the layer
   vals <- terra::values(terra::as.int(summ))
   vals <- vals[!is.na(vals)]
   expect_true(all(vals >= 1 & vals <= terra::nlyr(a)))
-  # Matches an independent which.max over the layer values.
-  expect_equal(
-    as.integer(terra::values(terra::as.int(summ))),
-    apply(terra::values(a), 1, which.max)
-  )
+  # Matches an independent which.max over the layer values (NA where all layers are NA).
+  expected <- apply(terra::values(a), 1, function(r) {
+    w <- which.max(r); if (length(w) == 0) NA_integer_ else w
+  })
+  expect_equal(as.integer(terra::values(terra::as.int(summ))), expected)
 })
 
 test_that("getPrecisionPar reports cell counts and proportions above thresholds", {

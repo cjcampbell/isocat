@@ -3,17 +3,19 @@
 #' Three months (July, August, September) of a d2H precipitation isoscape,
 #' provided to demonstrate \code{\link{makeMultiMonthIsoscape}}.
 #'
-#' @format A data.frame with 43200 rows and 5 columns: \code{x} and \code{y}
+#' @format A data.frame with 22500 rows and 5 columns: \code{x} and \code{y}
 #'   coordinates plus three monthly d2H layers \code{d2h_07}, \code{d2h_08},
-#'   and \code{d2h_09}. Convert to a multi-layer SpatRaster with
-#'   \code{rast(iso_monthly, type = "xyz")}.
+#'   and \code{d2h_09}, on a square 150 x 150 equal-area (Albers) grid (edge cells
+#'   \code{NA}). Coordinates are in metres; the CRS is carried in a \code{"crs"}
+#'   attribute. Convert to a multi-layer SpatRaster with
+#'   \code{rast(iso_monthly, type = "xyz", crs = attr(iso_monthly, "crs"))}.
 #'
 #' @references Bowen G. J., West J.B., Miller C. C., Zhao L. and Zhang T. (2018) IsoMAP: Isoscapes Modeling, Analysis and Prediction (version 1.0). The IsoMAP Project. http://isomap.org
 #'
 #' @seealso \code{\link{iso_monthly_se}}, \code{\link{makeMultiMonthIsoscape}}
 #'
 #' @examples
-#' iso <- rast(iso_monthly, type = "xyz")
+#' iso <- rast(iso_monthly, type = "xyz", crs = attr(iso_monthly, "crs"))
 "iso_monthly"
 
 
@@ -22,15 +24,17 @@
 #' Standard-error surfaces matching \code{\link{iso_monthly}}: three months
 #' (July, August, September) of the d2H precipitation isoscape prediction error.
 #'
-#' @format A data.frame with 43200 rows and 5 columns: \code{x} and \code{y}
+#' @format A data.frame with 22500 rows and 5 columns: \code{x} and \code{y}
 #'   coordinates plus three monthly standard-error layers \code{d2h_se_07},
-#'   \code{d2h_se_08}, and \code{d2h_se_09}. Convert to a multi-layer SpatRaster
-#'   with \code{rast(iso_monthly_se, type = "xyz")}.
+#'   \code{d2h_se_08}, and \code{d2h_se_09}, on a square 150 x 150 equal-area (Albers)
+#'   grid (edge cells \code{NA}). Coordinates are in metres; the CRS is carried in a
+#'   \code{"crs"} attribute. Convert to a multi-layer SpatRaster with
+#'   \code{rast(iso_monthly_se, type = "xyz", crs = attr(iso_monthly_se, "crs"))}.
 #'
 #' @references Bowen G. J., West J.B., Miller C. C., Zhao L. and Zhang T. (2018) IsoMAP: Isoscapes Modeling, Analysis and Prediction (version 1.0). The IsoMAP Project. http://isomap.org
 #'
 #' @seealso \code{\link{iso_monthly}}, \code{\link{makeMultiMonthIsoscape}}
 #'
 #' @examples
-#' iso_se <- rast(iso_monthly_se, type = "xyz")
+#' iso_se <- rast(iso_monthly_se, type = "xyz", crs = attr(iso_monthly_se, "crs"))
 "iso_monthly_se"

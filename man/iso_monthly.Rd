@@ -5,10 +5,12 @@
 \alias{iso_monthly}
 \title{Example monthly precipitation isoscape data}
 \format{
-A data.frame with 43200 rows and 5 columns: \code{x} and \code{y}
+A data.frame with 22500 rows and 5 columns: \code{x} and \code{y}
   coordinates plus three monthly d2H layers \code{d2h_07}, \code{d2h_08},
-  and \code{d2h_09}. Convert to a multi-layer SpatRaster with
-  \code{rast(iso_monthly, type = "xyz")}.
+  and \code{d2h_09}, on a square 150 x 150 equal-area (Albers) grid (edge cells
+  \code{NA}). Coordinates are in metres; the CRS is carried in a \code{"crs"}
+  attribute. Convert to a multi-layer SpatRaster with
+  \code{rast(iso_monthly, type = "xyz", crs = attr(iso_monthly, "crs"))}.
 }
 \usage{
 iso_monthly
@@ -18,7 +20,7 @@ Three months (July, August, September) of a d2H precipitation isoscape,
 provided to demonstrate \code{\link{makeMultiMonthIsoscape}}.
 }
 \examples{
-iso <- rast(iso_monthly, type = "xyz")
+iso <- rast(iso_monthly, type = "xyz", crs = attr(iso_monthly, "crs"))
 }
 \references{
 Bowen G. J., West J.B., Miller C. C., Zhao L. and Zhang T. (2018) IsoMAP: Isoscapes Modeling, Analysis and Prediction (version 1.0). The IsoMAP Project. http://isomap.org

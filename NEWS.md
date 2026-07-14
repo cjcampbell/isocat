@@ -45,6 +45,14 @@ environment (or distance travelled) at those origins.
 * New `movementKernel()` provides the half-normal movement-prior weight used by the summary.
 * New `plotOriginDistribution()` visualizes the per-individual distribution of a variable as
   horizontal violins (requires `ggplot2`, in `Suggests`).
+* New example dataset `example_dem` (elevation over the `isoscape` grid, from NOAA's
+  public-domain ETOPO 2022 global relief model) demonstrates extracting a secondary
+  environmental surface at sampled points.
+* The bundled example datasets (`isoscape`, `isoscape_sd`, `iso_monthly`,
+  `iso_monthly_se`, `example_dem`) are now on a square 150x150 equal-area (Albers) grid in
+  metres (previously lon/lat degrees), with the CRS carried in a `"crs"` attribute:
+  rebuild with `rast(x, type = "xyz", crs = attr(x, "crs"))`. Projection leaves NA cells
+  at the grid edges.
 * New vignette `origin-summaries` walks through the workflow on the bundled example data.
 
 # isocat 1.0.1

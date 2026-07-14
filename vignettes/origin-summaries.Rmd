@@ -60,9 +60,15 @@ library(terra)
 We build a small set of probability-of-origin surfaces from the bundled isoscape,
 following the approach in the main vignette.
 
+Probability-of-origin surfaces should be in an **equal-area** projection so that
+distances and areas derived from them are meaningful. The bundled isoscape already ships
+on a square equal-area (Albers) grid in metres, with the CRS carried in a `"crs"`
+attribute; we apply it when building the raster. (If you start from a lon/lat isoscape,
+project it to an equal-area CRS first.)
+
 ```{r surfaces, fig.width = 6, fig.height = 3}
-myiso    <- rast(isoscape,    type = "xyz")
-myiso_sd <- rast(isoscape_sd, type = "xyz")
+myiso    <- rast(isoscape,    type = "xyz", crs = attr(isoscape,    "crs"))
+myiso_sd <- rast(isoscape_sd, type = "xyz", crs = attr(isoscape_sd, "crs"))
 
 df <- data.frame(
   ID           = LETTERS[1:5],
@@ -91,26 +97,33 @@ site <- c(x = mean(ev[1:2]), y = mean(ev[3:4]))
 site
 ```
 
-We also assemble an environmental stack aligned to the surfaces. Here we use the
-isoscape itself as a real covariate (`d2H`) and add a simple synthetic gradient
-(`gradient`, increasing with latitude) purely to illustrate multi-layer
-extraction.
+We also assemble an environmental stack aligned to the surfaces. Here we combine two
+real surfaces: the isoscape itself (`d2H`) and a digital elevation model. `isocat`
+bundles `example_dem`, elevation on the same equal-area grid as the isoscape (from NOAA's
+public-domain ETOPO 2022 global relief model), so it stacks directly. A secondary
+`SpatRaster` on a different grid would first be projected to match with
+`project(dem, myiso)`.
 
 ```{r env}
-env <- c(myiso, terra::init(myiso, "y"))
-names(env) <- c("d2H", "gradient")
+dem <- rast(example_dem, type = "xyz", crs = attr(example_dem, "crs"))
+env <- c(myiso, dem)
+names(env) <- c("d2H", "elevation")
 ```
 
 # Example 1: Sample probability-weighted origin points
 
 `sampleOriginPoints()` draws `n` points from each layer, sampling cells with
 probability proportional to their value. Passing `xy` (our sampling site) adds each
-point's easting, northing, and Euclidean distance from the site, in the surface's
-map units. Set a seed for reproducibility.
+point's easting, northing, and Euclidean distance from the site in the surface's map
+units — metres, now that the surface is equal-area. We add kilometre versions for
+readability. Set a seed for reproducibility.
 
 ```{r sample}
 set.seed(42)
 pts <- sampleOriginPoints(surfaces, n = 1000, xy = site)
+pts$easting_km  <- pts$easting  / 1000
+pts$northing_km <- pts$northing / 1000
+pts$dist_km     <- pts$dist     / 1000
 head(pts)
 ```
 
@@ -127,27 +140,39 @@ points(site["x"], site["y"], pch = 4, cex = 1.5, lwd = 2, col = "red")
 # Example 2: Extract environmental values at the points
 
 `extractEnvPoints()` reads the environmental stack at each point's coordinates and
-appends one column per layer. The full point-by-point distribution is retained.
+appends one column per layer. Our stack holds two surfaces — the isoscape (`d2H`) and
+the ETOPO elevation (`elevation`) — so a single call attaches both, and the DEM value
+now rides along on every sampled origin. The full point-by-point distribution is
+retained.
 
 ```{r extract}
 pts <- extractEnvPoints(pts, env)
-head(pts)
+head(pts[, c("ID", "x", "y", "dist", "d2H", "elevation")])
 ```
 
 # Example 3: Summarize the origin distribution per individual
 
 `summarizeDistribution()` reduces the points to per-individual, per-variable
-summaries: a mean, standard deviation, and quantiles. Alongside the environmental
-variables we can summarize `dist` directly to describe probable distance travelled.
+summaries: a mean, standard deviation, and quantiles. We start with the two
+environmental surfaces, the isoscape value and the extracted elevation:
 
 ```{r summarize}
-summ <- summarizeDistribution(pts, vars = c("d2H", "gradient", "dist"))
+summ <- summarizeDistribution(pts, vars = c("d2H", "elevation"))
 kableExtra::kable(summ, digits = 2)
 ```
 
-The `d2H` summary recovers each individual's plausible origin isoscape value, and
-the `dist` summary describes how far, in map units, its plausible origins fall from
-the sampling site.
+The `d2H` summary recovers each individual's plausible origin isoscape value, and the
+`elevation` summary gives the probable elevation of origin (m).
+
+The same call summarizes the *spatial geometry* of the plausible origins relative to the
+sampling site. The `q2.5`–`q97.5` span is the range of each (in km): how far east/west
+(`easting_km`) and north/south (`northing_km`) origins fall, and the spread of
+straight-line distance travelled (`dist_km`).
+
+```{r summarize_spatial}
+spatial <- summarizeDistribution(pts, vars = c("easting_km", "northing_km", "dist_km"))
+kableExtra::kable(spatial, digits = 1)
+```
 
 # Example 4: Apply a movement prior
 
@@ -158,23 +183,24 @@ kernel is the *only* explicit weight, since probability weighting is already in 
 sample.
 
 ```{r kernel, fig.width = 5, fig.height = 3}
-d <- seq(0, 15, length.out = 100)
-plot(d, movementKernel(d, L = 5), type = "l", lwd = 2,
-     xlab = "Distance from site (map units)", ylab = "Weight",
-     main = "Half-normal movement kernel, L = 5")
+d <- seq(0, 800, length.out = 100)
+plot(d, movementKernel(d, L = 300), type = "l", lwd = 2,
+     xlab = "Distance from site (km)", ylab = "Weight",
+     main = "Half-normal movement kernel, L = 300 km")
 ```
 
-Compare the unweighted origin `d2H` to the movement-weighted estimate. The movement
-prior pulls each individual's estimate toward the environment nearer the site.
+Compare the unweighted origin `d2H` to the movement-weighted estimate (here a 300 km
+scale, applied to `dist_km`). The movement prior pulls each individual's estimate toward
+the environment nearer the site.
 
 ```{r weighted}
 unweighted <- summarizeDistribution(pts, vars = "d2H", L = Inf)
-weighted   <- summarizeDistribution(pts, vars = "d2H", L = 5)
+weighted   <- summarizeDistribution(pts, vars = "d2H", L = 300, dist = "dist_km")
 
 comparison <- data.frame(
-  ID            = unweighted$ID,
+  ID             = unweighted$ID,
   d2H_unweighted = round(unweighted$mean, 1),
-  d2H_L5         = round(weighted$mean, 1)
+  d2H_L300km     = round(weighted$mean, 1)
 )
 kableExtra::kable(comparison)
 ```
@@ -182,29 +208,36 @@ kableExtra::kable(comparison)
 # Example 5: Visualize per-individual distributions
 
 `plotOriginDistribution()` shows the spread of a variable across each individual's
-sampled origins as horizontal violins — a ridgeline-style view of the point cloud.
+sampled origins, one row per individual. The default `type = "halfeye"` draws a
+[ggdist](https://mjskay.github.io/ggdist/) slab-and-interval: a density with a
+median-and-quantile-interval beneath it. Because the sampled points are Monte-Carlo
+draws from the probability surface, these distribution-of-draws idioms apply directly.
 
-```{r plot_dist, fig.width = 6, fig.height = 4}
+```{r plot_dist, fig.width = 6, fig.height = 4, eval = requireNamespace("ggdist", quietly = TRUE)}
 plotOriginDistribution(pts, var = "d2H") +
   labs(x = "Origin d2H", y = "Individual",
        title = "Distribution of plausible origin d2H per individual")
 ```
 
-The same call works for distance travelled, or any extracted covariate:
+The same call works for the elevation extracted from the DEM, or any other covariate.
+Other `type`s include `"eye"`, `"dots"` (a quantile dotplot, also via ggdist), and
+`"violin"` (a plain ggplot2 violin, requiring only ggplot2):
 
-```{r plot_dist2, fig.width = 6, fig.height = 4}
-plotOriginDistribution(pts, var = "dist") +
-  labs(x = "Distance from sampling site (map units)", y = "Individual")
+```{r plot_dist2, fig.width = 6, fig.height = 4, eval = requireNamespace("ggdist", quietly = TRUE)}
+plotOriginDistribution(pts, var = "elevation", type = "dots") +
+  labs(x = "Origin elevation (m)", y = "Individual")
 ```
 
 # Notes
 
-- **Coordinate system.** Distances are Euclidean in the surface's map units, so use
-  a projected (ideally equal-area) surface for meaningful distances and movement
-  scales. The bundled isoscape is in geographic (lon/lat) degrees, so distances
-  here are illustrative degrees.
+- **Coordinate system.** `easting`, `northing`, and `dist` are Euclidean in the
+  surface's map units, so surfaces should be in an equal-area projection for these to be
+  meaningful. The bundled isoscape already ships on a square equal-area (Albers) grid in
+  metres, with its CRS carried in a `"crs"` attribute. If you start from a lon/lat
+  isoscape, project it to equal-area first; `sampleOriginPoints()` warns if it is handed
+  a lon/lat surface.
 - **Environmental alignment.** `extractEnvPoints()` reads values at point
-  coordinates, so the environmental stack need not share the surface's grid — only
-  its coordinate system.
+  coordinates, so the environmental stack need not share the surface's grid — but it
+  must share its coordinate system (project secondary surfaces to match).
 - **Reproducibility.** `sampleOriginPoints()` uses `sample.int()`; call `set.seed()`
   beforehand to reproduce a point cloud.
