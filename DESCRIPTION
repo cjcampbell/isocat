@@ -32,7 +32,6 @@ Depends:
 Imports:
   stats,
   plyr,
-  magrittr,
   methods,
   foreach,
 Suggests:
