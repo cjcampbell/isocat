@@ -1,0 +1,210 @@
+---
+title: "Summarizing origin environments from probability-of-origin surfaces"
+author: "C.J. Campbell"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Summarizing origin environments from probability-of-origin surfaces}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 4
+)
+library(isocat)
+library(terra)
+library(ggplot2)
+library(kableExtra)
+```
+
+**Contact Information:** Caitlin J. Campbell (<caitjcampbell@gmail.com>)
+
+# Overview
+
+Once you have a probability-of-origin surface for an individual, a common next
+question is *what were the plausible origin conditions?* — the environment
+(elevation, climate, an isoscape value) an individual likely came from, and how
+far it likely travelled from where it was sampled.
+
+`isocat` answers this by drawing a probability-weighted cloud of candidate origin
+points from each surface, attaching environmental values to those points, and
+reducing the point cloud to per-individual summaries. The workflow is four small
+functions:
+
+1. `sampleOriginPoints()` — draw points from a surface, weighted by probability of
+   origin, optionally relative to a sampling location.
+2. `extractEnvPoints()` — attach environmental covariates at each point.
+3. `summarizeDistribution()` — reduce the retained point cloud to per-individual
+   summaries, optionally under a movement prior.
+4. `plotOriginDistribution()` — visualize the per-individual distributions.
+
+Because the points are drawn *with probability proportional to the surface*, the
+probability weighting is already baked into the sample, and every downstream
+summary is a simple (optionally movement-weighted) average over points.
+
+```{r load}
+library(isocat)
+library(terra)
+```
+
+# Example data and a simulated sampling site
+
+We build a small set of probability-of-origin surfaces from the bundled isoscape,
+following the approach in the main vignette.
+
+```{r surfaces, fig.width = 6, fig.height = 3}
+myiso    <- rast(isoscape,    type = "xyz")
+myiso_sd <- rast(isoscape_sd, type = "xyz")
+
+df <- data.frame(
+  ID           = LETTERS[1:5],
+  isotopeValue = c(-120, -100, -80, -60, -45),
+  SD_indv      = rep(5, 5)
+)
+
+surfaces <- isotopeAssignmentModel(
+  ID               = df$ID,
+  isotopeValue     = df$isotopeValue,
+  SD_indv          = df$SD_indv,
+  precip_raster    = myiso,
+  precip_SD_raster = myiso_sd,
+  nClusters        = FALSE
+)
+plot(surfaces)
+```
+
+For a worked example we imagine every individual was captured at a single
+sampling site placed at the **center of the study extent**. In a real analysis this
+would be each individual's true capture coordinates.
+
+```{r site}
+ev   <- as.vector(terra::ext(surfaces))            # xmin, xmax, ymin, ymax
+site <- c(x = mean(ev[1:2]), y = mean(ev[3:4]))
+site
+```
+
+We also assemble an environmental stack aligned to the surfaces. Here we use the
+isoscape itself as a real covariate (`d2H`) and add a simple synthetic gradient
+(`gradient`, increasing with latitude) purely to illustrate multi-layer
+extraction.
+
+```{r env}
+env <- c(myiso, terra::init(myiso, "y"))
+names(env) <- c("d2H", "gradient")
+```
+
+# Example 1: Sample probability-weighted origin points
+
+`sampleOriginPoints()` draws `n` points from each layer, sampling cells with
+probability proportional to their value. Passing `xy` (our sampling site) adds each
+point's easting, northing, and Euclidean distance from the site, in the surface's
+map units. Set a seed for reproducibility.
+
+```{r sample}
+set.seed(42)
+pts <- sampleOriginPoints(surfaces, n = 1000, xy = site)
+head(pts)
+```
+
+The result is one row per point. Plotted over a single individual's surface, the
+cloud is denser where the probability of origin is higher:
+
+```{r cloud, fig.width = 6, fig.height = 4}
+plot(surfaces[["A"]], main = "Individual A: surface and sampled origin points")
+points(pts[pts$ID == "A", c("x", "y")], pch = 16, cex = 0.2,
+       col = adjustcolor("black", alpha.f = 0.2))
+points(site["x"], site["y"], pch = 4, cex = 1.5, lwd = 2, col = "red")
+```
+
+# Example 2: Extract environmental values at the points
+
+`extractEnvPoints()` reads the environmental stack at each point's coordinates and
+appends one column per layer. The full point-by-point distribution is retained.
+
+```{r extract}
+pts <- extractEnvPoints(pts, env)
+head(pts)
+```
+
+# Example 3: Summarize the origin distribution per individual
+
+`summarizeDistribution()` reduces the points to per-individual, per-variable
+summaries: a mean, standard deviation, and quantiles. Alongside the environmental
+variables we can summarize `dist` directly to describe probable distance travelled.
+
+```{r summarize}
+summ <- summarizeDistribution(pts, vars = c("d2H", "gradient", "dist"))
+kableExtra::kable(summ, digits = 2)
+```
+
+The `d2H` summary recovers each individual's plausible origin isoscape value, and
+the `dist` summary describes how far, in map units, its plausible origins fall from
+the sampling site.
+
+# Example 4: Apply a movement prior
+
+Distant origins are often less plausible than nearby ones. A finite movement scale
+`L` down-weights points far from the sampling site with a half-normal
+`movementKernel()`; `L = Inf` (the default) leaves the summary unweighted. The
+kernel is the *only* explicit weight, since probability weighting is already in the
+sample.
+
+```{r kernel, fig.width = 5, fig.height = 3}
+d <- seq(0, 15, length.out = 100)
+plot(d, movementKernel(d, L = 5), type = "l", lwd = 2,
+     xlab = "Distance from site (map units)", ylab = "Weight",
+     main = "Half-normal movement kernel, L = 5")
+```
+
+Compare the unweighted origin `d2H` to the movement-weighted estimate. The movement
+prior pulls each individual's estimate toward the environment nearer the site.
+
+```{r weighted}
+unweighted <- summarizeDistribution(pts, vars = "d2H", L = Inf)
+weighted   <- summarizeDistribution(pts, vars = "d2H", L = 5)
+
+comparison <- data.frame(
+  ID            = unweighted$ID,
+  d2H_unweighted = round(unweighted$mean, 1),
+  d2H_L5         = round(weighted$mean, 1)
+)
+kableExtra::kable(comparison)
+```
+
+# Example 5: Visualize per-individual distributions
+
+`plotOriginDistribution()` shows the spread of a variable across each individual's
+sampled origins as horizontal violins — a ridgeline-style view of the point cloud.
+
+```{r plot_dist, fig.width = 6, fig.height = 4}
+plotOriginDistribution(pts, var = "d2H") +
+  labs(x = "Origin d2H", y = "Individual",
+       title = "Distribution of plausible origin d2H per individual")
+```
+
+The same call works for distance travelled, or any extracted covariate:
+
+```{r plot_dist2, fig.width = 6, fig.height = 4}
+plotOriginDistribution(pts, var = "dist") +
+  labs(x = "Distance from sampling site (map units)", y = "Individual")
+```
+
+# Notes
+
+- **Coordinate system.** Distances are Euclidean in the surface's map units, so use
+  a projected (ideally equal-area) surface for meaningful distances and movement
+  scales. The bundled isoscape is in geographic (lon/lat) degrees, so distances
+  here are illustrative degrees.
+- **Environmental alignment.** `extractEnvPoints()` reads values at point
+  coordinates, so the environmental stack need not share the surface's grid — only
+  its coordinate system.
+- **Reproducibility.** `sampleOriginPoints()` uses `sample.int()`; call `set.seed()`
+  beforehand to reproduce a point cloud.

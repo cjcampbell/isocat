@@ -28,6 +28,25 @@ functions alongside the classic `isotopeAssignmentModel()` path (which is unchan
 * `brms` is added to `Suggests` (guarded at runtime): it is required only for the new
   Bayesian functions and is never loaded otherwise.
 
+## New: summarizing origin environments from probability-of-origin surfaces
+
+A small function family for post-processing a probability-of-origin surface into a
+probability-weighted cloud of candidate origin points and per-individual summaries of the
+environment (or distance travelled) at those origins.
+
+* New `sampleOriginPoints()` draws points from each layer of a probability-of-origin
+  `SpatRaster` with probability proportional to the surface, optionally recording each
+  point's easting, northing, and distance from a supplied sampling location.
+* New `extractEnvPoints()` attaches one or more environmental covariates to the points by
+  extracting an `env` `SpatRaster` at each point's coordinates, retaining the full
+  point-by-point distribution.
+* New `summarizeDistribution()` reduces the retained points to per-individual, per-variable
+  summaries (mean, SD, and quantiles), optionally under a half-normal movement prior.
+* New `movementKernel()` provides the half-normal movement-prior weight used by the summary.
+* New `plotOriginDistribution()` visualizes the per-individual distribution of a variable as
+  horizontal violins (requires `ggplot2`, in `Suggests`).
+* New vignette `origin-summaries` walks through the workflow on the bundled example data.
+
 # isocat 1.0.0
 ## Updates to rely on `terra` and `sf` for long-term package stability
 * `isotopeAssignmentModel` now relies on terra instead of raster. Depreciated the  parallel processing capability within this function
