@@ -266,7 +266,7 @@ ptDeets <- list(
 
 ex_plot <- gplot(p) + gglayers + ggProb + ptDeets
 
-ex_hist <- data.frame(x = as.vector(p[])) %>% 
+ex_hist <- data.frame(x = as.vector(p[])) |> 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -291,7 +291,7 @@ cumsum_plot <- gplot(CumSumEx) +
   scale_fill_gradient(
     name = "Cumulative Sum\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-cumsum_hist <- data.frame(x = as.vector(CumSumEx[])) %>% 
+cumsum_hist <- data.frame(x = as.vector(CumSumEx[])) |> 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -317,7 +317,7 @@ odds_plot <- gplot(OddsRatioEx) +
   scale_fill_gradient(
     name = "Odds-Ratio\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-odds_hist <- data.frame(x = as.vector(OddsRatioEx[])) %>% 
+odds_hist <- data.frame(x = as.vector(OddsRatioEx[])) |> 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -343,7 +343,7 @@ quantile_plot <- gplot(QuantileEx) +
   scale_fill_gradient(
     name = "Quantile\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-quantile_hist <- data.frame(x = as.vector(QuantileEx[])) %>% 
+quantile_hist <- data.frame(x = as.vector(QuantileEx[])) |> 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +
@@ -381,7 +381,7 @@ quantsim_plot <- gplot(QuantSimEx) +
   scale_fill_gradient(
     name = "Quantile-Simulation\nProbability\nOf Origin", low = 'darkblue', high = 'yellow') 
 
-quantsim_hist <- data.frame(x = as.vector(QuantSimEx[])) %>% 
+quantsim_hist <- data.frame(x = as.vector(QuantSimEx[])) |> 
   ggplot(.) +
   geom_density(aes(x = x)) +
   scale_y_continuous(expand = c(0,0)) +

@@ -7,7 +7,6 @@
 #'
 #' @return Returns SpatRaster rescaled to Odds Ratio values.
 #'
-#' @importFrom magrittr %>%
 #' @importFrom methods is
 #'
 #' @aliases odds_surface odds_surface
