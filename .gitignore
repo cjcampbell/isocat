@@ -24,3 +24,5 @@ vignettes/*_files/
 # Hold onto some things for v2
 v2/*
 .claude
+# Google Drive Desktop sync staging dirs
+.tmp.drive*/
