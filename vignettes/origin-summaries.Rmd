@@ -34,21 +34,29 @@ question is *what were the plausible origin conditions?* — the environment
 (elevation, climate, an isoscape value) an individual likely came from, and how
 far it likely travelled from where it was sampled.
 
-`isocat` answers this by drawing a probability-weighted cloud of candidate origin
-points from each surface, attaching environmental values to those points, and
-reducing the point cloud to per-individual summaries. The workflow is four small
-functions:
+`isocat` answers this by folding the capture location into the surface, drawing a
+probability-weighted cloud of candidate origin points, attaching environmental values
+to those points, and reducing the cloud to per-individual summaries. The workflow is:
 
-1. `sampleOriginPoints()` — draw points from a surface, weighted by probability of
-   origin, optionally relative to a sampling location.
-2. `extractEnvPoints()` — attach environmental covariates at each point.
-3. `summarizeDistribution()` — reduce the retained point cloud to per-individual
-   summaries, optionally under a movement prior.
-4. `plotOriginDistribution()` — visualize the per-individual distributions.
+1. `competitiveSurface()` — reweight the surface by the capture location so nearby
+   origins are favoured over distant ones *only when a closer origin is equally or more
+   isotopically suitable* (the recommended, parameter-free way to bring in geography).
+2. `sampleOriginPoints()` — draw points from a surface, weighted by probability of
+   origin, recording each point's position relative to the capture site.
+3. `extractEnvPoints()` — attach environmental covariates at each point.
+4. `summarizeDistribution()` — reduce the retained point cloud to per-individual
+   summaries.
+5. `plotOriginDistribution()` — visualize the per-individual distributions.
 
 Because the points are drawn *with probability proportional to the surface*, the
-probability weighting is already baked into the sample, and every downstream
-summary is a simple (optionally movement-weighted) average over points.
+probability weighting is already baked into the sample, and every downstream summary is a
+simple average over points.
+
+There are two ways to bring the capture location into the summary. The recommended default
+is **competitive distance reweighting** (`competitiveSurface()`), which needs no movement
+scale and never discounts the most-suitable origin, wherever it lies. A parametric
+**half-normal movement prior** (`movementKernel()`) is available as an alternative and is
+shown at the end.
 
 ```{r load}
 library(isocat)
@@ -66,7 +74,7 @@ on a square equal-area (Albers) grid in metres, with the CRS carried in a `"crs"
 attribute; we apply it when building the raster. (If you start from a lon/lat isoscape,
 project it to an equal-area CRS first.)
 
-```{r surfaces, fig.width = 6, fig.height = 3}
+```{r surfaces, fig.width = 7.5, fig.height = 5}
 myiso    <- rast(isoscape,    type = "xyz", crs = attr(isoscape,    "crs"))
 myiso_sd <- rast(isoscape_sd, type = "xyz", crs = attr(isoscape_sd, "crs"))
 
@@ -110,34 +118,109 @@ env <- c(myiso, dem)
 names(env) <- c("d2H", "elevation")
 ```
 
-# Example 1: Sample probability-weighted origin points
+# Example 1: Competitive distance reweighting
+
+Isotopic suitability alone treats an origin 2000 km away exactly like an equally-suitable
+origin next to the capture site. `competitiveSurface()` folds in the capture location so
+that a candidate origin is discounted **only when a closer, equally- or more-suitable
+origin exists**. Formally, each cell is weighted by the isotope-weighted probability that
+an equally- or more-suitable location lies at least as far from capture as that cell — a
+within-suitability distance survival function in $[0, 1]$.
+
+This has three useful properties:
+
+- **Isotope-led.** The single most-suitable cell always keeps weight 1 and is never
+  discounted, *wherever it is* — so a genuine long-distance origin survives.
+- **Competitive.** A cell is penalized only by locations that are *both* more suitable
+  *and* nearer; diffuse low-suitability tails dissolve because each such cell has a
+  superior, nearer alternative.
+- **Parameter-free.** It uses only the *ordering* of distances, so — unlike a movement
+  kernel — there is no movement scale to choose, and the result is invariant to the
+  absolute distance scale.
+
+```{r reweight, fig.width = 7.5, fig.height = 5}
+psurf <- competitiveSurface(surfaces, xy = site)
+plot(psurf)
+```
+
+The effect is clearest side by side. The raw surface for individual C spreads probability
+across every isotopically-suitable cell; the reweighted surface pulls that mass toward the
+capture site (red X), retaining distant cells only where they are the most suitable
+available.
+
+```{r reweight_compare, fig.width = 8, fig.height = 4}
+op <- par(mfrow = c(1, 2))
+plot(surfaces[["C"]], main = "Raw isotopic surface (C)")
+points(site["x"], site["y"], pch = 4, cex = 1.5, lwd = 2, col = "red")
+plot(psurf[["C"]], main = "Competitively reweighted (C)")
+points(site["x"], site["y"], pch = 4, cex = 1.5, lwd = 2, col = "red")
+par(op)
+```
+
+The rest of the workflow runs on the reweighted surface `psurf`.
+
+# Example 2: Sample probability-weighted origin points
 
 `sampleOriginPoints()` draws `n` points from each layer, sampling cells with
 probability proportional to their value. Passing `xy` (our sampling site) adds each
 point's easting, northing, and Euclidean distance from the site in the surface's map
-units — metres, now that the surface is equal-area. We add kilometre versions for
+units — metres, since the surface is equal-area. We add kilometre versions for
 readability. Set a seed for reproducibility.
 
 ```{r sample}
 set.seed(42)
-pts <- sampleOriginPoints(surfaces, n = 1000, xy = site)
+pts <- sampleOriginPoints(psurf, n = 1000, xy = site)
 pts$easting_km  <- pts$easting  / 1000
 pts$northing_km <- pts$northing / 1000
 pts$dist_km     <- pts$dist     / 1000
 head(pts)
 ```
 
-The result is one row per point. Plotted over a single individual's surface, the
-cloud is denser where the probability of origin is higher:
+The result is one row per point, across all five individuals. Taking individual C as an
+example, we can confirm the draws represent its surface by placing them side by side on the
+same spatial scale: the reweighted surface with the sampled points overlaid (left), and a
+2-D kernel density of those same points (right). The smoothed cloud recovers the surface —
+denser where the probability of origin is higher — with the sampling site marked by the
+red X.
 
-```{r cloud, fig.width = 6, fig.height = 4}
-plot(surfaces[["A"]], main = "Individual A: surface and sampled origin points")
-points(pts[pts$ID == "A", c("x", "y")], pch = 16, cex = 0.2,
-       col = adjustcolor("black", alpha.f = 0.2))
-points(site["x"], site["y"], pch = 4, cex = 1.5, lwd = 2, col = "red")
+```{r cloud, fig.width = 9, fig.height = 4.6, eval = requireNamespace("gridExtra", quietly = TRUE)}
+ptsC  <- pts[pts$ID == "C", ]
+csurf <- as.data.frame(psurf[["C"]], xy = TRUE)          # reweighted surface as x/y/prob
+names(csurf)[3] <- "prob"
+siteC <- data.frame(x = site[["x"]], y = site[["y"]])
+
+# Shared spatial scale + look for both panels.
+xr <- range(csurf$x); yr <- range(csurf$y)
+panel <- list(
+  coord_equal(xlim = xr, ylim = yr, expand = FALSE),
+  scale_fill_viridis_c(option = "viridis"),
+  theme_minimal(base_size = 11),
+  theme(axis.text = element_blank(), axis.title = element_blank(),
+        axis.ticks = element_blank(), panel.grid = element_blank(),
+        plot.subtitle = element_text(face = "bold"))
+)
+star <- geom_point(data = siteC, aes(x, y), shape = 4, size = 3, stroke = 1.2,
+                   colour = "red", inherit.aes = FALSE)
+
+p_surface <- ggplot(csurf, aes(x, y)) +
+  geom_raster(aes(fill = prob)) +
+  geom_point(data = ptsC, aes(x, y), colour = "white", alpha = 0.15, size = 0.35,
+             inherit.aes = FALSE) +
+  star + panel +
+  labs(subtitle = "Reweighted surface + sampled points", fill = "P(origin)")
+
+# Estimate the density over the full surface extent so the raster fills the panel.
+kd  <- MASS::kde2d(ptsC$x, ptsC$y, n = 150, lims = c(xr, yr))
+kdf <- expand.grid(x = kd$x, y = kd$y); kdf$density <- as.vector(kd$z)
+p_density <- ggplot(kdf, aes(x, y, fill = density)) +
+  geom_raster() +
+  star + panel +
+  labs(subtitle = "Kernel density of sampled points", fill = "Density")
+
+gridExtra::grid.arrange(p_surface, p_density, nrow = 1)
 ```
 
-# Example 2: Extract environmental values at the points
+# Example 3: Extract environmental values at the points
 
 `extractEnvPoints()` reads the environmental stack at each point's coordinates and
 appends one column per layer. Our stack holds two surfaces — the isoscape (`d2H`) and
@@ -150,11 +233,12 @@ pts <- extractEnvPoints(pts, env)
 head(pts[, c("ID", "x", "y", "dist", "d2H", "elevation")])
 ```
 
-# Example 3: Summarize the origin distribution per individual
+# Example 4: Summarize the origin distribution per individual
 
 `summarizeDistribution()` reduces the points to per-individual, per-variable
-summaries: a mean, standard deviation, and quantiles. We start with the two
-environmental surfaces, the isoscape value and the extracted elevation:
+summaries: a mean, standard deviation, and quantiles. The summary is a plain average over
+the points — no explicit weighting, because both the probability of origin and the
+competitive distance reweighting are already contained in the sampled cloud.
 
 ```{r summarize}
 summ <- summarizeDistribution(pts, vars = c("d2H", "elevation"))
@@ -172,37 +256,6 @@ straight-line distance travelled (`dist_km`).
 ```{r summarize_spatial}
 spatial <- summarizeDistribution(pts, vars = c("easting_km", "northing_km", "dist_km"))
 kableExtra::kable(spatial, digits = 1)
-```
-
-# Example 4: Apply a movement prior
-
-Distant origins are often less plausible than nearby ones. A finite movement scale
-`L` down-weights points far from the sampling site with a half-normal
-`movementKernel()`; `L = Inf` (the default) leaves the summary unweighted. The
-kernel is the *only* explicit weight, since probability weighting is already in the
-sample.
-
-```{r kernel, fig.width = 5, fig.height = 3}
-d <- seq(0, 800, length.out = 100)
-plot(d, movementKernel(d, L = 300), type = "l", lwd = 2,
-     xlab = "Distance from site (km)", ylab = "Weight",
-     main = "Half-normal movement kernel, L = 300 km")
-```
-
-Compare the unweighted origin `d2H` to the movement-weighted estimate (here a 300 km
-scale, applied to `dist_km`). The movement prior pulls each individual's estimate toward
-the environment nearer the site.
-
-```{r weighted}
-unweighted <- summarizeDistribution(pts, vars = "d2H", L = Inf)
-weighted   <- summarizeDistribution(pts, vars = "d2H", L = 300, dist = "dist_km")
-
-comparison <- data.frame(
-  ID             = unweighted$ID,
-  d2H_unweighted = round(unweighted$mean, 1),
-  d2H_L300km     = round(weighted$mean, 1)
-)
-kableExtra::kable(comparison)
 ```
 
 # Example 5: Visualize per-individual distributions
@@ -228,14 +281,80 @@ plotOriginDistribution(pts, var = "elevation", type = "dots") +
   labs(x = "Origin elevation (m)", y = "Individual")
 ```
 
+`plotOriginDistribution()` shows one variable at a time. To view several together — here
+the spatial geometry of each individual's origins — reshape the points to long form and
+facet. This gives a per-individual view of easting, northing, and distance travelled; the
+dashed line marks the sampling site (0), so easting/northing show which way, and how far,
+plausible origins lie from it.
+
+```{r plot_spatial, fig.width = 8, fig.height = 4, eval = requireNamespace("ggdist", quietly = TRUE)}
+spatial_long <- data.frame(
+  ID       = rep(pts$ID, 3),
+  variable = factor(rep(c("Easting (km)", "Northing (km)", "Distance (km)"),
+                        each = nrow(pts)),
+                    levels = c("Easting (km)", "Northing (km)", "Distance (km)")),
+  value    = c(pts$easting_km, pts$northing_km, pts$dist_km)
+)
+ggplot(spatial_long, aes(x = value, y = ID)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50", linewidth = 0.3) +
+  ggdist::stat_halfeye(fill = "steelblue", alpha = 0.8) +
+  facet_wrap(~ variable, scales = "free_x") +
+  labs(x = NULL, y = "Individual",
+       title = "Per-individual distribution of origin geometry") +
+  theme_bw()
+```
+
+# Alternative: a parametric movement prior
+
+Competitive reweighting is parameter-free, but sometimes you have an independent estimate
+of how far a species can move and want to impose it explicitly. `movementKernel()`
+provides a half-normal movement prior, $\pi(d) = \exp(-0.5 (d / L)^2)$, at a movement
+scale `L` you supply. It is applied as the *only* explicit weight in
+`summarizeDistribution()` (via `L=`), on points drawn from the **raw** surface — so it is
+an alternative to `competitiveSurface()`, not a complement.
+
+```{r kernel, fig.width = 5, fig.height = 3}
+d <- seq(0, 800, length.out = 100)
+plot(d, movementKernel(d, L = 300), type = "l", lwd = 2,
+     xlab = "Distance from site (km)", ylab = "Weight",
+     main = "Half-normal movement kernel, L = 300 km")
+```
+
+Sample from the raw surface, then compare the unweighted origin `d2H` to the
+movement-weighted estimate (here a 300 km scale, applied to `dist_km`). The movement prior
+pulls each estimate toward the environment nearer the site.
+
+```{r weighted}
+set.seed(42)
+pts_raw <- sampleOriginPoints(surfaces, n = 1000, xy = site)
+pts_raw$dist_km <- pts_raw$dist / 1000
+pts_raw <- extractEnvPoints(pts_raw, env)
+
+unweighted <- summarizeDistribution(pts_raw, vars = "d2H", L = Inf)
+weighted   <- summarizeDistribution(pts_raw, vars = "d2H", L = 300, dist = "dist_km")
+
+comparison <- data.frame(
+  ID             = unweighted$ID,
+  d2H_unweighted = round(unweighted$mean, 1),
+  d2H_L300km     = round(weighted$mean, 1)
+)
+kableExtra::kable(comparison)
+```
+
+The two approaches answer different questions. Competitive reweighting asks *is there a
+better, nearer origin?* and needs no scale; the movement kernel asks *how far is this
+species likely to have moved?* and requires you to commit to an `L`. Use the movement
+kernel when you have a defensible movement scale; otherwise the parameter-free competitive
+surface is the safer default.
+
 # Notes
 
-- **Coordinate system.** `easting`, `northing`, and `dist` are Euclidean in the
-  surface's map units, so surfaces should be in an equal-area projection for these to be
-  meaningful. The bundled isoscape already ships on a square equal-area (Albers) grid in
-  metres, with its CRS carried in a `"crs"` attribute. If you start from a lon/lat
-  isoscape, project it to equal-area first; `sampleOriginPoints()` warns if it is handed
-  a lon/lat surface.
+- **Coordinate system.** `easting`, `northing`, `dist`, and the competitive reweighting
+  are all Euclidean in the surface's map units, so surfaces should be in an equal-area
+  projection for these to be meaningful. The bundled isoscape already ships on a square
+  equal-area (Albers) grid in metres, with its CRS carried in a `"crs"` attribute. If you
+  start from a lon/lat isoscape, project it to equal-area first; both
+  `competitiveSurface()` and `sampleOriginPoints()` warn if handed a lon/lat surface.
 - **Environmental alignment.** `extractEnvPoints()` reads values at point
   coordinates, so the environmental stack need not share the surface's grid — but it
   must share its coordinate system (project secondary surfaces to match).

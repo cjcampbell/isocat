@@ -44,6 +44,7 @@ Suggests:
 	gridExtra,
 	kableExtra,
 	knitr,
+	MASS,
 	parallel,
 	pvclust,
   rmarkdown,

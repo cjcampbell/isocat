@@ -34,6 +34,15 @@ A small function family for post-processing a probability-of-origin surface into
 probability-weighted cloud of candidate origin points and per-individual summaries of the
 environment (or distance travelled) at those origins.
 
+* New `competitiveSurface()` folds an individual's capture location into its
+  probability-of-origin surface by *competitive distance reweighting*: a candidate origin
+  is discounted only when a closer, equally- or more-suitable origin exists. It needs no
+  movement-scale parameter, is invariant to the absolute distance scale, and never
+  discounts the single most-suitable cell (so genuine long-distance origins are retained).
+  This is the recommended way to bring geography into the origin-summary workflow: reweight
+  the surface, then sample and summarize it unweighted.
+* New `competitiveWeight()` provides the underlying within-suitability distance survival
+  weight on plain value vectors, evaluated on a binned histogram for `O(nbins^2)` cost.
 * New `sampleOriginPoints()` draws points from each layer of a probability-of-origin
   `SpatRaster` with probability proportional to the surface, optionally recording each
   point's easting, northing, and distance from a supplied sampling location.
@@ -41,8 +50,11 @@ environment (or distance travelled) at those origins.
   extracting an `env` `SpatRaster` at each point's coordinates, retaining the full
   point-by-point distribution.
 * New `summarizeDistribution()` reduces the retained points to per-individual, per-variable
-  summaries (mean, SD, and quantiles), optionally under a half-normal movement prior.
-* New `movementKernel()` provides the half-normal movement-prior weight used by the summary.
+  summaries (mean, SD, and quantiles); by default a plain average over the sampled cloud,
+  optionally under a half-normal movement prior (`L`).
+* New `movementKernel()` provides a half-normal movement-prior weight, offered as a
+  parametric alternative to `competitiveSurface()` when a defensible movement scale is
+  available.
 * New `plotOriginDistribution()` visualizes the per-individual distribution of a variable as
   horizontal violins (requires `ggplot2`, in `Suggests`).
 * New example dataset `example_dem` (elevation over the `isoscape` grid, from NOAA's
