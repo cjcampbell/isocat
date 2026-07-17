@@ -7,8 +7,8 @@
 \format{
 A data.frame with 22500 rows and 5 columns: \code{x} and \code{y}
   coordinates plus three monthly d2H layers \code{d2h_07}, \code{d2h_08},
-  and \code{d2h_09}, on a square 150 x 150 equal-area (Albers) grid (edge cells
-  \code{NA}). Coordinates are in metres; the CRS is carried in a \code{"crs"}
+  and \code{d2h_09}, on a filled square 150 x 150 equal-area (Albers) grid.
+  Coordinates are in metres; the CRS is carried in a \code{"crs"}
   attribute. Convert to a multi-layer SpatRaster with
   \code{rast(iso_monthly, type = "xyz", crs = attr(iso_monthly, "crs"))}.
 }

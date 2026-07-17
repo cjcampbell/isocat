@@ -7,8 +7,8 @@
 \format{
 A data.frame with 22500 rows and 3 columns (\code{x}, \code{y}, and
   \code{elevation} in metres), aligned cell-for-cell to the \code{isoscape} grid (a
-  square 150 x 150 equal-area Albers grid; edge cells \code{NA}). Coordinates are in
-  metres; the CRS is carried in a \code{"crs"} attribute. Build as a raster with
+  filled square 150 x 150 equal-area Albers grid). Coordinates are in metres; the CRS
+  is carried in a \code{"crs"} attribute. Build as a raster with
   \code{rast(example_dem, type = "xyz", crs = attr(example_dem, "crs"))}.
 }
 \source{

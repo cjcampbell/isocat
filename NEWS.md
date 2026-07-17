@@ -49,10 +49,9 @@ environment (or distance travelled) at those origins.
   public-domain ETOPO 2022 global relief model) demonstrates extracting a secondary
   environmental surface at sampled points.
 * The bundled example datasets (`isoscape`, `isoscape_sd`, `iso_monthly`,
-  `iso_monthly_se`, `example_dem`) are now on a square 150x150 equal-area (Albers) grid in
-  metres (previously lon/lat degrees), with the CRS carried in a `"crs"` attribute:
-  rebuild with `rast(x, type = "xyz", crs = attr(x, "crs"))`. Projection leaves NA cells
-  at the grid edges.
+  `iso_monthly_se`, `example_dem`) are now on a filled square 150x150 equal-area (Albers)
+  grid in metres (previously lon/lat degrees), with the CRS carried in a `"crs"`
+  attribute: rebuild with `rast(x, type = "xyz", crs = attr(x, "crs"))`.
 * New vignette `origin-summaries` walks through the workflow on the bundled example data.
 
 # isocat 1.0.1

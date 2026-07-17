@@ -6,8 +6,8 @@
 \title{Example isoscape standard deviation data}
 \format{
 A data.frame with 22500 rows (\code{x}, \code{y}, and a \code{d2h_se_GS}
-  layer) on a square 150 x 150 equal-area (Albers) grid; edge cells outside the
-  projected region are \code{NA}. Coordinates are in metres; the CRS is carried in a
+  layer) on a filled square 150 x 150 equal-area (Albers) grid. Coordinates are in
+  metres; the CRS is carried in a
   \code{"crs"} attribute, re-applied when rebuilding the raster.
 }
 \usage{
