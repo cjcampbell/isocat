@@ -34,7 +34,7 @@ A small function family for post-processing a probability-of-origin surface into
 probability-weighted cloud of candidate origin points and per-individual summaries of the
 environment (or distance travelled) at those origins.
 
-* New `competitiveSurface()` folds an individual's capture location into its
+* New `competitiveSurface()` folds an individual's sampling location into its
   probability-of-origin surface by *competitive distance reweighting*: a candidate origin
   is discounted only when a closer, equally- or more-suitable origin exists. It needs no
   movement-scale parameter, is invariant to the absolute distance scale, and never
@@ -64,6 +64,15 @@ environment (or distance travelled) at those origins.
   `iso_monthly_se`, `example_dem`) are now on a filled square 150x150 equal-area (Albers)
   grid in metres (previously lon/lat degrees), with the CRS carried in a `"crs"`
   attribute: rebuild with `rast(x, type = "xyz", crs = attr(x, "crs"))`.
+* `makeMultiMonthIsoscape()` now combines the monthly standard-error layers into the
+  standard error *of the precipitation-weighted mean it returns*. Through 1.0.1 it returned
+  the unweighted root-sum-of-square `sqrt(sum(iso_se_stack^2))`, which ignored the
+  precipitation weights and overstated the combined error, so **the returned `iso_se` values
+  change**; `mean_iso` is unaffected. The new `iso_se_method` argument picks the correlation
+  assumption -- `"weighted-correlated"` (the default, `sum(w * se)`) or
+  `"weighted-uncorrelated"` (`sqrt(sum(w^2 * se^2))`) -- with correlated the default because
+  monthly isoscapes typically share a station network and interpolation. Use
+  `iso_se_method = "rss"` to reproduce pre-2.0 results.
 * New vignette `origin-summaries` walks through the workflow on the bundled example data.
 
 # isocat 1.0.1
