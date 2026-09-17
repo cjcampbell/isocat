@@ -4,27 +4,70 @@
 \alias{makeMultiMonthIsoscape}
 \title{Make mean multi-month isoscape and error surfaces.}
 \usage{
-makeMultiMonthIsoscape(iso_stack, iso_se_stack, precip_stack = NULL)
+makeMultiMonthIsoscape(
+  iso_stack,
+  iso_se_stack,
+  precip_stack = NULL,
+  iso_se_method = c("weighted-correlated", "weighted-uncorrelated", "rss")
+)
 }
 \arguments{
 \item{iso_stack}{A SpatRaster containing n layers corresponding to isoscape models for n months.}
 
 \item{iso_se_stack}{A SpatRaster containing n layers corresponding to isoscape standard error maps for n months.}
 
-\item{precip_stack}{Either a SpatRaster containing n layers corresponding to precipitation amounts for n months, or NULL (assumes equal precipitation amounts.)}
+\item{precip_stack}{Either a SpatRaster containing n layers corresponding to precipitation amounts for n months, or NULL (assumes equal precipitation amounts.)
+Only each month's share of the per-cell total enters the weights, so the units are
+arbitrary. Long-term monthly averages (a precipitation climatology) are generally the
+appropriate choice, matching the climatological basis of most monthly isoscape
+products; monthly precipitation is a separate data product that you supply.}
+
+\item{iso_se_method}{Character; how the monthly standard-error layers are combined
+into a single error surface. One of \code{"weighted-correlated"} (the default),
+\code{"weighted-uncorrelated"}, or \code{"rss"}. See Details.}
 }
 \value{
-A list containing a precipitation-weighted mean isoscape (`mean_iso`)
-  and a root-sum-of-square combined error map (`iso_se`).
+A list containing a precipitation-weighted mean isoscape (`mean_iso`) and the
+  combined error map (`iso_se`), the latter computed according to `iso_se_method`.
 }
 \description{
 Combines a stack of monthly isoscape maps, monthly isoscape standard error
-maps, and optionally a precipitation (amount) stack into a single
-precipitation-weighted mean isoscape and a combined error surface. Each stack
-must contain layers corresponding to each of the target months.
+maps, and optionally a precipitation (amount) stack to provide weights,
+into a single precipitation-weighted mean isoscape and a combined error
+surface. Each stack must contain layers corresponding to each of the target
+months.
 }
 \details{
 If precip_stack is NULL, equal precipitation amounts are assumed for each month.
+
+
+The combined error surface is the standard error of the same precipitation-weighted
+mean returned as \code{mean_iso}. Writing \eqn{w_m} for the per-cell weight of month
+\eqn{m} (the relativized precipitation, or \eqn{1/n} when \code{precip_stack} is
+\code{NULL}) and \eqn{\sigma_m} for that month's standard error, the variance of the
+weighted mean under a single cross-month error correlation \eqn{\rho} is
+
+\deqn{(1 - \rho) \sum_m w_m^2 \sigma_m^2 + \rho \left( \sum_m w_m \sigma_m \right)^2.}
+
+\code{iso_se_method} selects the endpoints of that expression:
+\describe{
+  \item{\code{"weighted-correlated"}}{\eqn{\rho = 1}, giving \eqn{\sum_m w_m \sigma_m}.
+    Perfectly correlated monthly errors do not cancel, so this is the upper bound. It
+    is the default: monthly isoscapes are typically built from a shared station network
+    and a shared interpolation, so their errors are strongly positively correlated, and
+    assuming otherwise lets the combined error shrink as \eqn{\sqrt{n}} purely by
+    averaging in more months.}
+  \item{\code{"weighted-uncorrelated"}}{\eqn{\rho = 0}, giving
+    \eqn{\sqrt{\sum_m w_m^2 \sigma_m^2}}. Uncorrelated monthly errors partially
+    cancel, so this is the lower bound. Appropriate only when the monthly errors are
+    genuinely unrelated.}
+  \item{\code{"rss"}}{The unweighted root-sum-of-square \eqn{\sqrt{\sum_m \sigma_m^2}}
+    returned by isocat 1.0.1 and earlier. It ignores the precipitation weights entirely
+    and is the standard error of the unweighted \emph{sum} of the months rather than of
+    \code{mean_iso}, so it overstates the combined error: an amount-weighted
+    combination returns the same error surface as an equal-weighted one. Retained only
+    for reproducing results from earlier versions.}
+}
 }
 \examples{
 myiso <- rast(isoscape, type = "xyz")

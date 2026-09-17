@@ -1,7 +1,10 @@
 # Tests for makeMultiMonthIsoscape, built on a controlled two-month example with
-# hand-verifiable answers. Guards the two bugs the migration fixed:
-#   - the weighted mean was off by a factor of n (calc mean vs sum)
-#   - the NULL-precip branch crashed on eager `|` evaluation of nlayers(NULL)
+# hand-verifiable answers. Guards the three bugs fixed in this function:
+#   - (1.0) the weighted mean was off by a factor of n (calc mean vs sum)
+#   - (1.0) the NULL-precip branch crashed on eager `|` evaluation of nlayers(NULL)
+#   - (2.0) the combined SE ignored the precipitation weights (unweighted RSS), so an
+#     amount-weighted combination returned the same error surface as an equal-
+#     weighted one; now selected by iso_se_method, with "rss" kept as legacy.
 
 mm_stacks <- function() {
   tmpl <- terra::rast(nrows = 4, ncols = 4, xmin = 0, xmax = 4, ymin = 0, ymax = 4)
@@ -20,10 +23,74 @@ test_that("precipitation-weighted mean isoscape is a weighted average (not a mea
   expect_equal(cell1(out$mean_iso), 0.25 * 10 + 0.75 * 20)  # 17.5, not 8.75
 })
 
-test_that("combined error is the root-sum-of-square of the monthly SE layers", {
+test_that('iso_se_method = "rss" reproduces the isocat <= 1.0.1 error surface', {
+  s <- mm_stacks()
+  out <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip, iso_se_method = "rss")
+  expect_equal(cell1(out$iso_se), sqrt(2^2 + 4^2))  # sqrt(20)
+})
+
+# Weights are 1/4 and 3/4; monthly SEs are 2 and 4.
+test_that("default combined error is the weighted correlated (rho = 1) bound", {
   s <- mm_stacks()
   out <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip)
-  expect_equal(cell1(out$iso_se), sqrt(2^2 + 4^2))  # sqrt(20)
+  expect_equal(cell1(out$iso_se), 0.25 * 2 + 0.75 * 4)  # 3.5
+})
+
+test_that("weighted-uncorrelated is the rho = 0 bound", {
+  s <- mm_stacks()
+  out <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip,
+                                iso_se_method = "weighted-uncorrelated")
+  expect_equal(cell1(out$iso_se),
+               sqrt(0.25^2 * 2^2 + 0.75^2 * 4^2))  # sqrt(9.25)
+})
+
+test_that("the uncorrelated bound lies below the correlated one", {
+  s <- mm_stacks()
+  lo <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip,
+                               iso_se_method = "weighted-uncorrelated")
+  hi <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip)
+  expect_lt(cell1(lo$iso_se), cell1(hi$iso_se))
+})
+
+test_that("NULL precip combines the monthly SEs with equal weights", {
+  s <- mm_stacks()
+  out <- makeMultiMonthIsoscape(s$iso, s$iso_se, NULL)
+  expect_equal(cell1(out$iso_se), 0.5 * 2 + 0.5 * 4)  # 3
+})
+
+test_that("the precipitation weights now change the combined error", {
+  s <- mm_stacks()
+  equal   <- makeMultiMonthIsoscape(s$iso, s$iso_se, NULL)
+  unequal <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip)
+  expect_false(isTRUE(all.equal(cell1(equal$iso_se), cell1(unequal$iso_se))))
+
+  # The bug: under the legacy rule the two are identical.
+  equal_rss   <- makeMultiMonthIsoscape(s$iso, s$iso_se, NULL,      iso_se_method = "rss")
+  unequal_rss <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip, iso_se_method = "rss")
+  expect_equal(cell1(equal_rss$iso_se), cell1(unequal_rss$iso_se))
+})
+
+test_that("combined error is invariant to layer order", {
+  s <- mm_stacks()
+  fwd <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip)
+  rev <- makeMultiMonthIsoscape(s$iso[[2:1]], s$iso_se[[2:1]], s$precip[[2:1]])
+  expect_equal(cell1(fwd$iso_se), cell1(rev$iso_se))
+
+  for (m in c("weighted-uncorrelated", "rss")) {
+    fwd <- makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip, iso_se_method = m)
+    rev <- makeMultiMonthIsoscape(s$iso[[2:1]], s$iso_se[[2:1]], s$precip[[2:1]],
+                                  iso_se_method = m)
+    expect_equal(cell1(fwd$iso_se), cell1(rev$iso_se))
+  }
+})
+
+test_that("an unrecognized iso_se_method is rejected", {
+  s <- mm_stacks()
+  expect_error(makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip,
+                                      iso_se_method = "correlated"))
+  # The shared prefix is ambiguous, so it must not partially match either option.
+  expect_error(makeMultiMonthIsoscape(s$iso, s$iso_se, s$precip,
+                                      iso_se_method = "weighted"))
 })
 
 test_that("NULL precip yields the equal-weight mean across months", {
